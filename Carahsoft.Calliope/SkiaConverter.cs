@@ -3,9 +3,9 @@ using System.Text;
 
 namespace Carahsoft.Calliope
 {
-    public class Calliope
+    public class SkiaConverter
     {
-        public Calliope(
+        public SkiaConverter(
             string bannerText,
             int width = 120,
             int height = 28,
