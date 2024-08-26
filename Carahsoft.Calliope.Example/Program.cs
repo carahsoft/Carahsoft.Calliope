@@ -3,7 +3,7 @@ using Carahsoft.Calliope;
 using System.Text;
 
 Console.OutputEncoding = Encoding.UTF8;
-var test = new SkiaAsciiConverter(
+var test = new Calliope(
     "Carahsoft",
     font: "Yu Gothic",
     width: 70,

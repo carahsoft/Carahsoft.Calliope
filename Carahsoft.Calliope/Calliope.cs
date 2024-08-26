@@ -1,15 +1,11 @@
 ﻿using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope
 {
-    public class SkiaAsciiConverter
+    public class Calliope
     {
-        public SkiaAsciiConverter(
+        public Calliope(
             string bannerText,
             int width = 120,
             int height = 28,
