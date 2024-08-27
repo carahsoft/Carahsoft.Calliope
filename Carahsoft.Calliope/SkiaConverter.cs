@@ -3,42 +3,38 @@ using System.Text;
 
 namespace Carahsoft.Calliope
 {
-    public class SkiaConverter
+    internal class SkiaConverter
     {
         public SkiaConverter(
             string bannerText,
-            int width = 120,
-            int height = 28,
-            string font = "Roboto",
-            int fontSize = 18,
-            ConsoleColor fontColor = ConsoleColor.DarkRed,
-            char drawChar = '\u2580',
-            char spaceChar = ' ',
-            byte drawThreshold = 255)
+            CalliopeOptions? options = null)
         {
-            BannerText = bannerText.ToLower();
-            Width = width;
-            Height = height;
-            FontName = font;
-            FontSize = fontSize;
-            _color = fontColor;
-            _drawChar = drawChar;
-            _spaceChar = spaceChar;
-            _drawThreshold = drawThreshold;
+            _options = options ?? new CalliopeOptions();
+            BannerText = bannerText;
+            Width = _options.Width;
+            Height = _options.Height;
+            FontName = _options.Font;
+            FontSize = _options.FontSize;
+            _color = _options.FontColor;
+            _drawChar = _options.DrawChar;
+            _spaceChar = _options.SpaceChar;
+            _drawThreshold = _options.DrawThreshold;
+            _antiAliasing = _options.AntiAliasing;
             DrawText();
 
-            _matrix = new int[height, width];
+            _matrix = new int[Height, Width];
 
             ConvertToMatrix();
         }
 
         public void Print()
         {
+            var fgSnap = Console.ForegroundColor;
+
             Console.ForegroundColor = _color;
             Console.WriteLine(ToString());
 
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = fgSnap;
         }
 
         private void ConvertToMatrix()
@@ -63,12 +59,34 @@ namespace Carahsoft.Calliope
             {
                 for (var j = 0; j < Width; j++)
                 {
-                    sb.Append(_matrix[i, j] == 0 ? _spaceChar : _drawChar);
+                    sb.Append(GetCharAt(i, j, _matrix[i, j]));
                 }
                 sb.Append('\n');
             }
 
             return sb.ToString();
+        }
+
+        private char GetCharAt(int x, int y, int val)
+        {
+            if (_options.Effect == CalliopeEffect.ScanlineGradient)
+            {
+                var line = (int)(((double)x / Height) * 8);
+                return (val, line) switch
+                {
+                    (0, _) => _spaceChar,
+                    (_, 0) => '\u2588',
+                    (_, 1) => '\u2587',
+                    (_, 2) => '\u2586',
+                    (_, 3) => '\u2585',
+                    (_, 4) => '\u2584',
+                    (_, 5) => '\u2583',
+                    (_, 6) => '\u2582',
+                    (_, 7) => '\u2581',
+                };
+            }
+
+            return val == 0  ? _spaceChar : _drawChar;
         }
 
         private void DrawText()
@@ -82,7 +100,7 @@ namespace Carahsoft.Calliope
             using (var paint = new SKPaint())
             {
                 paint.TextSize = FontSize;
-                paint.IsAntialias = true;
+                paint.IsAntialias = _antiAliasing;
                 paint.Color = SKColors.Black;
                 paint.IsStroke = false;
                 paint.Typeface = SKTypeface.FromFamilyName(FontName);
@@ -113,6 +131,8 @@ namespace Carahsoft.Calliope
         private readonly char _drawChar;
         private readonly char _spaceChar;
         private readonly byte _drawThreshold;
+        private readonly bool _antiAliasing;
         private readonly int[,] _matrix;
+        private readonly CalliopeOptions _options;
     }
 }

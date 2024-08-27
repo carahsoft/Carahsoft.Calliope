@@ -3,16 +3,26 @@ using Carahsoft.Calliope;
 using System.Text;
 
 Console.OutputEncoding = Encoding.UTF8;
-var test = new Calliope(
-    "Carahsoft",
-    font: "Yu Gothic",
+Calliope.Print(
+    "carahsoft",
+    font: "Ubuntu Mono",
     width: 70,
     height: 14,
     fontColor: ConsoleColor.Magenta,
-    drawChar: '\u2588',
+    //drawChar: '\u2588',
     //spaceChar: '　',
     fontSize: 11,
-    drawThreshold: 230 
+    drawThreshold: 255,
+    antiAliasing: false
 );
 
-test.Print();
+Calliope.Print("carahsoft", new CalliopeOptions
+{
+    Font = "Ubuntu Mono",
+    Width = 70,
+    Height = 14,
+    FontColor = ConsoleColor.Magenta,
+    FontSize = 11,
+    AntiAliasing = false,
+    Effect = CalliopeEffect.ScanlineGradient
+});

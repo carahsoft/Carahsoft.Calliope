@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Carahsoft.Calliope.Example": {
+      "commandName": "Project"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    }
+  }
+}
