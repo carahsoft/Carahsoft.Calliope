@@ -19,10 +19,33 @@ Calliope.Print(
 Calliope.Print("carahsoft", new CalliopeOptions
 {
     Font = "Ubuntu Mono",
-    Width = 70,
-    Height = 14,
-    FontColor = ConsoleColor.Magenta,
-    FontSize = 11,
+    Width = 100,
+    Height = 20,
+    FontStartColor = ConsoleColor.Blue,
+   // ConsoleBackgroundColor = ConsoleColor.DarkBlue,
+    FontSize = 16,
     AntiAliasing = false,
     Effect = CalliopeEffect.ScanlineGradient
+});
+
+Calliope.Print("CARAHSOFT", new CalliopeOptions
+{
+    Font = "Ubuntu Mono",
+    Width = 70,
+    Height = 14,
+    FontStartColor = ConsoleColor.Red,
+    FontSize = 12,
+    AntiAliasing = false,
+    Effect = CalliopeEffect.Phoenix
+});
+
+Calliope.Print("CARAHSOFT", new CalliopeOptions
+{
+    Font = "Courier New",
+    Width = 70,
+    Height = 14,
+    FontStartColor = ConsoleColor.Red,
+    FontSize = 12,
+    AntiAliasing = false,
+    Effect = CalliopeEffect.Unicorn
 });

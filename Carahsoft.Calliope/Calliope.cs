@@ -29,7 +29,7 @@ namespace Carahsoft.Calliope
                 DrawThreshold = drawThreshold,
                 Font = font,
                 FontSize = fontSize,
-                FontColor = fontColor,
+                FontStartColor = fontColor,
                 Height = height
             });
         }

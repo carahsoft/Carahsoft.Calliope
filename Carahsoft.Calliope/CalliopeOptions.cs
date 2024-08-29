@@ -12,7 +12,8 @@ namespace Carahsoft.Calliope
         public int Height { get; set; } = 28;
         public string Font { get; set; } = "Roboto";
         public int FontSize { get; set; } = 18;
-        public ConsoleColor FontColor { get; set; } = ConsoleColor.DarkRed;
+        public ConsoleColor FontStartColor { get; set; } = ConsoleColor.DarkRed;
+        public ConsoleColor ConsoleBackgroundColor { get; set; } = ConsoleColor.Black;
         public char DrawChar { get; set; } = '\u2580';
         public char SpaceChar { get; set; } = ' ';
         public byte DrawThreshold { get; set; } = 255;

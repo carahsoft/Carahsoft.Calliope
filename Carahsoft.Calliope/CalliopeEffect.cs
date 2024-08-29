@@ -3,6 +3,8 @@
     public enum CalliopeEffect
     {
         None,
-        ScanlineGradient
+        ScanlineGradient,
+        Phoenix,
+        Unicorn
     }
 }
