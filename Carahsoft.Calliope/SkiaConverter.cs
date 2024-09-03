@@ -1,5 +1,5 @@
 ﻿using SkiaSharp;
-using System.Drawing;
+﻿using Carahsoft.Calliope.Renderers;
 using System.Text;
 
 namespace Carahsoft.Calliope
@@ -22,11 +22,15 @@ namespace Carahsoft.Calliope
             _drawThreshold = _options.DrawThreshold;
             _antiAliasing = _options.AntiAliasing;
             _bgcolor = _options.ConsoleBackgroundColor;
+            _renderer = _options.Renderer ?? CalliopeRenderer.RendererFromEffect(_options.Effect);
             DrawText();
             
+            _outputChars = new char[Width * Height];
             _matrix = new int[Height, Width];
 
+
             ConvertToMatrix();
+            RemovePadding();
         }
 
         public void Print()
@@ -45,6 +49,16 @@ namespace Carahsoft.Calliope
 
         private void ConvertToMatrix()
         {
+            for (var i = 0; i < Height; i++)
+            {
+                for (var j = 0; j < Width; j++)
+                {
+                    var idx = (i * Width) + j;
+                    var px = _pixels[idx];
+                    _outputChars[idx] = _renderer.CharAtPoint(i, j, px, _options);
+                }
+            }
+
             var offset = 0;
             
             for (var i = 0; i < Height; i++)
@@ -57,10 +71,34 @@ namespace Carahsoft.Calliope
             }
         }
 
+        private void RemovePadding()
+        {
+            List<int[]> lines = new();
+            for (var i = 0; i < Height; i++)
+            {
+                var blankLine = true;
+                int[] line = new int[Width];
+                for (var j = 0; j < Width; j++)
+                {
+                    if (_matrix[i, j] > 0)
+                    {
+                        blankLine = false;
+                        break;
+                    }
+                    line[j] = _matrix[i, j];
+                }
+                if (!blankLine)
+                {
+                    lines.Add(line);
+                }
+            }
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();
 
+            /*
             for (var i = 0; i < Height; i++)
             {
                 for (var j = 0; j < Width; j++)
@@ -69,81 +107,18 @@ namespace Carahsoft.Calliope
                 }
                 sb.Append('\n');
             }
+            */
+            for (int i = 0; i < Height; i++)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    sb.Append(_outputChars[(i * Width) + j]);
+                }
+                sb.Append('\n');
+            }
 
             return sb.ToString();
         }
-
-        private char GetCharAt(int x, int y, int val)
-        {
-            if (_options.Effect == CalliopeEffect.ScanlineGradient)
-            {
-                var line = (int)(((double)x / Height) * 8);
-                return (val, line) switch
-                {
-                    (0, _) => _spaceChar,
-                    (_, 0) => '\u2588',  //█
-                    (_, 1) => '\u2587',  //▇
-                    (_, 2) => '\u2586',  //▆
-                    (_, 3) => '\u2585',  //▅
-                    (_, 4) => '\u2584',  //▄  
-                    (_, 5) => '\u2583',  //▃        
-                    (_, 6) => '\u2582',  //▂
-                    (_, 7) => '\u2581',  //▁
-                };
-            }
-
-            else if (_options.Effect == CalliopeEffect.Phoenix)
-            {
-                var line = (int)( (((double)(y) / Width)) * 8);
-
-                return (val, line) switch
-                {
-                    (0, _) => _spaceChar,
-                    (_, 0) => '\u2588',  //█
-                    (_, 1) => '\u2593',  //▓
-                    (_, 2) => '\u2592',  //▒
-                    (_, 3) => '\u2591',  //░
-                    (_, 4) => '\u2591',  //░
-                    (_, 5) => '\u2592',  //▒
-                    (_, 6) => '\u2593',  //▓
-                    (_, 7) => '\u2588',  //█
-                };
-            }
-
-            else if (_options.Effect == CalliopeEffect.Unicorn)
-            {
-                var line = (int)((((double)(y) / Width)) * 17);
-
-                line = rand.Next() % 17;
-
-                return (val, line) switch
-                {
-                    (0, _) => _spaceChar,
-                    (_, 0) => '\u2724',  //✤
-                    (_, 1) => '\u2725',  //✥
-                    (_, 2) => '\u2726',  //✦
-                    (_, 3) => '\u2727',  //✧
-                    (_, 4) => '\u2729',  //✩
-                    (_, 5) => '\u2739',  //✹
-                    (_, 6) => '\u2740',  //❀
-                    (_, 7) => '\u2741',  //❁
-                    (_, 8) => '\u2742',  //❂
-                    (_, 9) => '\u2743',  //❃
-                    (_, 10) => '\u2744', //❄
-                    (_, 11) => '\u2745', //❅
-                    (_, 12) => '\u2746', //❆
-                    (_, 13) => '\u2748', //❈
-                    (_, 14) => '\u2749', //❉
-                    (_, 15) => '\u2765', //❥
-                    (_, 16) => '\u2764', //❤
-                };
-            }
-
-            return val == 0  ? _spaceChar : _drawChar;
-        }
-
-        Random rand = new Random();
-
 
         private void DrawText()
         {
@@ -164,15 +139,14 @@ namespace Carahsoft.Calliope
                 canvas.DrawText(BannerText, 2, FontSize, paint);
                 canvas.Flush();
             }
-            canvas.Scale(1, -1, 0, 0);
             canvas.Save();
 
             using var image = surface.Snapshot();
             var bmp = SKBitmap.FromImage(image);
 
-            var bytes = bmp.Bytes.Where(x => x != 255).ToArray();
-            var notWhite = bmp.Pixels.Where(x => x != SKColors.White).ToArray();
-
+            _pixels = bmp.Pixels
+                .Select(x => new RgbPixel { Red = x.Red, Green = x.Green, Blue = x.Blue })
+                .ToArray();
             _bytes = bmp.Bytes;
         }
 
@@ -185,11 +159,21 @@ namespace Carahsoft.Calliope
         private ConsoleColor _color;
         private ConsoleColor _bgcolor;
         private byte[] _bytes;
+        private RgbPixel[] _pixels;
+        private char[] _outputChars;
         private readonly char _drawChar;
         private readonly char _spaceChar;
         private readonly byte _drawThreshold;
         private readonly bool _antiAliasing;
         private readonly int[,] _matrix;
         private readonly CalliopeOptions _options;
+        private readonly IRenderer _renderer;
+    }
+
+    public record RgbPixel
+    {
+        public byte Red { get; init; }
+        public byte Green { get; init; }
+        public byte Blue { get; init; }
     }
 }

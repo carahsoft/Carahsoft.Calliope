@@ -5,6 +5,7 @@
         None,
         ScanlineGradient,
         Phoenix,
-        Unicorn
+        Unicorn,
+        Greyscale
     }
 }

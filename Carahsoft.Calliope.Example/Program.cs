@@ -46,6 +46,6 @@ Calliope.Print("CARAHSOFT", new CalliopeOptions
     Height = 14,
     FontStartColor = ConsoleColor.Red,
     FontSize = 12,
-    AntiAliasing = false,
+    AntiAliasing = true,
     Effect = CalliopeEffect.Unicorn
 });
