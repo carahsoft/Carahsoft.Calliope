@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Carahsoft.Calliope.Renderers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,5 +20,6 @@ namespace Carahsoft.Calliope
         public byte DrawThreshold { get; set; } = 255;
         public bool AntiAliasing { get; set; } = true;
         public CalliopeEffect Effect { get; set; } = CalliopeEffect.None;
+        public IRenderer? Renderer { get; set; } = null;
     }
 }
