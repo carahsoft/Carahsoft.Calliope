@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carahsoft.Calliope
+namespace Carahsoft.Calliope.Table
 {
     public class ConsoleTable
     {
@@ -36,12 +36,10 @@ namespace Carahsoft.Calliope
 
                 if (maxString.Length > col.ColumnName.Length)
                 {
-                    colHeader.Width = maxString.Length+2;
+                    colHeader.Width = maxString.Length + 2;
                 }
                 else
-                    colHeader.Width = col.ColumnName.Length+2;
-
-                Debug.WriteLine(colHeader.Name + "\t" + colHeader.Width + "\t" + maxString);
+                    colHeader.Width = col.ColumnName.Length + 2;
 
                 cols.Add(colHeader);
 
@@ -80,8 +78,8 @@ namespace Carahsoft.Calliope
 
                     string val = dr[c.Name].ToString();
 
-                    if(c.Alignment==ColumnAlignment.Center)
-                        val = val.PadRight(((c.Width - val.Length) / 2) + val.Length, ' ');
+                    if (c.Alignment == ColumnAlignment.Center)
+                        val = val.PadRight((c.Width - val.Length) / 2 + val.Length, ' ');
 
                     sb.Append(string.Format(c.FormatString, val));
 
@@ -92,10 +90,10 @@ namespace Carahsoft.Calliope
 
             return sb.ToString();
         }
-  
+
     }
 
- 
 
- 
+
+
 }
