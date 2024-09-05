@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Carahsoft.Calliope.AnsiConsole;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,6 +45,11 @@ namespace Carahsoft.Calliope
             );
 
             skConverter.Print();
+        }
+
+        public static CalliopeProgram<TModel> NewProgram<TModel>(ICalliopeProgram<TModel> program)
+        {
+            return new CalliopeProgram<TModel>(program);
         }
     }
 }
