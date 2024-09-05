@@ -52,6 +52,7 @@ namespace Carahsoft.Calliope.Table
         }
 
 
+
         private void SetHeaders()
         {
             cols = new List<ColumnHeader>();
