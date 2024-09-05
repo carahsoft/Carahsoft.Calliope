@@ -18,6 +18,7 @@ namespace Carahsoft.Calliope.AnsiConsole
 
         private TModel _state;
         private int _linesRendered = 0;
+        private bool _updated = true;
         private bool _quitting = false;
 
         public ProgramRunner(ICalliopeProgram<TModel> program, ProgramOptions opts)
@@ -43,6 +44,10 @@ namespace Carahsoft.Calliope.AnsiConsole
                     if (_quitting)
                         break;
 
+                    if (!_updated)
+                        continue;
+
+                    _updated = false;
                     await RenderBuffer();
                 }
             });
@@ -50,7 +55,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             while (true)
             {
                 var key = Console.ReadKey(true);
-                var (newState, cmd) = _program.Update(_state, new KeyPressMsg
+                var cmd = UpdateProgram(new KeyPressMsg
                 {
                     Key = key.Key,
                     KeyChar = key.KeyChar,
@@ -62,10 +67,19 @@ namespace Carahsoft.Calliope.AnsiConsole
                     _quitting = true;
                     break;
                 }
-                _state = newState;
             }
 
             Console.TreatControlCAsInput = ctrlCRestore;
+        }
+
+        private CalliopeMsg? UpdateProgram(CalliopeMsg msg)
+        {
+            var (newState, cmd) = _program.Update(_state, msg);
+            _state = newState;
+
+            _updated = true;
+
+            return cmd;
         }
 
         public async Task RenderBuffer()
