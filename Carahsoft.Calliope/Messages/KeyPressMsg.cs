@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Messages
 {
-    public class KeyPressMessage : CalliopeMsg
+    public class KeyPressMsg : CalliopeMsg
     {
         public ConsoleKey Key { get; set; }
         public char KeyChar { get; set; }

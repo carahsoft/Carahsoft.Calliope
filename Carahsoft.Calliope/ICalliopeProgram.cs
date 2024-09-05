@@ -9,8 +9,8 @@ namespace Carahsoft.Calliope
 {
     public interface ICalliopeProgram<TModel>
     {
-        public (TModel, CalliopeMsg) Update(TModel state, CalliopeMsg msg);
-        public TModel Init();
+        public (TModel, CalliopeMsg?) Update(TModel state, CalliopeMsg msg);
+        public (TModel, CalliopeMsg?) Init();
         public string View(TModel state);
     }
 }

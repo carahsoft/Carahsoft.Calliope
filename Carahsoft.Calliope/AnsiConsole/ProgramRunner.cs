@@ -32,7 +32,9 @@ namespace Carahsoft.Calliope.AnsiConsole
             var ctrlCRestore = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
 
-            _state = _program.Init();
+            // TODO: handle init cmd
+            (_state, _) = _program.Init();
+
             // Render screen in background task while primary thread waits on user input
             var renderTask = Task.Run(async () =>
             {
@@ -45,16 +47,21 @@ namespace Carahsoft.Calliope.AnsiConsole
                 }
             });
 
-            //TODO cancellation
             while (true)
             {
                 var key = Console.ReadKey(true);
-                var (newState, cmd) = _program.Update(_state, new KeyPressMessage
+                var (newState, cmd) = _program.Update(_state, new KeyPressMsg
                 {
                     Key = key.Key,
                     KeyChar = key.KeyChar,
                     Modifiers = key.Modifiers
                 });
+
+                if (cmd is QuitMsg msg)
+                {
+                    _quitting = true;
+                    break;
+                }
                 _state = newState;
             }
 
@@ -63,6 +70,7 @@ namespace Carahsoft.Calliope.AnsiConsole
 
         public async Task RenderBuffer()
         {
+            // TODO: Check if we need a render and skip render if not
             var renderLines = _program.View(_state).Split('\n');
             var sb = new StringBuilder();
 

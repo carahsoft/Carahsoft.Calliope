@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Messages
 {
-    public abstract class CalliopeMsg
+    public class QuitMsg : CalliopeMsg
     {
-        public static CalliopeMsg Quit = new QuitMsg();
     }
 }

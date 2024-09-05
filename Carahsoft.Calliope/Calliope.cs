@@ -1,4 +1,5 @@
 ﻿using Carahsoft.Calliope.AnsiConsole;
+using Carahsoft.Calliope.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,11 @@ namespace Carahsoft.Calliope
         public static CalliopeProgram<TModel> NewProgram<TModel>(ICalliopeProgram<TModel> program)
         {
             return new CalliopeProgram<TModel>(program);
+        }
+
+        public static (TModel, CalliopeMsg?) Return<TModel>(TModel model, CalliopeMsg? msg = null)
+        {
+            return (model, msg);
         }
     }
 }
