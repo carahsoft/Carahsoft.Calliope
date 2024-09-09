@@ -48,14 +48,14 @@ namespace Carahsoft.Calliope
             skConverter.Print();
         }
 
-        public static CalliopeProgram<TModel> NewProgram<TModel>(ICalliopeProgram<TModel> program)
+        public static CalliopeProgramBuilder<TModel> NewProgram<TModel>(ICalliopeProgram<TModel> program)
         {
-            return new CalliopeProgram<TModel>(program);
+            return new CalliopeProgramBuilder<TModel>(program);
         }
 
-        public static (TModel, CalliopeMsg?) Return<TModel>(TModel model, CalliopeMsg? msg = null)
+        public static (TModel, CalliopeCmd?) Return<TModel>(TModel model, CalliopeCmd? cmd = null)
         {
-            return (model, msg);
+            return (model, cmd);
         }
     }
 }

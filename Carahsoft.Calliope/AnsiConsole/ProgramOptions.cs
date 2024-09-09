@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.AnsiConsole
 {
-    internal class ProgramOptions
+    public class ProgramOptions
     {
         public int ConsoleWidth { get; set; }
         public int ConsoleHeight { get; set; }

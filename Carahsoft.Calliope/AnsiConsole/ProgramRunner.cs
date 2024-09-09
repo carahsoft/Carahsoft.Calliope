@@ -5,16 +5,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.AnsiConsole
 {
-    internal class ProgramRunner<TModel>
+    public class ProgramRunner<TModel>
     {
         private readonly ICalliopeProgram<TModel> _program;
         private readonly ProgramOptions _opts;
-        private readonly PeriodicTimer _timer;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0, 1);
+        private readonly TimeSpan _framerate;
+        private readonly PeriodicTimer _renderTimer;
+
+        private readonly Channel<CalliopeMsg> _messageChannel = Channel.CreateUnbounded<CalliopeMsg>(
+            new UnboundedChannelOptions
+            {
+                SingleReader = true,
+                SingleWriter = false,
+                AllowSynchronousContinuations = false,
+            });
+
+        private readonly Channel<CalliopeCmd> _commandChannel = Channel.CreateUnbounded<CalliopeCmd>(
+            new UnboundedChannelOptions
+            {
+                SingleReader = false,
+                SingleWriter = false,
+                AllowSynchronousContinuations = false,
+            });
 
         private TModel _state;
         private int _linesRendered = 0;
@@ -25,7 +42,13 @@ namespace Carahsoft.Calliope.AnsiConsole
         {
             _program = program;
             _opts = opts;
-            _timer = new PeriodicTimer(TimeSpan.FromSeconds((double)1 / _opts.Framerate));
+            _framerate = TimeSpan.FromSeconds((double)1 / _opts.Framerate);
+            _renderTimer = new PeriodicTimer(_framerate);
+        }
+
+        public async Task SendAsync(CalliopeMsg msg)
+        {
+            await _messageChannel.Writer.WriteAsync(msg);
         }
 
         public async Task RunAsync()
@@ -33,13 +56,16 @@ namespace Carahsoft.Calliope.AnsiConsole
             var ctrlCRestore = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
 
-            // TODO: handle init cmd
-            (_state, _) = _program.Init();
+            var (state, cmd) = _program.Init();
+            _state = state;
+
+            if (cmd != null)
+                await _commandChannel.Writer.WriteAsync(cmd);
 
             // Render screen in background task while primary thread waits on user input
             var renderTask = Task.Run(async () =>
             {
-                while (await _timer.WaitForNextTickAsync())
+                while (await _renderTimer.WaitForNextTickAsync())
                 {
                     if (_quitting)
                         break;
@@ -52,37 +78,90 @@ namespace Carahsoft.Calliope.AnsiConsole
                 }
             });
 
-            while (true)
-            {
-                var key = Console.ReadKey(true);
-                var cmd = UpdateProgram(new KeyPressMsg
-                {
-                    Key = key.Key,
-                    KeyChar = key.KeyChar,
-                    Modifiers = key.Modifiers
-                });
+            var messageLoopTask = Task.Run(MessageLoop);
+            var commandLoopTask = Task.Run(CommandLoop);
 
-                if (cmd is QuitMsg msg)
+            // Start key capture
+            await Task.Run(async () =>
+            {
+                while (true)
                 {
-                    _quitting = true;
-                    break;
+                    var key = await GetKeyWithTimeoutAsync();
+                    if (key == null)
+                        break;
+
+                    await _messageChannel.Writer.WriteAsync(new KeyPressMsg
+                    {
+                        Key = key.Value.Key,
+                        KeyChar = key.Value.KeyChar,
+                        Modifiers = key.Value.Modifiers
+                    });
+                }
+
+                Console.TreatControlCAsInput = ctrlCRestore;
+            });
+        }
+
+        private async Task<ConsoleKeyInfo?> GetKeyWithTimeoutAsync()
+        {
+            while (!_quitting)
+            {
+                if (Console.KeyAvailable)
+                {
+                    return Console.ReadKey(true);
+                }
+                // Delay 1 frame before checking again
+                await Task.Delay(_framerate);
+            }
+            return null;
+        }
+
+        private async Task MessageLoop()
+        {
+            while (await _messageChannel.Reader.WaitToReadAsync())
+            {
+                while (_messageChannel.Reader.TryRead(out var msg))
+                {
+                    if (msg is QuitMsg)
+                    {
+                        _quitting = true;
+                    }
+
+                    var cmd = UpdateProgram(msg);
+                    if (cmd != null)
+                        await _commandChannel.Writer.WriteAsync(cmd);
                 }
             }
-
-            Console.TreatControlCAsInput = ctrlCRestore;
         }
 
-        private CalliopeMsg? UpdateProgram(CalliopeMsg msg)
+        private async Task CommandLoop()
         {
-            var (newState, cmd) = _program.Update(_state, msg);
-            _state = newState;
-
-            _updated = true;
-
-            return cmd;
+            // Process commands as they are added to the channel
+            while (await _commandChannel.Reader.WaitToReadAsync())
+            {
+                while (_commandChannel.Reader.TryRead(out var cmd))
+                {
+                    var msg = await cmd.CommandFunc();
+                    await _messageChannel.Writer.WriteAsync(msg);
+                }
+            }
         }
 
-        public async Task RenderBuffer()
+        private CalliopeCmd? UpdateProgram(CalliopeMsg msg)
+        {
+            // TODO: async wait
+            lock (this)
+            {
+                var (newState, cmd) = _program.Update(_state, msg);
+                _state = newState;
+
+                _updated = true;
+
+                return cmd;
+            }
+        }
+
+        private async Task RenderBuffer()
         {
             // TODO: Check if we need a render and skip render if not
             var renderLines = _program.View(_state).Split('\n');
