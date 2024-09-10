@@ -37,6 +37,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         private int _linesRendered = 0;
         private bool _updated = true;
         private bool _quitting = false;
+        private string[] _previousRender;
 
         public ProgramRunner(ICalliopeProgram<TModel> program, ProgramOptions opts)
         {
@@ -55,6 +56,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         {
             var ctrlCRestore = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
+            Console.Write(AnsiConstants.HideCursor);
 
             var (state, cmd) = _program.Init();
             _state = state;
@@ -99,6 +101,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                 }
 
                 Console.TreatControlCAsInput = ctrlCRestore;
+                Console.Write(AnsiConstants.ShowCursor);
             });
         }
 
@@ -167,23 +170,37 @@ namespace Carahsoft.Calliope.AnsiConsole
             var renderLines = _program.View(_state).Split('\n');
             var sb = new StringBuilder();
 
+            bool[] skipLines = new bool[_linesRendered];
             if (_linesRendered > 0)
             {
+                //Console.SetCursorPosition(0, 0);
                 for (int i = _linesRendered - 1; i >= 0; i--)
                 {
                     sb.Append(AnsiConstants.CursorUp);
-                    sb.Append(AnsiConstants.ClearLine);
+
+                    if (_previousRender[i] != renderLines[i])
+                    {
+                        sb.Append(AnsiConstants.ClearLine);
+                    }
+                    else
+                    {
+                        skipLines[i] = true;
+                    }
                 }
             }
 
-            foreach (var line in renderLines)
+            for (int i = 0; i < renderLines.Length; i++)
             {
                 // TODO: length overflow check
-                sb.AppendLine(line);
+                if (i < _linesRendered && skipLines[i])
+                    sb.AppendLine();
+                else
+                    sb.AppendLine(renderLines[i]);
             }
             _linesRendered = renderLines.Length;
 
             Console.Write(sb.ToString());
+            _previousRender = renderLines;
         }
     }
 }

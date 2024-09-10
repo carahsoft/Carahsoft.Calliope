@@ -1,4 +1,5 @@
-﻿using Carahsoft.Calliope.Messages;
+﻿using Carahsoft.Calliope.AnsiConsole;
+using Carahsoft.Calliope.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,27 @@ namespace Carahsoft.Calliope.Components
         public int Percent { get; set; }
     }
 
+    public class LoadingBarOptions
+    {
+        public RgbPixel? Color { get; set; }
+        public RgbPixel? GradientStart { get; set; }
+        public RgbPixel? GradientEnd { get; set; }
+    }
+
     public class LoadingBar : ICalliopeProgram<LoadingBarState>
     {
         private const char UNLOADED = '\u2591';
         private const char DARK = '\u2593';
         private const char FULL = '\u2588';
+
+        private readonly LoadingBarOptions _options;
+
+        public LoadingBar(LoadingBarOptions options)
+        {
+            if (options.Color == null)
+                options.Color = new RgbPixel { Blue = 255, Green = 255, Red = 255 };
+            _options = options;
+        }
 
         public (LoadingBarState, CalliopeCmd?) Init()
         {
@@ -47,7 +64,18 @@ namespace Carahsoft.Calliope.Components
             var loadedString = new string(FULL, loadedCount);
             var unloadedString = new string(UNLOADED, unloadedCount);
 
-            return loadedString + unloadedString + $" {state.Percent}%";
+            if (_options.GradientStart != null && _options.GradientEnd != null)
+            {
+                return AnsiTextHelper.GradientLine(
+                    loadedString + unloadedString,
+                    _options.GradientStart,
+                    _options.GradientEnd)
+                    + $" {state.Percent}%";
+            }
+
+            return AnsiTextHelper.ColorText(
+                loadedString + unloadedString + $" {state.Percent}%",
+                _options.Color!);
         }
     }
 }
