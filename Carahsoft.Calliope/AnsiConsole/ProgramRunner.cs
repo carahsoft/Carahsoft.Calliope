@@ -52,7 +52,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             await _messageChannel.Writer.WriteAsync(msg);
         }
 
-        public async Task RunAsync()
+        public async Task<TModel> RunAsync()
         {
             var ctrlCRestore = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
@@ -75,8 +75,16 @@ namespace Carahsoft.Calliope.AnsiConsole
                     if (!_updated)
                         continue;
 
+                    try
+                    {
+                        await RenderBuffer();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine(ex);
+                        Environment.Exit(1);
+                    }
                     _updated = false;
-                    await RenderBuffer();
                 }
             });
 
@@ -103,6 +111,9 @@ namespace Carahsoft.Calliope.AnsiConsole
                 Console.TreatControlCAsInput = ctrlCRestore;
                 Console.Write(AnsiConstants.ShowCursor);
             });
+
+            // Return the final state of the program to the caller
+            return _state;
         }
 
         private async Task<ConsoleKeyInfo?> GetKeyWithTimeoutAsync()

@@ -34,7 +34,7 @@ namespace Carahsoft.Calliope
             });
         }
 
-        public Task RunAsync()
+        public Task<TModel> RunAsync()
         {
             var pr = Build();
             return pr.RunAsync();
