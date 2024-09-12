@@ -223,11 +223,11 @@ namespace Carahsoft.Calliope.AnsiConsole
                 //Console.SetCursorPosition(0, 0);
                 for (int i = _linesRendered - 1; i >= 0; i--)
                 {
-                    if (i >= renderLines.Length || _previousRender[i] != renderLines[i])
+                    if (i >= renderLines.Length || string.IsNullOrEmpty(renderLines[i]))
                     {
                         sb.Append(AnsiConstants.ClearLine);
                     }
-                    else
+                    if (_previousRender[i] == renderLines[i])
                     {
                         skipLines[i] = true;
                     }
@@ -236,15 +236,12 @@ namespace Carahsoft.Calliope.AnsiConsole
             }
             sb.Append("\x1b[" + _screenWidth + "D");
 
-            Console.Write(sb.ToString());
-            sb.Clear();
-
             for (int i = 0; i < renderLines.Length; i++)
             {
                 // TODO: length overflow check
                 if (i != 0) sb.AppendLine();
                 if (!(i < _linesRendered && skipLines[i]))
-                    sb.Append(renderLines[i]);
+                    sb.Append(renderLines[i] + AnsiConstants.ClearRight);
             }
             _linesRendered = renderLines.Length;
 
