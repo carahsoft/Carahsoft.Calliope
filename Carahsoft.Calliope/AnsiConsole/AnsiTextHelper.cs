@@ -8,11 +8,18 @@ namespace Carahsoft.Calliope.AnsiConsole
 {
     public static class AnsiTextHelper
     {
-        public static string ColorText(string text, RgbPixel color)
+        public static string ColorText(string text, RgbPixel color, RgbPixel? background = null)
         {
             var sb = new StringBuilder();
             sb.Append("\x1b[");
             sb.Append($"38;2;{(int)color.Red};{(int)color.Green};{(int)color.Blue}");
+            
+            if (background != null)
+            {
+                sb.Append(';');
+                sb.Append($"48;2;{(int)background.Red};{(int)background.Green};{(int)background.Blue}");
+            }
+
             sb.Append("m");
             sb.Append(text);
             sb.Append("\x1b[0m");

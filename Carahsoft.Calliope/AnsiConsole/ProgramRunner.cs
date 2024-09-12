@@ -141,6 +141,14 @@ namespace Carahsoft.Calliope.AnsiConsole
                         _quitting = true;
                     }
 
+                    if (msg is BatchMsg batch)
+                    {
+                        foreach (var batchCommand in batch.Commands)
+                        {
+                            await _commandChannel.Writer.WriteAsync(batchCommand);
+                        }
+                    }
+
                     var cmd = UpdateProgram(msg);
                     if (cmd != null)
                         await _commandChannel.Writer.WriteAsync(cmd);
@@ -189,7 +197,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                 {
                     sb.Append(AnsiConstants.CursorUp);
 
-                    if (_previousRender[i] != renderLines[i])
+                    if (i >= renderLines.Length || _previousRender[i] != renderLines[i])
                     {
                         sb.Append(AnsiConstants.ClearLine);
                     }
