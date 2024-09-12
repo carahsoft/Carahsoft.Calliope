@@ -52,7 +52,7 @@ namespace Carahsoft.Calliope.Messages
 
         public static CalliopeCmd Quit => Make(() => new QuitMsg());
 
-        public static CalliopeCmd Combine(params CalliopeCmd[] cmds)
+        public static CalliopeCmd Combine(params CalliopeCmd?[] cmds)
         {
             return Make(() => new BatchMsg(cmds));
         }

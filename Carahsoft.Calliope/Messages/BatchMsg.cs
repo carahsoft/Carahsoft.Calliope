@@ -10,9 +10,9 @@ namespace Carahsoft.Calliope.Messages
     {
         private readonly List<CalliopeCmd> _commands;
 
-        public BatchMsg(params CalliopeCmd[] commands)
+        public BatchMsg(params CalliopeCmd?[] commands)
         {
-            _commands = commands.ToList();
+            _commands = commands.Where(x => x != null).ToList()!;
         }
 
         public List<CalliopeCmd> Commands => _commands;

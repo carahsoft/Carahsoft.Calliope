@@ -44,7 +44,8 @@ namespace Carahsoft.Calliope.Components
         public (SelectListState, CalliopeCmd?) Init()
         {
             var (searchState, searchCmd) = _searchInput.Init();
-            return (new() { Index = 0, SearchState = searchState }, searchCmd);
+            return (new() { Index = 0, SearchState = searchState },
+                CalliopeCmd.Combine(searchCmd, TextInput.StopBlinking()));
         }
 
         public (SelectListState, CalliopeCmd?) Update(SelectListState state, CalliopeMsg msg)
@@ -83,7 +84,7 @@ namespace Carahsoft.Calliope.Components
 
                     if (kpm.KeyChar == '/')
                     {
-                        return (state with { Searching = true }, null);
+                        return (state with { Searching = true }, TextInput.StartBlinking());
                     }
                 }
             }
@@ -93,7 +94,7 @@ namespace Carahsoft.Calliope.Components
                 {
                     if (kpm.Key == ConsoleKey.Enter)
                     {
-                        return (state with { Searching = false }, null);
+                        return (state with { Searching = false }, TextInput.StopBlinking());
                     }
                     if (kpm.Key == ConsoleKey.Escape)
                     {
@@ -106,7 +107,7 @@ namespace Carahsoft.Calliope.Components
                                 CursorIndex = 0,
                                 Text = ""
                             }
-                        }, null);
+                        }, TextInput.StopBlinking());
                     }
 
                 }

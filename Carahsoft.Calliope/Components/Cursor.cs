@@ -66,12 +66,12 @@ namespace Carahsoft.Calliope.Components
             }
         }
 
-        public CalliopeCmd StartBlinking()
+        public static CalliopeCmd StartBlinking()
         {
             return CalliopeCmd.Make(() => new StartBlinkMsg());
         }
 
-        public CalliopeCmd StopBlinking()
+        public static CalliopeCmd StopBlinking()
         {
             return CalliopeCmd.Make(() => new StopBlinkMsg());
         }

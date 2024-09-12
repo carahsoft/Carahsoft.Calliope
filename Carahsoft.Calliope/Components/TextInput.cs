@@ -96,6 +96,16 @@ namespace Carahsoft.Calliope.Components
             return InsertCursor(state);
         }
 
+        public static CalliopeCmd StartBlinking()
+        {
+            return Cursor.StartBlinking();
+        }
+
+        public static CalliopeCmd StopBlinking()
+        {
+            return Cursor.StopBlinking();
+        }
+
         private string InsertCursor(TextInputState state)
         {
             if (string.IsNullOrEmpty(state.Text))
