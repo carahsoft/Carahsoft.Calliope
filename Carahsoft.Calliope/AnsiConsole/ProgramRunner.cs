@@ -38,6 +38,8 @@ namespace Carahsoft.Calliope.AnsiConsole
         private bool _updated = true;
         private bool _quitting = false;
         private string[] _previousRender;
+        private int _screenHeight = 0;
+        private int _screenWidth = 0;
 
         public ProgramRunner(ICalliopeProgram<TModel> program, ProgramOptions opts)
         {
@@ -56,7 +58,15 @@ namespace Carahsoft.Calliope.AnsiConsole
         {
             var ctrlCRestore = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
-            Console.Write(AnsiConstants.HideCursor);
+            //Console.Write(AnsiConstants.HideCursor);
+
+            _screenHeight = Console.BufferHeight;
+            _screenWidth = Console.BufferWidth;
+            await _messageChannel.Writer.WriteAsync(new WindowSizeChangeMsg
+            {
+                ScreenHeight = _screenHeight,
+                ScreenWidth = _screenWidth,
+            });
 
             var (state, cmd) = _program.Init();
             _state = state;
@@ -71,6 +81,18 @@ namespace Carahsoft.Calliope.AnsiConsole
                 {
                     if (_quitting)
                         break;
+
+                    if (Console.BufferHeight != _screenHeight || Console.BufferWidth != _screenWidth)
+                    {
+                        _screenHeight = Console.BufferHeight;
+                        _screenWidth = Console.BufferWidth;
+
+                        await _messageChannel.Writer.WriteAsync(new WindowSizeChangeMsg
+                        {
+                            ScreenHeight = _screenHeight,
+                            ScreenWidth = _screenWidth
+                        });
+                    }
 
                     if (!_updated)
                         continue;
@@ -186,7 +208,13 @@ namespace Carahsoft.Calliope.AnsiConsole
         private async Task RenderBuffer()
         {
             // TODO: Check if we need a render and skip render if not
-            var renderLines = _program.View(_state).Split('\n');
+            var renderLines = _program.View(_state).Split(Environment.NewLine);
+
+            if (renderLines.Length > _screenHeight)
+            {
+                renderLines = renderLines[^_screenHeight..];
+            }
+
             var sb = new StringBuilder();
 
             bool[] skipLines = new bool[_linesRendered];
@@ -195,8 +223,6 @@ namespace Carahsoft.Calliope.AnsiConsole
                 //Console.SetCursorPosition(0, 0);
                 for (int i = _linesRendered - 1; i >= 0; i--)
                 {
-                    sb.Append(AnsiConstants.CursorUp);
-
                     if (i >= renderLines.Length || _previousRender[i] != renderLines[i])
                     {
                         sb.Append(AnsiConstants.ClearLine);
@@ -205,16 +231,20 @@ namespace Carahsoft.Calliope.AnsiConsole
                     {
                         skipLines[i] = true;
                     }
+                    sb.Append(AnsiConstants.CursorUp);
                 }
             }
+            sb.Append("\x1b[" + _screenWidth + "D");
+
+            Console.Write(sb.ToString());
+            sb.Clear();
 
             for (int i = 0; i < renderLines.Length; i++)
             {
                 // TODO: length overflow check
-                if (i < _linesRendered && skipLines[i])
-                    sb.AppendLine();
-                else
-                    sb.AppendLine(renderLines[i]);
+                if (i != 0) sb.AppendLine();
+                if (!(i < _linesRendered && skipLines[i]))
+                    sb.Append(renderLines[i]);
             }
             _linesRendered = renderLines.Length;
 

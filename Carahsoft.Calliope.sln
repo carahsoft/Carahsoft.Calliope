@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Carahsoft.Calliope.Example"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{9059C6CB-6B5F-4758-B7CF-0B43D22B8983}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadingBarExample", "Examples\LoadingBarExample\LoadingBarExample.csproj", "{C09BD04E-4FD6-4AFD-A997-1B20122BFCBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadingBarExample", "Examples\LoadingBarExample\LoadingBarExample.csproj", "{C09BD04E-4FD6-4AFD-A997-1B20122BFCBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FullscreenExample", "Examples\FullscreenExample\FullscreenExample.csproj", "{CED2D87B-A796-4372-8B69-4273850DF32D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +31,17 @@ Global
 		{C09BD04E-4FD6-4AFD-A997-1B20122BFCBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C09BD04E-4FD6-4AFD-A997-1B20122BFCBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C09BD04E-4FD6-4AFD-A997-1B20122BFCBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CED2D87B-A796-4372-8B69-4273850DF32D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CED2D87B-A796-4372-8B69-4273850DF32D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CED2D87B-A796-4372-8B69-4273850DF32D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CED2D87B-A796-4372-8B69-4273850DF32D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C09BD04E-4FD6-4AFD-A997-1B20122BFCBE} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
+		{CED2D87B-A796-4372-8B69-4273850DF32D} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {43F417E6-E7BB-4010-80CF-727F32D2A059}
