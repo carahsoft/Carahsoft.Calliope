@@ -58,7 +58,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         {
             var ctrlCRestore = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
-            //Console.Write(AnsiConstants.HideCursor);
+            Console.Write(AnsiConstants.HideCursor);
 
             _screenHeight = Console.BufferHeight;
             _screenWidth = Console.BufferWidth;
