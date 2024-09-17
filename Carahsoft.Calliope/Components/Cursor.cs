@@ -1,5 +1,4 @@
 ﻿using Carahsoft.Calliope.AnsiConsole;
-using Carahsoft.Calliope.Messages;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;

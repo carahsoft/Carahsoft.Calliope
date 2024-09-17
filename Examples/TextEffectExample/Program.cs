@@ -1,6 +1,5 @@
 ﻿using Carahsoft.Calliope;
 using Carahsoft.Calliope.AnsiConsole;
-using Carahsoft.Calliope.Messages;
 using System.Text;
 using TextEffectExample;
 
@@ -97,13 +96,14 @@ public class TextEffect : ICalliopeProgram<TextEffectState>
 
     public TextEffect()
     {
-        var renderLines = Calliope.PrintString("carahsoft", new CalliopeOptions
+        var renderLines = Calliope.PrintString("Calliope", new CalliopeOptions
         {
             Effect = CalliopeEffect.None,
-            Font = "Trebuchet MS",
+            Font = "Comic Sans MS",
             Width = 100,
-            Height = 20,
-            DrawChar = '\u2588'
+            Height = 40,
+            DrawChar = '\u2588',
+            FontSize = 28
         }).Replace("\r\n", "\n").Split('\n');
 
         _renderComponents = renderLines.Select(line => line.Select((x, i) => new RainbowChar(x, i * 6)).ToList()).ToList();

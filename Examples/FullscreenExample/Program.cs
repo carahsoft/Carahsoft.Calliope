@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Carahsoft.Calliope;
 using Carahsoft.Calliope.Components;
-using Carahsoft.Calliope.Messages;
 
 var table = new FullscreenTable(
     """

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carahsoft.Calliope.Messages
+namespace Carahsoft.Calliope
 {
     public class KeyPressMsg : CalliopeMsg
     {

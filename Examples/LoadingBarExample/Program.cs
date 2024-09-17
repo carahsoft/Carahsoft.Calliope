@@ -1,6 +1,5 @@
 ﻿using Carahsoft.Calliope;
 using Carahsoft.Calliope.Components;
-using Carahsoft.Calliope.Messages;
 using System.Text;
 
 Console.OutputEncoding = Encoding.UTF8;

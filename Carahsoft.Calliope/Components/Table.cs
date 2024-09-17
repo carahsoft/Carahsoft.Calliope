@@ -1,5 +1,4 @@
-﻿using Carahsoft.Calliope.Messages;
-using Carahsoft.Calliope.Table;
+﻿using Carahsoft.Calliope.Table;
 using System;
 using System.Collections.Generic;
 using System.Data;

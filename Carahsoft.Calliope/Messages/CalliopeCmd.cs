@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carahsoft.Calliope.Messages
+namespace Carahsoft.Calliope
 {
     /// <summary>
     /// CalliopeCmd is an alias for Func&lt;Task&lt;<see cref="CalliopeMsg"/>&gt;&gt;
