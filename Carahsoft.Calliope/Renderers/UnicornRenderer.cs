@@ -11,7 +11,7 @@ namespace Carahsoft.Calliope.Renderers
         private readonly Random _rand = new Random();
         public override char CharAtPoint(int x, int y, RgbPixel pixel, CalliopeOptions options)
         {
-            var line = _rand.Next() % 17;
+            var line = _rand.Next() % 15;
             var val = PerceivedBrightness(pixel) > 90;
 
             return (val, line) switch
@@ -27,13 +27,13 @@ namespace Carahsoft.Calliope.Renderers
                 (_, 7) => '\u2741',  //
                 (_, 8) => '\u2742',  //
                 (_, 9) => '\u2743',  //
-                (_, 10) => '\u2744', //
-                (_, 11) => '\u2745', //
-                (_, 12) => '\u2746', //
-                (_, 13) => '\u2765', //
-                (_, 14) => '\u2748', //
-                (_, 15) => '\u2749', //
-                (_, 16) => '\u2764', //
+                //(_, 10) => '\u2744', //
+                (_, 10) => '\u2745', //
+                (_, 11) => '\u2746', //
+                (_, 12) => '\u2765', //
+                (_, 13) => '\u2748', //
+                (_, 14) => '\u2749', //
+                //(_, 16) => '\u2764', //
             };
         }
     }

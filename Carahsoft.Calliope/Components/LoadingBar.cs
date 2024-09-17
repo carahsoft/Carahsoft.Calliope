@@ -68,14 +68,14 @@ namespace Carahsoft.Calliope.Components
             {
                 return AnsiTextHelper.GradientLine(
                     loadedString + unloadedString,
-                    _options.GradientStart,
-                    _options.GradientEnd)
+                    _options.GradientStart.Value,
+                    _options.GradientEnd.Value)
                     + $" {state.Percent}%";
             }
 
             return AnsiTextHelper.ColorText(
                 loadedString + unloadedString + $" {state.Percent}%",
-                _options.Color!);
+                _options.Color!.Value);
         }
     }
 }

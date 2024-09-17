@@ -6,6 +6,7 @@
         ScanlineGradient,
         Phoenix,
         Unicorn,
-        Greyscale
+        Greyscale,
+        Twinkle // TODO: document this is for interactive mode
     }
 }

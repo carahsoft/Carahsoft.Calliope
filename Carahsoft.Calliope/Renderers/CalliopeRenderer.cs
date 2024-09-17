@@ -28,6 +28,7 @@
                 CalliopeEffect.ScanlineGradient => ScanlineGradientRenderer,
                 CalliopeEffect.Phoenix => PhoenixRenderer,
                 CalliopeEffect.Unicorn => UnicornRenderer,
+                CalliopeEffect.Twinkle => TwinkleRenderer,
                 _ => DefaultRenderer
             };
         }
@@ -37,5 +38,6 @@
         public static CalliopeRenderer PhoenixRenderer = new PhoenixRenderer();
         public static CalliopeRenderer ScanlineGradientRenderer = new ScanlineGradientRenderer();
         public static CalliopeRenderer UnicornRenderer = new UnicornRenderer();
+        public static CalliopeRenderer TwinkleRenderer = new TwinkleRenderer();
     }
 }

@@ -17,7 +17,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             if (background != null)
             {
                 sb.Append(';');
-                sb.Append($"48;2;{(int)background.Red};{(int)background.Green};{(int)background.Blue}");
+                sb.Append($"48;2;{(int)background.Value.Red};{(int)background.Value.Green};{(int)background.Value.Blue}");
             }
 
             sb.Append("m");

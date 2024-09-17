@@ -1,12 +1,7 @@
 ﻿using Carahsoft.Calliope.Constants;
 using Carahsoft.Calliope.Messages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Channels;
-using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.AnsiConsole
 {
@@ -16,6 +11,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         private readonly ProgramOptions _opts;
         private readonly TimeSpan _framerate;
         private readonly PeriodicTimer _renderTimer;
+        private readonly SemaphoreSlim _renderLock = new SemaphoreSlim(1, 1);
 
         private readonly Channel<CalliopeMsg> _messageChannel = Channel.CreateUnbounded<CalliopeMsg>(
             new UnboundedChannelOptions
@@ -60,6 +56,13 @@ namespace Carahsoft.Calliope.AnsiConsole
             Console.TreatControlCAsInput = true;
             Console.Write(AnsiConstants.HideCursor);
 
+            if (_opts.Fullscreen)
+            {
+                Console.Write(AnsiConstants.EnableAltScreenBuffer);
+                Console.Write(AnsiConstants.ClearDisplay);
+                Console.SetCursorPosition(0, 0);
+            }
+
             _screenHeight = Console.BufferHeight;
             _screenWidth = Console.BufferWidth;
             await _messageChannel.Writer.WriteAsync(new WindowSizeChangeMsg
@@ -86,6 +89,14 @@ namespace Carahsoft.Calliope.AnsiConsole
                     {
                         _screenHeight = Console.BufferHeight;
                         _screenWidth = Console.BufferWidth;
+
+                        // if screen shrunk and we painted more than the new
+                        // height lines, ignore lines from the top
+                        if (_screenHeight < _linesRendered)
+                        {
+                            _linesRendered = _screenHeight;
+                            _previousRender = _previousRender[^_linesRendered..];
+                        }
 
                         await _messageChannel.Writer.WriteAsync(new WindowSizeChangeMsg
                         {
@@ -129,10 +140,12 @@ namespace Carahsoft.Calliope.AnsiConsole
                         Modifiers = key.Value.Modifiers
                     });
                 }
-
-                Console.TreatControlCAsInput = ctrlCRestore;
-                Console.Write(AnsiConstants.ShowCursor);
             });
+
+            Console.TreatControlCAsInput = ctrlCRestore;
+            Console.Write(AnsiConstants.ShowCursor);
+            if (_opts.Fullscreen)
+                Console.Write(AnsiConstants.DisableAltScreenBuffer);
 
             // Return the final state of the program to the caller
             return _state;
@@ -171,7 +184,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                         }
                     }
 
-                    var cmd = UpdateProgram(msg);
+                    var cmd = await UpdateProgram(msg);
                     if (cmd != null)
                         await _commandChannel.Writer.WriteAsync(cmd);
                 }
@@ -191,10 +204,10 @@ namespace Carahsoft.Calliope.AnsiConsole
             }
         }
 
-        private CalliopeCmd? UpdateProgram(CalliopeMsg msg)
+        private async Task<CalliopeCmd?> UpdateProgram(CalliopeMsg msg)
         {
-            // TODO: async wait
-            lock (this)
+            await _renderLock.WaitAsync();
+            try
             {
                 var (newState, cmd) = _program.Update(_state, msg);
                 _state = newState;
@@ -203,12 +216,26 @@ namespace Carahsoft.Calliope.AnsiConsole
 
                 return cmd;
             }
+            finally
+            {
+                _renderLock.Release();
+            }
         }
 
         private async Task RenderBuffer()
         {
             // TODO: Check if we need a render and skip render if not
-            var renderLines = _program.View(_state).Split(Environment.NewLine);
+            string?[] renderLines;
+            await _renderLock.WaitAsync();
+            try
+            {
+                renderLines = _program.View(_state).Replace("\r\n", "\n").Split("\n");
+            }
+            finally
+            {
+                _renderLock.Release();
+            }
+
 
             if (renderLines.Length > _screenHeight)
             {
@@ -227,19 +254,26 @@ namespace Carahsoft.Calliope.AnsiConsole
                     {
                         sb.Append(AnsiConstants.ClearLine);
                     }
-                    if (_previousRender[i] == renderLines[i])
+                    else if (_previousRender[i] == renderLines[i])
                     {
                         skipLines[i] = true;
                     }
-                    sb.Append(AnsiConstants.CursorUp);
+
+                    if (i != 0)
+                    {
+                        sb.Append(AnsiConstants.CursorUp);
+                    }
                 }
             }
-            sb.Append("\x1b[" + _screenWidth + "D");
 
             for (int i = 0; i < renderLines.Length; i++)
             {
                 // TODO: length overflow check
-                if (i != 0) sb.AppendLine();
+                if (i != 0)
+                    sb.AppendLine();
+                else
+                    sb.Append("\x1b[" + _screenWidth + "D");
+
                 if (!(i < _linesRendered && skipLines[i]))
                     sb.Append(renderLines[i] + AnsiConstants.ClearRight);
             }

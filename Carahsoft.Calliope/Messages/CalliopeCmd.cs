@@ -49,6 +49,7 @@ namespace Carahsoft.Calliope.Messages
 
         public static CalliopeCmd Make(Func<Task<CalliopeMsg>> cmd) => new CalliopeCmd(cmd);
         public static CalliopeCmd Make(Func<CalliopeMsg> cmd) => new CalliopeCmd(cmd);
+        public static CalliopeCmd Make(CalliopeMsg msg) => new CalliopeCmd(() => msg);
 
         public static CalliopeCmd Quit => Make(() => new QuitMsg());
 

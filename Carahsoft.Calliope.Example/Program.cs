@@ -5,7 +5,7 @@ using System.Text;
 Console.OutputEncoding = Encoding.UTF8;
 Calliope.Print(
     "carahsoft",
-    font: "Ubuntu Mono",
+    font: "Trebuchet MS",
     width: 70,
     height: 14,
     fontColor: ConsoleColor.Magenta,
@@ -18,7 +18,21 @@ Calliope.Print(
 
 Calliope.Print("carahsoft", new CalliopeOptions
 {
-    Font = "Ubuntu Mono",
+    //Font = "Ubuntu Mono",
+    Font = "Trebuchet MS",
+    Width = 100,
+    Height = 20,
+    FontStartColor = ConsoleColor.Blue,
+   // ConsoleBackgroundColor = ConsoleColor.DarkBlue,
+    FontSize = 16,
+    AntiAliasing = false,
+    DrawChar = '\u2588'
+});
+
+Calliope.Print("carahsoft", new CalliopeOptions
+{
+    //Font = "Ubuntu Mono",
+    Font = "Trebuchet MS",
     Width = 100,
     Height = 20,
     FontStartColor = ConsoleColor.Blue,
@@ -30,8 +44,8 @@ Calliope.Print("carahsoft", new CalliopeOptions
 
 Calliope.Print("CARAHSOFT", new CalliopeOptions
 {
-    Font = "Ubuntu Mono",
-    Width = 70,
+    Font = "Trebuchet MS",
+    Width = 65,
     Height = 14,
     FontStartColor = ConsoleColor.Red,
     FontSize = 12,
@@ -39,9 +53,9 @@ Calliope.Print("CARAHSOFT", new CalliopeOptions
     Effect = CalliopeEffect.Phoenix
 });
 
-Calliope.Print("CARAHSOFT", new CalliopeOptions
+Calliope.Print("UNICORN", new CalliopeOptions
 {
-    Font = "Courier New",
+    Font = "Fira Code NF",
     Width = 70,
     Height = 14,
     FontStartColor = ConsoleColor.Red,

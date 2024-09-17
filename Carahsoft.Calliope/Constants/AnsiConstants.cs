@@ -15,5 +15,6 @@ namespace Carahsoft.Calliope.Constants
         public const string ClearRight = "\x1b[0K";
         public const string ShowCursor = "\x1b[?25h";
         public const string HideCursor = "\x1b[?25l";
+        public const string ClearDisplay = "\x1b[2J";
     }
 }

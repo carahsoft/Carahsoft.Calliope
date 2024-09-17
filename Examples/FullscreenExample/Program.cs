@@ -49,7 +49,7 @@ var table = new FullscreenTable(
     X
     """);
 
-await Calliope.NewProgram(table).RunAsync();
+await Calliope.NewProgram(table).Fullscreen().RunAsync();
 
 
 public record FullscreenTableState

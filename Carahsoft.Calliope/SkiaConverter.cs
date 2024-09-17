@@ -170,8 +170,17 @@ namespace Carahsoft.Calliope
         private readonly IRenderer _renderer;
     }
 
-    public record RgbPixel
+    public record struct RgbPixel
     {
+        public RgbPixel() { }
+
+        public RgbPixel(byte red, byte green, byte blue)
+        {
+            Red = red;
+            Green = green;
+            Blue = blue;
+        }
+
         public byte Red { get; init; }
         public byte Green { get; init; }
         public byte Blue { get; init; }
