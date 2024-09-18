@@ -3,19 +3,19 @@ using Carahsoft.Calliope.AnsiConsole;
 using System.Text;
 using TextEffectExample;
 
-Console.ForegroundColor = ConsoleColor.Green;
+Console.ForegroundColor = ConsoleColor.Blue;
 Console.OutputEncoding = Encoding.UTF8;
 
-/*
-await Calliope.PrintEffect("twinkle", new CalliopeOptions
+
+await Calliope.PrintAnimatedEffect("GALACTIC CRUSH", new CalliopeOptions
 {
-    Effect = CalliopeEffect.Twinkle,
-    Font = "Trebuchet MS",
+    Effect = CalliopeEffect.None,
+    Font = "Comic Sans MS",
     Height = 20,
-    Width = 100,
+    Width = Console.BufferWidth,
     FontSize = 18
-});
-*/
+}, CalliopeAnimation.Twinkle);
+
 
 await Calliope.NewProgram(new TextEffect()).RunAsync();
 

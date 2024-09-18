@@ -7,6 +7,6 @@
         Phoenix,
         Unicorn,
         Greyscale,
-        Twinkle // TODO: document this is for interactive mode
+        GalacticCrush,
     }
 }

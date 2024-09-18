@@ -33,7 +33,7 @@ namespace Carahsoft.Calliope
 
             foreach (char c in value)
             {
-                if ((c != ' '))
+                if ((c == '\n') )
                 {
                     Thread.Sleep(1);
                     i++;

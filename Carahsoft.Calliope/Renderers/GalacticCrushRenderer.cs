@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Renderers
 {
-    public class TwinkleRenderer : CalliopeRenderer
+    public class GalacticCrushRenderer : CalliopeRenderer
     {
         private readonly Random _rand = new Random();
 
