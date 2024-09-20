@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextEffectExample", "Exampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CounterExample", "Examples\CounterExample\CounterExample.csproj", "{88E3E412-4BE1-4B09-9ADA-250C0429520A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableExample", "TableExample\TableExample.csproj", "{3570EFCD-C413-419C-9C00-3A7BF9EE1DB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableExample", "TableExample\TableExample.csproj", "{3570EFCD-C413-419C-9C00-3A7BF9EE1DB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiSelectExample", "Examples\MultiSelectExample\MultiSelectExample.csproj", "{BE9099BE-5DC3-4E33-B2DB-C5B881F73584}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{3570EFCD-C413-419C-9C00-3A7BF9EE1DB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3570EFCD-C413-419C-9C00-3A7BF9EE1DB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3570EFCD-C413-419C-9C00-3A7BF9EE1DB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE9099BE-5DC3-4E33-B2DB-C5B881F73584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE9099BE-5DC3-4E33-B2DB-C5B881F73584}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE9099BE-5DC3-4E33-B2DB-C5B881F73584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE9099BE-5DC3-4E33-B2DB-C5B881F73584}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +76,7 @@ Global
 		{24D4950A-F2CB-421E-BC4E-2B867345A29D} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
 		{88E3E412-4BE1-4B09-9ADA-250C0429520A} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
 		{3570EFCD-C413-419C-9C00-3A7BF9EE1DB4} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
+		{BE9099BE-5DC3-4E33-B2DB-C5B881F73584} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {43F417E6-E7BB-4010-80CF-727F32D2A059}

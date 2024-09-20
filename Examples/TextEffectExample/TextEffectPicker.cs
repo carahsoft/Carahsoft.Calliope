@@ -22,7 +22,7 @@ namespace TextEffectExample
             }).Replace("\r\n", "\n").Split('\n');
         }
 
-        private readonly SelectList _picker = new SelectList(new SelectListProps
+        private readonly FilterableSelectList _picker = new FilterableSelectList(new SelectListProps
         {
             Items =
             [
@@ -71,7 +71,7 @@ namespace TextEffectExample
 
     public record TextEffectPickerState
     {
-        public SelectListState SelectListState { get; init; }
+        public FilterableSelectListState SelectListState { get; init; }
         public string? Selection { get; init; }
         public int Frame { get; init; }
     }
