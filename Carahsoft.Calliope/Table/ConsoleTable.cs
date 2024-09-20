@@ -14,15 +14,22 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Table
 {
+    public enum SortDirection
+    {
+        ASC, 
+        DESC,
+    }
     public class ConsoleTable<T>
     {
 
-        DataTable tab;
-        List<ColumnHeader> cols;
+        DataTable _table;
+        DataTable _sourcetable;
+        List<ColumnHeader> _columns;
 
         public ConsoleTable(DataTable table)
         {
-            tab = table;
+            this._table = table;
+            this._sourcetable = table;
             SetHeaders();
         }
 
@@ -47,21 +54,21 @@ namespace Carahsoft.Calliope.Table
                dt.Rows.Add(alist.ToArray());
             }
             
-            tab = dt;
+            _table = dt;
             SetHeaders();
         }
 
         private void SetHeaders()
         {
-            cols = new List<ColumnHeader>();
+            _columns = new List<ColumnHeader>();
 
-            foreach (DataColumn col in tab.Columns)
+            foreach (DataColumn col in _table.Columns)
             {
                 var colHeader = new ColumnHeader();
 
                 colHeader.Name = col.ColumnName;
 
-                string maxString = tab.AsEnumerable()
+                string maxString = _table.AsEnumerable()
                                         .Select(row => row[col].ToString())
                                         .OrderByDescending(st => st.Length).FirstOrDefault();
 
@@ -73,7 +80,6 @@ namespace Carahsoft.Calliope.Table
                 {
                     colHeader.Width = col.ColumnName.Length ;
                 }
-
 
                 if (col.DataType == typeof(int))
                 {
@@ -88,39 +94,53 @@ namespace Carahsoft.Calliope.Table
                     colHeader.Alignment = ColumnAlignment.Left;
                 }
 
-                cols.Add(colHeader);
+                _columns.Add(colHeader);
             }
+
         }
 
+
+        public void Sort(int columnnumber, SortDirection direction = SortDirection.ASC)
+        {
+            DataView dv = _table.DefaultView;
+            dv.Sort = $"{_columns[columnnumber].Name} {direction}";
+            _table = dv.ToTable();
+        }
+
+        public void ResetTable()
+        {
+            _table = _sourcetable;
+        }
+               
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
 
-            StringBuilder spacer = new StringBuilder();
+            StringBuilder _spacer = new StringBuilder();
 
 
             sb.Append(" | ");
 
-            spacer.Append(" +-");
+            _spacer.Append(" +-");
             
-            foreach (var c in cols)
+            foreach (var c in _columns)
             {
                 sb.Append(string.Format(c.FormatString, c.Name));
                 sb.Append(" | ");
 
-                spacer.Append(string.Empty.PadLeft(c.Width, '-'));
-                spacer.Append("-+-");
+                _spacer.Append(string.Empty.PadLeft(c.Width, '-'));
+                _spacer.Append("-+-");
             }
             sb.Append('\n');
-            sb.Append(spacer.ToString());
+            sb.Append(_spacer.ToString());
             sb.Append('\n');
 
 
-            foreach (DataRow dr in tab.Rows)
+            foreach (DataRow dr in _table.Rows)
             {
                 sb.Append(" | ");
 
-                foreach (var c in cols)
+                foreach (var c in _columns)
                 {
                     string val = dr[c.Name].ToString();
 
@@ -141,7 +161,7 @@ namespace Carahsoft.Calliope.Table
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (var header in cols)
+            foreach (var header in _columns)
             {
                 sb.Append(header.Name.Replace("\"", "\"\"").Replace("\n", "\r"));
                 sb.Append(",");
@@ -150,9 +170,9 @@ namespace Carahsoft.Calliope.Table
             sb.Remove(sb.Length - 1, 1);
             sb.Append("\n");
 
-            foreach (DataRow dr in tab.Rows)
+            foreach (DataRow dr in _table.Rows)
             {
-                foreach (var header in cols)
+                foreach (var header in _columns)
                 {
                     sb.Append("\"");
                     sb.Append((dr[header.Name].ToString() ?? string.Empty).Replace("\"", "\"\"").Replace("\n", "\r"));
@@ -171,10 +191,10 @@ namespace Carahsoft.Calliope.Table
 
             sb.Append("<TABLE>\n");
 
-            foreach (DataRow dr in tab.Rows)
+            foreach (DataRow dr in _table.Rows)
             {
                 sb.Append("<ROW>\n");
-                foreach (var header in cols)
+                foreach (var header in _columns)
                 {
                     sb.Append("<" + header.Name + ">" + dr[header.Name].ToString()+ "</" + header.Name + ">");
                 }
@@ -188,17 +208,17 @@ namespace Carahsoft.Calliope.Table
         public string ToJSON()
         {
             var sb = new StringBuilder();
-            if (tab.Rows.Count > 0)
+            if (_table.Rows.Count > 0)
             {
                 sb.Append("[");
-                for (int i = 0; i < tab.Rows.Count; i++)
+                for (int i = 0; i < _table.Rows.Count; i++)
                 {
                     sb.Append("{");
-                    for (int j = 0; j < tab.Columns.Count; j++)
+                    for (int j = 0; j < _table.Columns.Count; j++)
                     {
-                        sb.Append("\"" + tab.Columns[j].ColumnName.ToString() + "\":" + "\"" + tab.Rows[i][j].ToString() + "\"");
+                        sb.Append("\"" + _table.Columns[j].ColumnName.ToString() + "\":" + "\"" + _table.Rows[i][j].ToString() + "\"");
 
-                        if (j < tab.Columns.Count - 1)
+                        if (j < _table.Columns.Count - 1)
                         {
                             sb.Append(",");
                         }
@@ -206,7 +226,7 @@ namespace Carahsoft.Calliope.Table
                     }
                     sb.Append("}");
 
-                    if (i < tab.Rows.Count - 1)
+                    if (i < _table.Rows.Count - 1)
                     {
                         sb.Append(",\n");
                     }
