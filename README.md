@@ -41,6 +41,7 @@ A C# library for quickly writing awesome, responsive console apps.
 - MVU framework for rendering responsive, easy to write interactive console apps
 - Easy ANSI color support for rendering 24 bit color (on supported terminals)
 
+
 ## Calliope MVU
 
 The MVU framework was inspired by [Elm](https://elm-lang.org/) and [BubbleTea](https://github.com/charmbracelet/bubbletea). Calliope Programs implement the simple `Init`, `Update`, and `View` functions to render elements to the screen. Because the `View` function returns a `string`, programs can be easily composed together, or even used outside of the Calliope framework entirely. One of the primary advantages of this approach compared to traditional console libraries is that you can combine multiple interactive components together and seamlessly render them all at the same time. For example, the [TODO LINK HERE](LINK) example project demonstrates combining the text input element with the multi-select element for a filterable multi-select element.
@@ -108,7 +109,21 @@ public class CounterProgram : ICalliopeProgram<CounterState>
 }
 ```
 
+### Commands
+
+In the above example, we sent the `CalliopeCmd.Quit` command when the user presses control + c. The `Quit` command is a special command that instructs the Calliope framework to cleanly exit and return the final state of the program as the return value of the `RunAsync` method. However, in practice commands are used for much more than just quitting your application.
+
+A `CalliopeCmd` is just an async function that returns a `CalliopeMsg`, i.e. a `Func<Task<CalliopeMsg>>`. The `CalliopeMsg` that is returned from the command is passed to the `Update` function upon completion of the command. It represents any I/O operations or long running tasks that your program might need to perform. This might include loading data from an API, interacting with the filesystem, or just initiating a delayed effect with `Task.Delay`. All I/O and long running operations should be performed within a `CalliopeCmd` to ensure the program remains responsive for the user.
+
+
+## Calliope ASCII Rendering
+
+
+
 ## Roadmap
+
+- [ ] Do things
+- [x] Do other things
 
 ### For SkiaSharp + single executable:
 If you are using the text-to-ascii functions and want to produce a single packaged executable file, you will need to add the following line to your .*proj file:
