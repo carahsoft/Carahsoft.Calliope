@@ -44,6 +44,13 @@ namespace Carahsoft.Calliope.AnsiConsole
             _renderTimer = new PeriodicTimer(_framerate);
         }
 
+        /// <summary>
+        /// Send a message to the program from outside of the program.
+        /// This method is mainly used for integrating your Calliope program
+        /// with an external library.
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
         public async Task SendAsync(CalliopeMsg msg)
         {
             await _messageChannel.Writer.WriteAsync(msg);
