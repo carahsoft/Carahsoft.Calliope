@@ -51,8 +51,6 @@ namespace Carahsoft.Calliope.Table
             SetHeaders();
         }
 
-
-
         private void SetHeaders()
         {
             cols = new List<ColumnHeader>();
@@ -139,6 +137,85 @@ namespace Carahsoft.Calliope.Table
             return sb.ToString();
         }
 
+        public string ToCSV()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var header in cols)
+            {
+                sb.Append(header.Name.Replace("\"", "\"\"").Replace("\n", "\r"));
+                sb.Append(",");
+            }
+
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append("\n");
+
+            foreach (DataRow dr in tab.Rows)
+            {
+                foreach (var header in cols)
+                {
+                    sb.Append("\"");
+                    sb.Append((dr[header.Name].ToString() ?? string.Empty).Replace("\"", "\"\"").Replace("\n", "\r"));
+                    sb.Append("\",");
+                }
+                sb.Remove(sb.Length - 1, 1);
+                sb.Append("\n");
+            }
+
+            return sb.ToString();
+        }
+
+        public string ToXML()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("<TABLE>\n");
+
+            foreach (DataRow dr in tab.Rows)
+            {
+                sb.Append("<ROW>\n");
+                foreach (var header in cols)
+                {
+                    sb.Append("<" + header.Name + ">" + dr[header.Name].ToString()+ "</" + header.Name + ">");
+                }
+                sb.Append("\n</ROW>\n");
+            }
+
+            sb.Append("</TABLE>");
+            return sb.ToString();
+        }
+
+        public string ToJSON()
+        {
+            var sb = new StringBuilder();
+            if (tab.Rows.Count > 0)
+            {
+                sb.Append("[");
+                for (int i = 0; i < tab.Rows.Count; i++)
+                {
+                    sb.Append("{");
+                    for (int j = 0; j < tab.Columns.Count; j++)
+                    {
+                        sb.Append("\"" + tab.Columns[j].ColumnName.ToString() + "\":" + "\"" + tab.Rows[i][j].ToString() + "\"");
+
+                        if (j < tab.Columns.Count - 1)
+                        {
+                            sb.Append(",");
+                        }
+   
+                    }
+                    sb.Append("}");
+
+                    if (i < tab.Rows.Count - 1)
+                    {
+                        sb.Append(",\n");
+                    }
+              
+                }
+                sb.Append("]");
+            }
+            return sb.ToString();
+        }
     }
 
 
