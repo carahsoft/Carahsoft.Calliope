@@ -23,13 +23,11 @@ namespace Carahsoft.Calliope.Table
     {
 
         DataTable _table;
-        DataTable _sourcetable;
-        List<ColumnHeader> _columns;
+        public List<ColumnHeader> Columns;
 
         public ConsoleTable(DataTable table)
         {
             this._table = table;
-            this._sourcetable = table;
             SetHeaders();
         }
 
@@ -60,7 +58,7 @@ namespace Carahsoft.Calliope.Table
 
         private void SetHeaders()
         {
-            _columns = new List<ColumnHeader>();
+            Columns = new List<ColumnHeader>();
 
             foreach (DataColumn col in _table.Columns)
             {
@@ -68,50 +66,72 @@ namespace Carahsoft.Calliope.Table
 
                 colHeader.Name = col.ColumnName;
 
-                string maxString = _table.AsEnumerable()
-                                        .Select(row => row[col].ToString())
-                                        .OrderByDescending(st => st.Length).FirstOrDefault();
-
-                if (maxString.Length > col.ColumnName.Length)
-                {
-                    colHeader.Width = maxString.Length ;
-                }
-                else
-                {
-                    colHeader.Width = col.ColumnName.Length ;
-                }
-
                 if (col.DataType == typeof(int))
                 {
                     colHeader.Alignment = ColumnAlignment.Center;
+                    colHeader.ColumnType = ColumnTypes.Int;
                 }
                 else if (col.DataType == typeof(decimal))
                 {
                     colHeader.Alignment = ColumnAlignment.Right;
+                    colHeader.ColumnType = ColumnTypes.Decimal;
+                }
+                else if (col.DataType == typeof(DateTime))
+                {
+                    colHeader.Alignment = ColumnAlignment.Right;
+                    colHeader.ColumnType = ColumnTypes.Date;
                 }
                 else
                 {
                     colHeader.Alignment = ColumnAlignment.Left;
                 }
 
-                _columns.Add(colHeader);
+                SetWidth(colHeader);
+
+                Columns.Add(colHeader);
             }
 
+        }
+
+        private void SetWidth(ColumnHeader colHeader)
+        {
+            DataColumn col = _table.Columns[colHeader.Name];
+
+            string maxString = colHeader.FormatValue(_table.AsEnumerable()
+                                       .Select(row => row[col].ToString())
+                                       .OrderByDescending(st => st.Length).FirstOrDefault());
+            
+            int width = maxString.Length;
+
+            if (width < col.ColumnName.Length)
+            {
+                width = col.ColumnName.Length;
+            }
+
+            colHeader.Width = width; ;
+        }
+
+        public void ApplyStyle(int ColumnIndex, string StringFormat)
+        {
+            Columns[ColumnIndex].OutputFormat = StringFormat;
+            SetWidth(Columns[ColumnIndex]);
+        }
+
+        public void ApplyStyle(string ColumnName, string StringFormat)
+        {
+            var col = Columns.Find(x => x.Name == ColumnName);
+            col.OutputFormat = StringFormat;
+            SetWidth(col);
         }
 
 
         public void Sort(int columnnumber, SortDirection direction = SortDirection.ASC)
         {
             DataView dv = _table.DefaultView;
-            dv.Sort = $"{_columns[columnnumber].Name} {direction}";
+            dv.Sort = $"{Columns[columnnumber].Name} {direction}";
             _table = dv.ToTable();
         }
 
-        public void ResetTable()
-        {
-            _table = _sourcetable;
-        }
-               
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -123,7 +143,7 @@ namespace Carahsoft.Calliope.Table
 
             _spacer.Append(" +-");
             
-            foreach (var c in _columns)
+            foreach (var c in Columns)
             {
                 sb.Append(string.Format(c.FormatString, c.Name));
                 sb.Append(" | ");
@@ -140,9 +160,9 @@ namespace Carahsoft.Calliope.Table
             {
                 sb.Append(" | ");
 
-                foreach (var c in _columns)
+                foreach (var c in Columns)
                 {
-                    string val = dr[c.Name].ToString();
+                    string val = c.FormatValue(dr[c.Name].ToString());
 
                     if (c.Alignment == ColumnAlignment.Center)
                         val = val.PadRight((int)Math.Ceiling(((decimal)c.Width - val.Length) / 2 + val.Length), ' ');
@@ -161,7 +181,7 @@ namespace Carahsoft.Calliope.Table
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (var header in _columns)
+            foreach (var header in Columns)
             {
                 sb.Append(header.Name.Replace("\"", "\"\"").Replace("\n", "\r"));
                 sb.Append(",");
@@ -172,7 +192,7 @@ namespace Carahsoft.Calliope.Table
 
             foreach (DataRow dr in _table.Rows)
             {
-                foreach (var header in _columns)
+                foreach (var header in Columns)
                 {
                     sb.Append("\"");
                     sb.Append((dr[header.Name].ToString() ?? string.Empty).Replace("\"", "\"\"").Replace("\n", "\r"));
@@ -194,7 +214,7 @@ namespace Carahsoft.Calliope.Table
             foreach (DataRow dr in _table.Rows)
             {
                 sb.Append("<ROW>\n");
-                foreach (var header in _columns)
+                foreach (var header in Columns)
                 {
                     sb.Append("<" + header.Name + ">" + dr[header.Name].ToString()+ "</" + header.Name + ">");
                 }
