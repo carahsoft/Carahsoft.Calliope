@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using Carahsoft.Calliope.Components;
 using System;
 using System.Collections;
@@ -10,16 +11,27 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.JavaScript;
+=======
+﻿using System.Data;
+>>>>>>> c8bc53b56a445256b4e72100ca26bb5395b09673
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Table
 {
+<<<<<<< HEAD
 
 
    
 
     public class ConsoleTable
+=======
+    /// <summary>
+    /// This class is used for outputting a System.Data.DataTable or an IEnnumberable of objects in a table to the console.  
+    /// Sorting and text formatting are supported.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ConsoleTable<T>
+>>>>>>> c8bc53b56a445256b4e72100ca26bb5395b09673
     {
 
         protected DataTable _table;

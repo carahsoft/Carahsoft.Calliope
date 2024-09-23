@@ -39,6 +39,10 @@ namespace Carahsoft.Calliope.AnsiConsole
         {
             _program = program;
             _opts = opts;
+
+            if (_opts.Framerate <= 0 || _opts.Framerate > 60)
+                _opts.Framerate = 60;
+
             _framerate = TimeSpan.FromSeconds(1) / _opts.Framerate;
             _renderTimer = new PeriodicTimer(_framerate);
         }
@@ -55,6 +59,13 @@ namespace Carahsoft.Calliope.AnsiConsole
             await _messageChannel.Writer.WriteAsync(msg);
         }
 
+        /// <summary>
+        /// This executes the <see cref="TProgram"/>, taking over the
+        /// console to render the application.
+        /// </summary>
+        /// <returns>
+        /// Returns the final state of the program when the program exits cleanly.
+        /// </returns>
         public async Task<TProgram> RunAsync()
         {
             var ctrlCRestore = Console.TreatControlCAsInput;

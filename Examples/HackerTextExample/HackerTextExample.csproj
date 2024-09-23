@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Carahsoft.Calliope\Carahsoft.Calliope.csproj" />
+    <ProjectReference Include="..\..\Carahsoft.Calliope\Carahsoft.Calliope.csproj" />
   </ItemGroup>
 
 </Project>

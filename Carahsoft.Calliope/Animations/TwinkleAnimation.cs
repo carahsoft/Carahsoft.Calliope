@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Animations
 {
-    public class TwinkleMsg : CalliopeMsg
-    {
-        public required Guid TwinkleId { get; init; }
-    }
+    public class TwinkleMsg : CalliopeMsg { }
 
     public class TwinkleAnimation : CalliopeAnimation
     {
@@ -43,7 +40,7 @@ namespace Carahsoft.Calliope.Animations
                 }
             }
 
-            if (msg is TwinkleMsg tm)
+            if (msg is TwinkleMsg)
             {
                 Render = GenerateText();
                 return Twinkle();
@@ -87,10 +84,7 @@ namespace Carahsoft.Calliope.Animations
             return CalliopeCmd.Make(async () =>
             {
                 await Task.Delay(333);
-                return new TwinkleMsg
-                {
-                    TwinkleId = Guid.NewGuid()
-                };
+                return new TwinkleMsg();
             });
         }
     }

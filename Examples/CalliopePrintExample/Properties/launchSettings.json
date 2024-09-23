@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Carahsoft.Calliope.Example": {
+    "CalliopePrintExample": {
       "commandName": "Project"
     },
     "WSL": {
