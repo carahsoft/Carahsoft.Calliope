@@ -73,7 +73,7 @@ public class CounterProgram : ICalliopeProgram
     // Update is called whenever a message is sent to the application. Here, we look for
     // KeyPressMsg messages, which are sent whenever the user presses any key in the terminal
     // window.
-    public CalliopeCmd? Update(CounterState state, CalliopeMsg msg)
+    public CalliopeCmd? Update(CalliopeMsg msg)
     {
         if (msg is KeyPressMsg kpm)
         {
