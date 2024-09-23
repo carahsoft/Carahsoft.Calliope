@@ -1,6 +1,7 @@
 ﻿using Carahsoft.Calliope.AnsiConsole;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -17,16 +18,18 @@ namespace Carahsoft.Calliope.Animations
     {
 
         private readonly Random rand = new Random();
-        private bool[,] SnowMap ;
+        private int[,] SnowMap ;
 
         private string Render { get; set; }
 
 
         public BlizzardAnimation(string bannerText, CalliopeOptions options): base(bannerText, options)
         {
-            SnowMap = new bool[Options.Width, Options.Height];
+            SnowMap = new int[Options.Width, Options.Height];
 
             Options.Effect = CalliopeEffect.None;
+
+            TractorPositions = Enumerable.Repeat(-1, Options.Height).ToArray();
         }
 
         public override CalliopeCmd? Init()
@@ -70,6 +73,8 @@ namespace Carahsoft.Calliope.Animations
 
             Tick();
 
+            // sb.Append("🚜");
+
             foreach (char c in rendered)
             {
 
@@ -80,13 +85,17 @@ namespace Carahsoft.Calliope.Animations
                     sb.Append(c);
                     continue;
                 }
+                else if (i == TractorPositions[j])
+                {
+                    sb.Append("🚜");
+                }
                 else if (c == ' ')
                 {
                     sb.Append(' ');
                 }
                 else
                 {
-                    if (SnowMap[i, j] == true)
+                    if (SnowMap[i, j] == 1)
                         sb.Append(AnsiTextHelper.ColorText(c.ToString(), new((byte)255, (byte)255, (byte)255)));
                     else
                     {
@@ -96,32 +105,64 @@ namespace Carahsoft.Calliope.Animations
                 i++;
             }
 
-
-
             return sb.ToString();
         }
 
+        private bool snowmode = true;
+
+        private int[] TractorPositions;
+
+        int tractor = 120;
         private void Tick()
         {
-            for (int i = 0; i < Options.Width; i++)
-                SnowMap[i, Options.Height-1] = false;  //clear last row of drops
 
-            for(int i = 0; i < Options.Width; i++)
+
+            if (snowmode && SnowMap.Cast<int>().Min() > 0)
             {
-                for(int j = Options.Height -1; j > 0; j--)
+                snowmode = false;
+
+                for (int x = 0; x < TractorPositions.Length; x++)
+                    TractorPositions[x] = 120 + rand.Next(Options.Height);
+
+            }
+            else if (!snowmode && SnowMap.Cast<int>().Max() == 0)
+            {
+                snowmode = true;
+                TractorPositions = Enumerable.Repeat(-1, Options.Height).ToArray();
+            }
+
+            if (snowmode)
+            {
+                for (int i = 0; i < Options.Width; i++)
                 {
-                    if (SnowMap[i,j-1] == true)
+                    for (int j = Options.Height - 1; j > 0; j--)
                     {
-                        SnowMap[i, j - 1] = false;  //cascade drops down
-                        SnowMap[i, j] = true;
+                        if (SnowMap[i, j - 1] == 1 && SnowMap[i, j] != 1)
+                        {
+                            SnowMap[i, j - 1] = 0;  //cascade flakes down
+                            SnowMap[i, j] = 1;
+                        }
                     }
+                }
+
+                for (int i = 0; i < rand.Next(100); i++)
+                {
+                    SnowMap[rand.Next(Options.Width), 0] = 1;  //add a random number of new flakes at random places
                 }
             }
 
-            for(int i=0;i< rand.Next(50); i++)
+            else
             {
-                SnowMap[rand.Next(Options.Width), 0] = true;  //add a random number of new drops at random places
+                for (int x = 0; x < TractorPositions.Length; x++)
+                {
+                    TractorPositions[x]--;
+
+                    if(TractorPositions[x] < Options.Width && TractorPositions[x] >= 0)
+                        SnowMap[TractorPositions[x], x] = 0;
+                    
+                }
             }
+
         }
 
       
@@ -131,7 +172,7 @@ namespace Carahsoft.Calliope.Animations
         {
             return CalliopeCmd.Make(async () =>
             {
-                await Task.Delay(200);
+                await Task.Delay(100);
                 return new BlizzardMsg
                 {
                     BlizzardId = Guid.NewGuid()

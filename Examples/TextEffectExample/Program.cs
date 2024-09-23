@@ -31,7 +31,7 @@ await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainAnimation("Calliope", n
     Effect = CalliopeEffect.None,
     Font = "Comic Sans MS",
     Width = 100,
-    Height = 40,
+    Height = 34,
     FontSize = 28
 }));
 

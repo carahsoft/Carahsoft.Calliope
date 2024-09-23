@@ -38,7 +38,7 @@ namespace Carahsoft.Calliope.Components
 
         private string RenderTable()
         {
-            var ct = new ConsoleTable<T>(_table);
+            var ct = new ConsoleTable(_table);
             return ct.ToString();
         }
     }

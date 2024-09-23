@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Carahsoft.Calliope.Components;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,15 +17,12 @@ namespace Carahsoft.Calliope.Table
 {
 
 
-    /// <summary>
-    /// This class is used for outputting a System.Data.DataTable or an IEnnumberable of objects in a table to the console.  
-    /// Sorting and text formatting are supported.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ConsoleTable<T>
+   
+
+    public class ConsoleTable
     {
 
-        DataTable _table;
+        protected DataTable _table;
         public List<ColumnHeader> Columns;
 
         /// <summary>
@@ -38,41 +36,11 @@ namespace Carahsoft.Calliope.Table
         }
 
         /// <summary>
-        /// Initializes the table using an IEnumerable collection of objects.
-        /// All public properties in the object will become columns.
-        /// </summary>
-        /// <param name="myList"></param>
-        public ConsoleTable(IEnumerable<T> myList)
-        {
-            var testList = myList.ToList();
-
-            DataTable dt = new DataTable();
-
-            foreach (var o in testList[0].GetType().GetProperties())
-            {
-                dt.Columns.Add(o.Name, o.PropertyType);
-            }
-            
-            foreach (var obj in testList)
-            {
-                var alist = new List<object>();
-                foreach(var whatever in obj.GetType().GetProperties())
-                {
-                    alist.Add(whatever.GetValue(obj));
-                }
-               dt.Rows.Add(alist.ToArray());
-            }
-            
-            _table = dt;
-            SetHeaders();
-        }
-
-        /// <summary>
         /// Creates and assigns list of ColumnHeader objects containing column 
         /// formatting information.  Alignment assumption is made by contents 
         /// of first cell in each column.  
         /// </summary>
-        private void SetHeaders()
+        protected void SetHeaders()
         {
             Columns = new List<ColumnHeader>();
 
@@ -114,7 +82,7 @@ namespace Carahsoft.Calliope.Table
             string maxString = colHeader.FormatValue(_table.AsEnumerable()
                                        .Select(row => row[col].ToString())
                                        .OrderByDescending(st => st.Length).FirstOrDefault());
-            
+
             int width = maxString.Length;
 
             if (width < col.ColumnName.Length)
@@ -181,7 +149,7 @@ namespace Carahsoft.Calliope.Table
             sb.Append(" | ");
 
             spacer.Append(" +-");
-            
+
             foreach (var c in Columns)
             {
                 sb.Append(string.Format(c.AlignString, c.Name));
@@ -215,7 +183,7 @@ namespace Carahsoft.Calliope.Table
             return sb.ToString();
         }
 
-    
+
         /// <summary>
         /// Returns string composed of entire table contents in a text delimited format.
         /// </summary>
@@ -256,7 +224,6 @@ namespace Carahsoft.Calliope.Table
         public string ToXML()
         {
             StringBuilder sb = new StringBuilder();
-
             sb.Append("<TABLE>\n");
 
             foreach (DataRow dr in _table.Rows)
@@ -264,7 +231,7 @@ namespace Carahsoft.Calliope.Table
                 sb.Append("<ROW>\n");
                 foreach (var header in Columns)
                 {
-                    sb.Append("<" + header.Name + ">" + dr[header.Name].ToString()+ "</" + header.Name + ">");
+                    sb.Append("<" + header.Name + ">" + dr[header.Name].ToString() + "</" + header.Name + ">");
                 }
                 sb.Append("\n</ROW>\n");
             }
@@ -294,7 +261,7 @@ namespace Carahsoft.Calliope.Table
                         {
                             sb.Append(",");
                         }
-   
+
                     }
                     sb.Append("}");
 
@@ -302,12 +269,56 @@ namespace Carahsoft.Calliope.Table
                     {
                         sb.Append(",\n");
                     }
-              
+
                 }
                 sb.Append("]");
             }
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// This class is used for outputting a System.Data.DataTable or an IEnnumberable of objects in a table to the console.  
+    /// Sorting and text formatting are supported.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ConsoleTable<T> : ConsoleTable
+    {
+        
+        /// <summary>
+        /// Initializes the table using an IEnumerable collection of objects.
+        /// All public properties in the object will become columns.
+        /// </summary>
+        /// <param name="myList"></param>
+        public ConsoleTable(IEnumerable<T> myList) : base (getDataTable(myList))
+        {
+
+        }
+
+        private static DataTable getDataTable(IEnumerable<T> myList)
+        {
+            var testList = myList.ToList();
+
+            DataTable dt = new DataTable();
+
+            foreach (var o in testList[0].GetType().GetProperties())
+            {
+                dt.Columns.Add(o.Name, o.PropertyType);
+            }
+
+            foreach (var obj in testList)
+            {
+                var alist = new List<object>();
+                foreach (var whatever in obj.GetType().GetProperties())
+                {
+                    alist.Add(whatever.GetValue(obj));
+                }
+                dt.Rows.Add(alist.ToArray());
+            }
+           
+            return dt;
+        }
+       
     }
 
 
