@@ -2,7 +2,6 @@
 using Carahsoft.Calliope.Animations;
 using Carahsoft.Calliope.AnsiConsole;
 using System.Text;
-using TextEffectExample;
 
 Console.ForegroundColor = ConsoleColor.Blue;
 Console.OutputEncoding = Encoding.UTF8;

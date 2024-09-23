@@ -39,9 +39,6 @@ namespace Carahsoft.Calliope.Animations
             }
             if (msg is TickMsg)
             {
-                if (state.Frame > 100000)
-                    return (state, CalliopeCmd.Quit);
-
                 return (state with { Frame = state.Frame + 2 }, Tick());
             }
 

@@ -40,7 +40,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         {
             _program = program;
             _opts = opts;
-            _framerate = TimeSpan.FromSeconds((double)1 / _opts.Framerate);
+            _framerate = TimeSpan.FromSeconds(1) / _opts.Framerate;
             _renderTimer = new PeriodicTimer(_framerate);
         }
 
