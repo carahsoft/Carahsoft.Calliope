@@ -20,7 +20,7 @@ namespace Carahsoft.Calliope.Table
     
 
         /// <summary>
-        /// Initializes a ColumnHEader object for use in a ConsoleTable
+        /// Initializes a ColumnHeader object for use in a ConsoleTable
         /// ColumnHeader contains data type and output formatting 
         /// </summary>
         /// <param name="Name">Name of the column.  Name is used for the header text</param>
@@ -48,7 +48,7 @@ namespace Carahsoft.Calliope.Table
         /// <summary>
         /// Provides the format string that is used to position/align the column data in a call
         /// </summary>
-        protected string AlignString
+        public string AlignString
         {
             get
             {
@@ -62,7 +62,7 @@ namespace Carahsoft.Calliope.Table
         }
 
         /// <summary>
-        /// Converts the calue of the current object to a string representation using formating conventions.
+        /// Converts the value of the current object to a string representation using formating conventions.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
