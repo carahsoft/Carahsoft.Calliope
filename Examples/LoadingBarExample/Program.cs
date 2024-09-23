@@ -4,20 +4,16 @@ using System.Text;
 
 Console.OutputEncoding = Encoding.UTF8;
 
-var program = Calliope.NewProgram(new LoadingBarExample(new LoadingBarExampleProps(
-    new RgbPixel { Red = 255, Green = 0, Blue = 255 }
-)));
+var program = Calliope.NewProgram(new LoadingBarExample());
 
 await program.RunAsync();
 
 
-public record LoadingBarExampleProps(RgbPixel Color);
-
-public class LoadingBarExample : ICalliopeProgram<LoadingBarState>
+public class LoadingBarExample : ICalliopeProgram
 {
     private readonly LoadingBar _lb;
 
-    public LoadingBarExample(LoadingBarExampleProps props)
+    public LoadingBarExample()
     {
         _lb = new LoadingBar(new LoadingBarOptions
         {
@@ -26,35 +22,38 @@ public class LoadingBarExample : ICalliopeProgram<LoadingBarState>
         });
     }
 
-    public (LoadingBarState, CalliopeCmd?) Init()
+    public CalliopeCmd? Init()
     {
-        return (new() { Percent = 0 }, null);
+        _lb.Percent = 0;
+        return null;
     }
 
-    public (LoadingBarState, CalliopeCmd?) Update(LoadingBarState state, CalliopeMsg msg)
+    public CalliopeCmd? Update(CalliopeMsg msg)
     {
         if (msg is QuitMsg)
-            return (state, CalliopeCmd.Quit);
+            return CalliopeCmd.Quit;
 
         if (msg is KeyPressMsg kpm)
         {
             if (kpm.Key == ConsoleKey.RightArrow)
             {
-                var updatedPercent = state.Percent + 5;
-                return _lb.Update(state with { Percent = updatedPercent > 100 ? 100 : updatedPercent }, msg);
+                var updatedPercent = _lb.Percent + 5;
+                _lb.Percent = updatedPercent > 100 ? 100 : updatedPercent;
+                return null;
             }
             if (kpm.Key == ConsoleKey.LeftArrow)
             {
-                var updatedPercent = state.Percent - 5;
-                return _lb.Update(state with { Percent = updatedPercent < 0 ? 0 : updatedPercent }, msg);
+                var updatedPercent = _lb.Percent - 5;
+                _lb.Percent = updatedPercent < 0 ? 0 : updatedPercent;
+                return null;
             }
         }
 
-        return _lb.Update(state, msg);
+        return _lb.Update(msg);
     }
 
-    public string View(LoadingBarState state)
+    public string View()
     {
-        return _lb.View(state);
+        return _lb.View();
     }
 }

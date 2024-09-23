@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope
 {
-    public interface ICalliopeProgram<TModel>
+    public interface ICalliopeProgram
     {
-        public (TModel, CalliopeCmd?) Update(TModel state, CalliopeMsg msg);
-        public (TModel, CalliopeCmd?) Init();
-        public string View(TModel state);
+        public CalliopeCmd? Update(CalliopeMsg msg);
+        public CalliopeCmd? Init();
+        public string View();
     }
 }

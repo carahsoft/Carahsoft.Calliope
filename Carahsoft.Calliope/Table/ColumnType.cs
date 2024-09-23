@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 namespace Carahsoft.Calliope.Table
 {
     /// <summary>
-    /// Specifies horizontal alignmnet of data in table cell
+    /// Different data types supported by ConsoleTable for custom formatting 
     /// </summary>
-    public enum ColumnAlignment
+    public enum ColumnType
     {
-        Left,
-        Center,
-        Right
+        String,
+        Int,
+        Decimal,
+        Date
     }
 }

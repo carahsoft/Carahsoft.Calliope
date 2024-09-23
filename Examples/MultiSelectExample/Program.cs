@@ -31,4 +31,4 @@ var program2 = Calliope.NewProgram(new FilterableSelectList([
 ]));
 
 var choice = await program2.RunAsync();
-Console.WriteLine("You chose " + choice.SelectListState.Choice);
+Console.WriteLine("You chose " + choice.SelectList.Choice);

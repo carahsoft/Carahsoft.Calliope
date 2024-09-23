@@ -7,20 +7,18 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Animations
 {
-    public record TwinkleState
-    {
-        public Guid? LastTwinkle { get; init; }
-        public required string Render { get; init; }
-    }
-
     public class TwinkleMsg : CalliopeMsg
     {
         public required Guid TwinkleId { get; init; }
     }
 
-    public class TwinkleAnimation : CalliopeAnimation<TwinkleState>
+    public class TwinkleAnimation : CalliopeAnimation
     {
         private readonly Random rand = new Random();
+
+        private Guid? LastTwinkle { get; set; }
+        private string Render { get; set; }
+
 
         public TwinkleAnimation(string bannerText, CalliopeOptions options)
             : base(bannerText, options)
@@ -29,32 +27,34 @@ namespace Carahsoft.Calliope.Animations
             Options.Effect = CalliopeEffect.GalacticCrush;
         }
 
-        public override (TwinkleState, CalliopeCmd?) Init()
+        public override CalliopeCmd? Init()
         {
-            return (new() { Render = GenerateText() }, Twinkle());
+            Render = GenerateText();
+            return Twinkle();
         }
 
-        public override (TwinkleState, CalliopeCmd?) Update(TwinkleState state, CalliopeMsg msg)
+        public override CalliopeCmd? Update(CalliopeMsg msg)
         {
             if (msg is KeyPressMsg kpm)
             {
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
                 {
-                    return (state, CalliopeCmd.Quit);
+                    return CalliopeCmd.Quit;
                 }
             }
 
             if (msg is TwinkleMsg tm)
             {
-                return (state with { Render = GenerateText() }, Twinkle());
+                Render = GenerateText();
+                return Twinkle();
             }
 
-            return (state, null);
+            return null;
         }
 
-        public override string View(TwinkleState state)
+        public override string View()
         {
-            return state.Render;
+            return Render;
         }
 
         private string GenerateText()

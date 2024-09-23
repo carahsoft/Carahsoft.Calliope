@@ -4,9 +4,9 @@ using System.Threading.Channels;
 
 namespace Carahsoft.Calliope.AnsiConsole
 {
-    public class ProgramRunner<TModel>
+    public class ProgramRunner<TProgram> where TProgram : ICalliopeProgram
     {
-        private readonly ICalliopeProgram<TModel> _program;
+        private readonly TProgram _program;
         private readonly ProgramOptions _opts;
         private readonly TimeSpan _framerate;
         private readonly PeriodicTimer _renderTimer;
@@ -28,7 +28,6 @@ namespace Carahsoft.Calliope.AnsiConsole
                 AllowSynchronousContinuations = false,
             });
 
-        private TModel _state;
         private int _linesRendered = 0;
         private bool _updated = true;
         private bool _quitting = false;
@@ -36,7 +35,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         private int _screenHeight = 0;
         private int _screenWidth = 0;
 
-        public ProgramRunner(ICalliopeProgram<TModel> program, ProgramOptions opts)
+        public ProgramRunner(TProgram program, ProgramOptions opts)
         {
             _program = program;
             _opts = opts;
@@ -56,7 +55,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             await _messageChannel.Writer.WriteAsync(msg);
         }
 
-        public async Task<TModel> RunAsync()
+        public async Task<TProgram> RunAsync()
         {
             var ctrlCRestore = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
@@ -77,8 +76,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                 ScreenWidth = _screenWidth,
             });
 
-            var (state, cmd) = _program.Init();
-            _state = state;
+            var cmd = _program.Init();
 
             if (cmd != null)
                 await _commandChannel.Writer.WriteAsync(cmd);
@@ -154,7 +152,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                 Console.Write(AnsiConstants.DisableAltScreenBuffer);
 
             // Return the final state of the program to the caller
-            return _state;
+            return _program;
         }
 
         private async Task<ConsoleKeyInfo?> GetKeyWithTimeoutAsync()
@@ -191,6 +189,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                     }
 
                     var cmd = await UpdateProgram(msg);
+
                     if (cmd != null)
                         await _commandChannel.Writer.WriteAsync(cmd);
                 }
@@ -215,8 +214,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             await _renderLock.WaitAsync();
             try
             {
-                var (newState, cmd) = _program.Update(_state, msg);
-                _state = newState;
+                var cmd = _program.Update(msg);
 
                 _updated = true;
 
@@ -235,7 +233,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             await _renderLock.WaitAsync();
             try
             {
-                renderLines = _program.View(_state).Replace("\r\n", "\n").Split("\n");
+                renderLines = _program.View().Replace("\r\n", "\n").Split("\n");
             }
             finally
             {

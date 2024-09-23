@@ -14,23 +14,34 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Table
 {
-    public enum SortDirection
-    {
-        ASC, 
-        DESC,
-    }
+
+
+    /// <summary>
+    /// This class is used for outputting a System.Data.DataTable or an IEnnumberable of objects in a table to the console.  
+    /// Sorting and text formatting are supported.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ConsoleTable<T>
     {
 
         DataTable _table;
         public List<ColumnHeader> Columns;
 
+        /// <summary>
+        /// Initializes a ConsoleTable supplying a DataTable onject
+        /// </summary>
+        /// <param name="table"></param>
         public ConsoleTable(DataTable table)
         {
             this._table = table;
             SetHeaders();
         }
 
+        /// <summary>
+        /// Initializes the table using an IEnumerable collection of objects.
+        /// All public properties in the object will become columns.
+        /// </summary>
+        /// <param name="myList"></param>
         public ConsoleTable(IEnumerable<T> myList)
         {
             var testList = myList.ToList();
@@ -56,34 +67,33 @@ namespace Carahsoft.Calliope.Table
             SetHeaders();
         }
 
+        /// <summary>
+        /// Creates and assigns list of ColumnHeader objects containing column 
+        /// formatting information.  Alignment assumption is made by contents 
+        /// of first cell in each column.  
+        /// </summary>
         private void SetHeaders()
         {
             Columns = new List<ColumnHeader>();
 
             foreach (DataColumn col in _table.Columns)
             {
-                var colHeader = new ColumnHeader();
-
-                colHeader.Name = col.ColumnName;
+                var colHeader = new ColumnHeader(col.ColumnName);
 
                 if (col.DataType == typeof(int))
                 {
                     colHeader.Alignment = ColumnAlignment.Center;
-                    colHeader.ColumnType = ColumnTypes.Int;
+                    colHeader.ColumnType = ColumnType.Int;
                 }
                 else if (col.DataType == typeof(decimal))
                 {
                     colHeader.Alignment = ColumnAlignment.Right;
-                    colHeader.ColumnType = ColumnTypes.Decimal;
+                    colHeader.ColumnType = ColumnType.Decimal;
                 }
                 else if (col.DataType == typeof(DateTime))
                 {
                     colHeader.Alignment = ColumnAlignment.Right;
-                    colHeader.ColumnType = ColumnTypes.Date;
-                }
-                else
-                {
-                    colHeader.Alignment = ColumnAlignment.Left;
+                    colHeader.ColumnType = ColumnType.Date;
                 }
 
                 SetWidth(colHeader);
@@ -93,6 +103,10 @@ namespace Carahsoft.Calliope.Table
 
         }
 
+        /// <summary>
+        /// Sets the output wodth for each column using the longest element contained in the column
+        /// </summary>
+        /// <param name="colHeader"></param>
         private void SetWidth(ColumnHeader colHeader)
         {
             DataColumn col = _table.Columns[colHeader.Name];
@@ -111,50 +125,74 @@ namespace Carahsoft.Calliope.Table
             colHeader.Width = width; ;
         }
 
-        public void ApplyStyle(int ColumnIndex, string StringFormat)
+        /// <summary>
+        /// Sets the format string for a specified column for outputting.  Forexample "MM/dd/yyyy" on a date.
+        /// </summary>
+        /// <param name="columnIndex"></param>
+        /// <param name="formatString"></param>
+        public void ColOutputFormat(int columnIndex, string formatString)
         {
-            Columns[ColumnIndex].OutputFormat = StringFormat;
-            SetWidth(Columns[ColumnIndex]);
+            ColOutputFormat(Columns[columnIndex].Name, formatString);
         }
 
-        public void ApplyStyle(string ColumnName, string StringFormat)
+        /// <summary>
+        /// Sets the format string for a specified column for outputting.  Forexample "MM/dd/yyyy" on a date.
+        /// </summary>
+        /// <param name="ColumnName">Name of the column to format</param>
+        /// <param name="StringFormat"></param>
+        public void ColOutputFormat(string columnName, string formatString)
         {
-            var col = Columns.Find(x => x.Name == ColumnName);
-            col.OutputFormat = StringFormat;
+            var col = Columns.Find(x => x.Name == columnName);
+            col.OutputFormat = formatString;
             SetWidth(col);
         }
 
+        /// <summary>
+        /// Sorts the data table by the column and direction supplied by yser
+        /// </summary>
+        /// <param name="columnIndex">0 based column index of column to sort by</param>
+        /// <param name="direction">Direction to sort (Ascending or Descending.  Defauly value = Ascending</param>
+        public void Sort(int columnIndex, SortDirection direction = SortDirection.ASC)
+        {
+            Sort(Columns[columnIndex].Name, direction);
+        }
 
-        public void Sort(int columnnumber, SortDirection direction = SortDirection.ASC)
+        /// <summary>
+        /// Sorts the data table by the column and direction supplied by yser
+        /// </summary>
+        /// <param name="columnName">0 ColumnName to sort by</param>
+        /// <param name="direction">Direction to sort (Ascending or Descending.  Defauly value = Ascending</param>
+        public void Sort(string columnName, SortDirection direction = SortDirection.ASC)
         {
             DataView dv = _table.DefaultView;
-            dv.Sort = $"{Columns[columnnumber].Name} {direction}";
+            dv.Sort = $"{columnName} {direction}";
             _table = dv.ToTable();
         }
 
+        /// <summary>
+        /// Output entire table contents to table applying cell alignmnet and formatting
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-
-            StringBuilder _spacer = new StringBuilder();
-
+            StringBuilder spacer = new StringBuilder();
 
             sb.Append(" | ");
 
-            _spacer.Append(" +-");
+            spacer.Append(" +-");
             
             foreach (var c in Columns)
             {
-                sb.Append(string.Format(c.FormatString, c.Name));
+                sb.Append(string.Format(c.AlignString, c.Name));
                 sb.Append(" | ");
 
-                _spacer.Append(string.Empty.PadLeft(c.Width, '-'));
-                _spacer.Append("-+-");
+                spacer.Append(string.Empty.PadLeft(c.Width, '-'));
+                spacer.Append("-+-");
             }
             sb.Append('\n');
-            sb.Append(_spacer.ToString());
+            sb.Append(spacer.ToString());
             sb.Append('\n');
-
 
             foreach (DataRow dr in _table.Rows)
             {
@@ -167,7 +205,7 @@ namespace Carahsoft.Calliope.Table
                     if (c.Alignment == ColumnAlignment.Center)
                         val = val.PadRight((int)Math.Ceiling(((decimal)c.Width - val.Length) / 2 + val.Length), ' ');
 
-                    sb.Append(string.Format(c.FormatString, val));
+                    sb.Append(string.Format(c.AlignString, val));
 
                     sb.Append(" | ");
                 }
@@ -177,14 +215,20 @@ namespace Carahsoft.Calliope.Table
             return sb.ToString();
         }
 
-        public string ToCSV()
+    
+        /// <summary>
+        /// Returns string composed of entire table contents in a text delimited format.
+        /// </summary>
+        /// <param name="delimiter">Delimiter character.  Default value = ","</param>
+        /// <returns></returns>
+        public string ToDelimitedString(char delimiter = ',')
         {
             StringBuilder sb = new StringBuilder();
 
             foreach (var header in Columns)
             {
                 sb.Append(header.Name.Replace("\"", "\"\"").Replace("\n", "\r"));
-                sb.Append(",");
+                sb.Append(delimiter);
             }
 
             sb.Remove(sb.Length - 1, 1);
@@ -196,7 +240,7 @@ namespace Carahsoft.Calliope.Table
                 {
                     sb.Append("\"");
                     sb.Append((dr[header.Name].ToString() ?? string.Empty).Replace("\"", "\"\"").Replace("\n", "\r"));
-                    sb.Append("\",");
+                    sb.Append($"\"{delimiter}");
                 }
                 sb.Remove(sb.Length - 1, 1);
                 sb.Append("\n");
@@ -205,6 +249,10 @@ namespace Carahsoft.Calliope.Table
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Returns string containing entire table contents in XML format
+        /// </summary>
+        /// <returns></returns>
         public string ToXML()
         {
             StringBuilder sb = new StringBuilder();
@@ -225,6 +273,10 @@ namespace Carahsoft.Calliope.Table
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Returns string containing entire table contents in JSON Format
+        /// </summary>
+        /// <returns></returns>
         public string ToJSON()
         {
             var sb = new StringBuilder();

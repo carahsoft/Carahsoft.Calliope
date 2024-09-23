@@ -7,34 +7,33 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope
 {
-    public class CalliopeProgramBuilder<TModel>
+    public class CalliopeProgramBuilder<TProgram>
+        where TProgram : ICalliopeProgram
     {
-        private readonly ICalliopeProgram<TModel> _program;
+        private readonly TProgram _program;
 
         private bool _fullscreen;
 
-        public CalliopeProgramBuilder(ICalliopeProgram<TModel> program)
+        public CalliopeProgramBuilder(TProgram program)
         {
             _program = program;
         }
 
-        public CalliopeProgramBuilder<TModel> Fullscreen()
+        public CalliopeProgramBuilder<TProgram> Fullscreen()
         {
             _fullscreen = true;
             return this;
         }
 
-        //public CalliopeProgramBuilder<TModel> 
-
-        public ProgramRunner<TModel> Build()
+        public ProgramRunner<TProgram> Build()
         {
-            return new ProgramRunner<TModel>(_program, new ProgramOptions
+            return new ProgramRunner<TProgram>(_program, new ProgramOptions
             {
                 Fullscreen = _fullscreen
             });
         }
 
-        public Task<TModel> RunAsync()
+        public Task<TProgram> RunAsync()
         {
             var pr = Build();
             return pr.RunAsync();

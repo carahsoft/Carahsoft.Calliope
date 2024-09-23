@@ -10,6 +10,9 @@ namespace Carahsoft.Calliope
 {
     public static class Calliope
     {
+
+        private static HackerWriter _hackerWriter;
+
         public static void Print(
             string bannerText,
             int width = 120,
@@ -49,8 +52,8 @@ namespace Carahsoft.Calliope
             skConverter.Print();
         }
 
-        public static async Task PrintAnimatedEffect<T>(
-            CalliopeAnimation<T> animator)
+        public static async Task PrintAnimatedEffect(
+            CalliopeAnimation animator)
         {
             await NewProgram(animator).RunAsync();
         }
@@ -64,14 +67,32 @@ namespace Carahsoft.Calliope
             return skConverter.ToString();
         }
 
-        public static CalliopeProgramBuilder<TModel> NewProgram<TModel>(ICalliopeProgram<TModel> program)
+        public static CalliopeProgramBuilder<TProgram> NewProgram<TProgram>(TProgram program)
+            where TProgram : ICalliopeProgram
         {
-            return new CalliopeProgramBuilder<TModel>(program);
+            return new CalliopeProgramBuilder<TProgram>(program);
         }
 
         public static (TModel, CalliopeCmd?) Return<TModel>(TModel model, CalliopeCmd? cmd = null)
         {
             return (model, cmd);
+        }
+
+
+        public static void EnableHackerText()
+        {
+            if (_hackerWriter == null)
+            {
+                _hackerWriter = new HackerWriter(Console.Out);
+                Console.SetOut(_hackerWriter);
+            }
+            _hackerWriter.Hackify = true;
+        }
+
+        public static void EnableHAckerText()
+        {
+            if(_hackerWriter!=null)
+                _hackerWriter.Hackify = false;
         }
     }
 }

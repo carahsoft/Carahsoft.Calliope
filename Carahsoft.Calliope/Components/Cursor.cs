@@ -8,60 +8,63 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Components
 {
-    public record CursorState
-    {
-        /// <summary>
-        /// The character under the cursor
-        /// </summary>
-        public char CursorChar { get; init; }
-        public bool CursorVisible { get; init; }
-        public bool Blinking { get; init; }
-    }
-
     public class BlinkMsg : CalliopeMsg { }
     public class StartBlinkMsg : CalliopeMsg { }
     public class StopBlinkMsg : CalliopeMsg { }
 
-    public class Cursor : ICalliopeProgram<CursorState>
+    public class Cursor : ICalliopeProgram
     {
-        public (CursorState, CalliopeCmd?) Init()
+        /// <summary>
+        /// The character under the cursor
+        /// </summary>
+        public char CursorChar { get; set; } = ' ';
+        public bool CursorVisible { get; set; } = true;
+        public bool Blinking { get; set; } = true;
+        public CalliopeCmd? Init()
         {
-            return (new() { CursorVisible = true, Blinking = true }, Blink());
+            return Blink();
         }
 
-        public (CursorState, CalliopeCmd?) Update(CursorState state, CalliopeMsg msg)
+        public CalliopeCmd? Update(CalliopeMsg msg)
         {
             if (msg is BlinkMsg)
             {
-                if (state.Blinking)
-                    return (state with { CursorVisible = !state.CursorVisible }, Blink());
+                if (Blinking)
+                {
+                    CursorVisible = !CursorVisible;
+                    return Blink();
+                }
                 else
-                    return (state, null);
+                {
+                    return null;
+                }
             }
             if (msg is StartBlinkMsg)
             {
-                return (state with { Blinking = true }, Blink());
+                Blinking = true;
+                return Blink();
             }
             if (msg is StopBlinkMsg)
             {
-                return (state with { Blinking = false }, null);
+                Blinking = false;
+                return null;
             }
             
-            return (state, null);
+            return null;
         }
 
-        public string View(CursorState state)
+        public string View()
         {
-            if (state.CursorVisible)
+            if (CursorVisible)
             {
-                return AnsiTextHelper.ColorText(state.CursorChar.ToString(),
+                return AnsiTextHelper.ColorText(CursorChar.ToString(),
                     //new() { Red = 45, Green = 156, Blue = 218 },
                     new() { },
                     new() { Red = 255, Green = 255, Blue = 255 });
             }
             else
             {
-                return state.CursorChar.ToString();
+                return CursorChar.ToString();
             }
         }
 

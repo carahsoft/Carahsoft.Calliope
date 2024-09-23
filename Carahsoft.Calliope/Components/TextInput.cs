@@ -6,93 +6,72 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Components
 {
-    public record TextInputState
-    {
-        public string Text { get; init; } = "";
-        public bool Enabled { get; init; }
-        public int CursorIndex { get; init; }
-        public CursorState CursorState { get; init; }
-    }
-
-    public class TextInput : ICalliopeProgram<TextInputState>
+    public class TextInput : ICalliopeProgram
     {
         private readonly Cursor _cursor = new();
+        public string Text { get; set; } = "";
+        public bool Enabled { get; set; }
+        public int CursorIndex { get; set; }
 
-        public (TextInputState, CalliopeCmd?) Init()
+        public CalliopeCmd? Init()
         {
-            var (cursorState, cursorCmd) = _cursor.Init();
-            return (new() { CursorState = cursorState }, cursorCmd);
+            var cursorCmd = _cursor.Init();
+            return cursorCmd;
         }
 
-        public (TextInputState, CalliopeCmd?) Update(TextInputState state, CalliopeMsg msg)
+        public CalliopeCmd? Update(CalliopeMsg msg)
         {
             if (msg is KeyPressMsg kpm)
             {
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
-                    return (state, CalliopeCmd.Quit);
+                    return CalliopeCmd.Quit;
 
-                var preCursor = state.Text[..state.CursorIndex];
-                var postCursor = state.Text[state.CursorIndex..];
+                var preCursor = Text[..CursorIndex];
+                var postCursor = Text[CursorIndex..];
 
                 if (kpm.Key == ConsoleKey.Backspace)
                 {
-                    return (state with
-                    {
-                        Text =
-                            string.IsNullOrEmpty(state.Text) ?
-                            state.Text :
-                            preCursor[..^1] + postCursor,
-                        CursorIndex = state.CursorIndex - 1 < 0 ? 0 : state.CursorIndex - 1
-                    }, null);
+                    Text = string.IsNullOrEmpty(Text) ?  Text : preCursor[..^1] + postCursor;
+                    CursorIndex = CursorIndex - 1 < 0 ? 0 : CursorIndex - 1;
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.RightArrow)
                 {
-                    return (state with
-                    {
-                        CursorIndex = state.CursorIndex + 1 > state.Text.Length ?
-                            state.Text.Length : state.CursorIndex + 1
-                    }, null);
+                    CursorIndex = CursorIndex + 1 > Text.Length ?
+                        Text.Length : CursorIndex + 1;
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.LeftArrow)
                 {
-                    return (state with
-                    {
-                        CursorIndex = state.CursorIndex - 1 < 0 ?
-                            0 : state.CursorIndex - 1
-                    }, null);
+                    CursorIndex = CursorIndex - 1 < 0 ? 0 : CursorIndex - 1;
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.Home)
                 {
-                    return (state with
-                    {
-                        CursorIndex = 0
-                    }, null);
+                    CursorIndex = 0;
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.End)
                 {
-                    return (state with
-                    {
-                        CursorIndex = state.Text.Length
-                    }, null);
+                    CursorIndex = Text.Length;
+                    return null;
                 }
 
                 var updatedText = preCursor + kpm.KeyChar + postCursor;
+                _cursor.CursorChar = kpm.KeyChar;
 
-                return (state with
-                {
-                    Text = updatedText,
-                    CursorIndex = state.CursorIndex + 1
-                }, null);
+                Text = updatedText;
+                CursorIndex = CursorIndex + 1;
+                return null;
             }
 
-            var (cursorState, cursorMsg) = _cursor.Update(state.CursorState, msg);
-
-            return (state with { CursorState = cursorState }, cursorMsg);
+            var cursorMsg = _cursor.Update(msg);
+            return cursorMsg;
         }
 
-        public string View(TextInputState state)
+        public string View()
         {
-            return InsertCursor(state);
+            return InsertCursor();
         }
 
         public static CalliopeCmd StartBlinking()
@@ -105,24 +84,33 @@ namespace Carahsoft.Calliope.Components
             return Cursor.StopBlinking();
         }
 
-        private string InsertCursor(TextInputState state)
+        private string InsertCursor()
         {
-            if (string.IsNullOrEmpty(state.Text))
-                return _cursor.View(state.CursorState with { CursorChar = ' ' });
-
-            var sb = new StringBuilder();
-            for (int i = 0; i < state.Text.Length; i++)
+            if (string.IsNullOrEmpty(Text))
             {
-                if (i == state.CursorIndex)
-                    sb.Append(_cursor.View(
-                        state.CursorState with { CursorChar = state.Text[i] }
-                    ));
-                else
-                    sb.Append(state.Text[i]);
+                _cursor.CursorChar = ' ';
+                return _cursor.View();
             }
 
-            if (state.CursorIndex == state.Text.Length)
-                sb.Append(_cursor.View(state.CursorState with { CursorChar = ' ' }));
+            var sb = new StringBuilder();
+            for (int i = 0; i < Text.Length; i++)
+            {
+                if (i == CursorIndex)
+                {
+                    _cursor.CursorChar = Text[i];
+                    sb.Append(_cursor.View());
+                }
+                else
+                {
+                    sb.Append(Text[i]);
+                }
+            }
+
+            if (CursorIndex == Text.Length)
+            {
+                _cursor.CursorChar = ' ';
+                sb.Append(_cursor.View());
+            }
 
             return sb.ToString();
         }

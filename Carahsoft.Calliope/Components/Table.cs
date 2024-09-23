@@ -8,42 +8,32 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Components
 {
-    public record TableState
-    {
-        public ScrollViewState ScrollViewState { get; init; }
-    }
-
-    public class Table<T> : ICalliopeProgram<TableState>
+    public class Table<T> : ICalliopeProgram
     {
         private readonly DataTable _table;
         private ScrollView _sv = new();
+
+        public ScrollView ScrollView { get { return _sv; } }
 
         public Table(DataTable table)
         {
             _table = table;
         }
 
-        public (TableState, CalliopeCmd?) Init()
+        public CalliopeCmd? Init()
         {
-            return (new()
-            {
-                ScrollViewState = new()
-                {
-                    View = RenderTable()
-                }
-            }, null);
+            _sv.RenderView = RenderTable();
+            return null;
         }
 
-        public (TableState, CalliopeCmd?) Update(TableState state, CalliopeMsg msg)
+        public CalliopeCmd? Update(CalliopeMsg msg)
         {
-            var (svState, svCmd) = _sv.Update(state.ScrollViewState, msg);
-
-            return (state with { ScrollViewState = svState }, svCmd);
+            return _sv.Update(msg);
         }
 
-        public string View(TableState state)
+        public string View()
         {
-            return _sv.View(state.ScrollViewState);
+            return _sv.View();
         }
 
         private string RenderTable()

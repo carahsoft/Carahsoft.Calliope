@@ -6,95 +6,102 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Components
 {
-    public record ScrollViewState
+    public class ScrollView : ICalliopeProgram
     {
-        public string View { get; init; } = "";
-        public int Index { get; init; }
-        public int Width { get; init; }
-        public int Height { get; init; }
-    }
+        public string RenderView { get; set; } = "";
+        public int Index { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
-    public class ScrollView : ICalliopeProgram<ScrollViewState>
-    {
-        public (ScrollViewState, CalliopeCmd?) Init()
+        public CalliopeCmd? Init()
         {
-            return (new(), null);
+            return null;
         }
 
-        public (ScrollViewState, CalliopeCmd?) Update(ScrollViewState state, CalliopeMsg msg)
+        public CalliopeCmd? Update(CalliopeMsg msg)
         {
-            var lines = state.View.Split('\n');
+            var lines = RenderView.Split('\n');
             if (msg is KeyPressMsg kpm)
             {
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
                 {
-                    return (state, CalliopeCmd.Quit);
+                    return CalliopeCmd.Quit;
                 }
                 if (kpm.Key == ConsoleKey.DownArrow || kpm.Key == ConsoleKey.J)
                 {
-                    if (state.Height > lines.Length)
-                        return (state with { Index = 0 }, null);
+                    if (Height > lines.Length)
+                    {
+                        Index = 0;
+                        return null;
+                    }
 
-                    var updatedIndex = state.Index + 1;
-                    if (updatedIndex > lines.Length - state.Height)
-                        updatedIndex = lines.Length - state.Height;
+                    Index = Index + 1;
+                    if (Index > lines.Length - Height)
+                        Index = lines.Length - Height;
 
-                    return (state with { Index = updatedIndex }, null);
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.UpArrow || kpm.Key == ConsoleKey.K)
                 {
-                    var updatedIndex = state.Index - 1;
-                    if (updatedIndex < 0)
-                        updatedIndex = 0;
+                    Index = Index - 1;
+                    if (Index < 0)
+                        Index = 0;
 
-                    return (state with { Index = updatedIndex }, null);
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.End || (kpm.Key == ConsoleKey.G && kpm.Modifiers == ConsoleModifiers.Shift))
                 {
-                    if (state.Height > lines.Length)
-                        return (state with { Index = 0 }, null);
+                    if (Height > lines.Length)
+                    {
+                        Index = 0;
+                        return null;
+                    }
 
-                    var updatedIndex = lines.Length - state.Height - 1;
-                    return (state with { Index = updatedIndex }, null);
+                    Index = lines.Length - Height - 1;
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.Home || kpm.Key == ConsoleKey.G)
                 {
-                    return (state with { Index = 0 }, null);
+                    Index = 0;
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.PageDown || (kpm.Key == ConsoleKey.F && kpm.Modifiers == ConsoleModifiers.Control))
                 {
-                    var updatedIndex = state.Index + state.Height;
-                    if (updatedIndex > lines.Length - state.Height - 1)
-                        updatedIndex = lines.Length - state.Height - 1;
-                    return (state with { Index = updatedIndex }, null);
+                    Index = Index + Height;
+                    if (Index > lines.Length - Height - 1)
+                        Index = lines.Length - Height - 1;
+
+                    return null;
                 }
                 if (kpm.Key == ConsoleKey.PageUp || (kpm.Key == ConsoleKey.B && kpm.Modifiers == ConsoleModifiers.Control))
                 {
-                    var updatedIndex = state.Index - state.Height;
-                    if (updatedIndex < 0)
-                        updatedIndex = 0;
-                    return (state with { Index = updatedIndex }, null);
+                    Index = Index - Height;
+                    if (Index < 0)
+                        Index = 0;
+                    return null;
                 }
             }
             if (msg is WindowSizeChangeMsg wmsg)
             {
-                var updatedIndex = state.Index;
-                if (wmsg.ScreenHeight > state.Height && state.Index > lines.Length - wmsg.ScreenHeight && wmsg.ScreenHeight <= lines.Length)
+                if (wmsg.ScreenHeight > Height && Index > lines.Length - wmsg.ScreenHeight
+                    && wmsg.ScreenHeight <= lines.Length)
                 {
-                    updatedIndex = lines.Length - wmsg.ScreenHeight;
+                    Index = lines.Length - wmsg.ScreenHeight;
                 }
-                return (state with { Index = updatedIndex, Height = wmsg.ScreenHeight, Width = wmsg.ScreenWidth }, null);
+                Height = wmsg.ScreenHeight;
+                Width = wmsg.ScreenWidth;
+                return null;
             }
 
-            return (state, null);
+            return null;
         }
 
-        public string View(ScrollViewState state)
+        public string View()
         {
-            var lines = state.View.Replace("\r\n", "\n").Split("\n");
+            var lines = RenderView.Replace("\r\n", "\n").Split("\n");
 
-            var startIndex = state.Index;
-            var endIndex = Math.Min(startIndex + state.Height, lines.Length);
+            var startIndex = Index;
+            var endIndex = Math.Min(startIndex + Height, lines.Length);
 
             var sb = new StringBuilder();
             for (int i = startIndex; i < endIndex; i++)

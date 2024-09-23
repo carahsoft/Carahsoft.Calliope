@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 namespace Carahsoft.Calliope.Table
 {
     /// <summary>
-    /// Specifies horizontal alignmnet of data in table cell
+    /// Specifies direction for column sorting
     /// </summary>
-    public enum ColumnAlignment
+    public enum SortDirection
     {
-        Left,
-        Center,
-        Right
+        ASC,
+        DESC,
     }
 }

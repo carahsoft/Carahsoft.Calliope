@@ -1,19 +1,13 @@
 ﻿using Carahsoft.Calliope.AnsiConsole;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Animations
 {
-    public record RainbowAnimationState
-    {
-        public int Frame { get; init; }
-    }
-    public class RainbowAnimation : CalliopeAnimation<RainbowAnimationState>
+    public class RainbowAnimation : CalliopeAnimation
     {
         private readonly List<List<RainbowChar>> _renderComponents;
+
+        public int Frame { get; private set; }
 
         public RainbowAnimation(string renderText, CalliopeOptions options)
             : base(renderText, options)
@@ -23,36 +17,37 @@ namespace Carahsoft.Calliope.Animations
             _renderComponents = renderLines.Select(line => line.Select((x, i) => new RainbowChar(x, i * 6)).ToList()).ToList();
         }
 
-        public override (RainbowAnimationState, CalliopeCmd?) Init()
+        public override CalliopeCmd? Init()
         {
-            return (new(), Tick());
+            return Tick();
         }
 
-        public override (RainbowAnimationState, CalliopeCmd?) Update(RainbowAnimationState state, CalliopeMsg msg)
+        public override CalliopeCmd? Update(CalliopeMsg msg)
         {
             if (msg is KeyPressMsg kpm)
             {
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
                 {
-                    return (state, CalliopeCmd.Quit);
+                    return CalliopeCmd.Quit;
                 }
             }
             if (msg is TickMsg)
             {
-                return (state with { Frame = state.Frame + 2 }, Tick());
+                Frame = Frame + 2;
+                return Tick();
             }
 
-            return (state, null);
+            return null;
         }
 
-        public override string View(RainbowAnimationState state)
+        public override string View()
         {
             var sb = new StringBuilder();
             foreach (var line in _renderComponents)
             {
                 foreach (var c in line)
                 {
-                    sb.Append(c.View(state.Frame));
+                    sb.Append(c.View(Frame));
                 }
                 sb.AppendLine();
             }

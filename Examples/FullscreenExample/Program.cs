@@ -51,11 +51,7 @@ var table = new FullscreenTable(
 await Calliope.NewProgram(table).Fullscreen().RunAsync();
 
 
-public record FullscreenTableState
-{
-    public required ScrollViewState ScrollViewState { get; set; }
-}
-public class FullscreenTable : ICalliopeProgram<FullscreenTableState>
+public class FullscreenTable : ICalliopeProgram
 {
     private readonly string _view;
     private readonly ScrollView _sv = new();
@@ -65,26 +61,19 @@ public class FullscreenTable : ICalliopeProgram<FullscreenTableState>
         _view = view;
     }
 
-    public (FullscreenTableState, CalliopeCmd?) Init()
+    public CalliopeCmd? Init()
     {
-        return (new()
-        {
-            ScrollViewState = new()
-            {
-                View = _view,
-            }
-        }, null);
+        _sv.RenderView = _view;
+        return null;
     }
 
-    public (FullscreenTableState, CalliopeCmd?) Update(FullscreenTableState state, CalliopeMsg msg)
+    public CalliopeCmd? Update(CalliopeMsg msg)
     {
-        var (svState, svMsg) = _sv.Update(state.ScrollViewState, msg);
-
-        return (state with { ScrollViewState = svState }, svMsg);
+        return _sv.Update(msg);
     }
 
-    public string View(FullscreenTableState state)
+    public string View()
     {
-        return _sv.View(state.ScrollViewState);
+        return _sv.View();
     }
 }
