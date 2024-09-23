@@ -1,4 +1,5 @@
-﻿using Carahsoft.Calliope.AnsiConsole;
+﻿using Carahsoft.Calliope.Animations;
+using Carahsoft.Calliope.AnsiConsole;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,13 +49,10 @@ namespace Carahsoft.Calliope
             skConverter.Print();
         }
 
-        public static async Task PrintAnimatedEffect(string bannerText, CalliopeOptions options, CalliopeAnimation animation)
+        public static async Task PrintAnimatedEffect<T>(
+            CalliopeAnimation<T> animator)
         {
-
-            if (animation == CalliopeAnimation.Twinkle)
-            {
-                await NewProgram(new TwinkleProgram(bannerText, options)).RunAsync();
-            }
+            await NewProgram(animator).RunAsync();
         }
 
         public static string PrintString(string bannerText, CalliopeOptions options)
@@ -74,83 +72,6 @@ namespace Carahsoft.Calliope
         public static (TModel, CalliopeCmd?) Return<TModel>(TModel model, CalliopeCmd? cmd = null)
         {
             return (model, cmd);
-        }
-
-        private record TwinkleState
-        {
-            public int LastRender { get; init; }
-        }
-
-        private class TwinkleMsg : CalliopeMsg { }
-
-        private class TwinkleProgram : ICalliopeProgram<TwinkleState>
-        {
-            private readonly string _bannerText;
-            private readonly CalliopeOptions _options;
-            private readonly Random rand = new Random();
-
-            public TwinkleProgram(string bannerText, CalliopeOptions options)
-            {
-                _bannerText = bannerText;
-                _options = options;
-                _options.Effect = CalliopeEffect.GalacticCrush;
-            }
-
-            public (TwinkleState, CalliopeCmd?) Init()
-            {
-                return (new(), Twinkle());
-            }
-
-            public (TwinkleState, CalliopeCmd?) Update(TwinkleState state, CalliopeMsg msg)
-            {
-                if (msg is KeyPressMsg kpm)
-                {
-                    if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
-                    {
-                        return (state, CalliopeCmd.Quit);
-                    }
-                }
-
-                if (msg is TwinkleMsg)
-                {
-                    return (state, Twinkle());
-                }
-                return (state, Twinkle());
-            }
-
-            public string View(TwinkleState state)
-            {
-                var skConverter = new SkiaConverter(_bannerText, _options);
-              
-                StringBuilder sb = new StringBuilder();
-
-                foreach(char c in skConverter.ToString())
-                {
-                    if(rand.Next(100) < 10 && c!= ' ')
-                    {
-                        sb.Append(AnsiTextHelper.ColorText(c.ToString(), new((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255))));
-                    }
-                    else
-                    {
-                        if(rand.Next(2)== 1)
-                        sb.Append(AnsiTextHelper.ColorText(c.ToString(), new(0, (byte)(100 + rand.Next(155)), 0)));
-
-                        else
-                            sb.Append(AnsiTextHelper.ColorText(c.ToString(), new((byte)(100 + rand.Next(155)), 0, 0)));
-                    }
-                }
-
-                return sb.ToString();
-            }
-
-            private CalliopeCmd Twinkle()
-            {
-                return CalliopeCmd.Make(async () =>
-                {
-                    await Task.Delay(333);
-                    return new TwinkleMsg();
-                });
-            }
         }
     }
 }

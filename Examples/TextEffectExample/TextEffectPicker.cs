@@ -22,15 +22,13 @@ namespace TextEffectExample
             }).Replace("\r\n", "\n").Split('\n');
         }
 
-        private readonly FilterableSelectList _picker = new FilterableSelectList(new SelectListProps
-        {
-            Items =
+        private readonly FilterableSelectList _picker = new FilterableSelectList(
             [
                 new() { Value = "Rainbow" },
                 new() { Value = "Matrix" },
                 new() { Value = "Twinkle" }
             ]
-        });
+        );
         private readonly string[] _renderLines;
 
         public (TextEffectPickerState, CalliopeCmd?) Init()

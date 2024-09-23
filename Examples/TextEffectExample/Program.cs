@@ -1,4 +1,5 @@
 ﻿using Carahsoft.Calliope;
+using Carahsoft.Calliope.Animations;
 using Carahsoft.Calliope.AnsiConsole;
 using System.Text;
 using TextEffectExample;
@@ -7,22 +8,24 @@ Console.ForegroundColor = ConsoleColor.Blue;
 Console.OutputEncoding = Encoding.UTF8;
 
 
-await Calliope.PrintAnimatedEffect("GALACTIC CRUSH", new CalliopeOptions
+await Calliope.PrintAnimatedEffect(CalliopeAnimation.TwinkleAnimation("GALACTIC CRUSH", new CalliopeOptions
 {
     Effect = CalliopeEffect.None,
     Font = "Comic Sans MS",
     Height = 20,
     Width = Console.BufferWidth,
     FontSize = 18
-}, CalliopeAnimation.Twinkle);
+}));
 
-
-await Calliope.NewProgram(new TextEffect()).RunAsync();
-
-public record TextEffectState
+await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainbowAnimation("Calliope", new CalliopeOptions
 {
-    public int Frame { get; init; }
-}
+    Effect = CalliopeEffect.None,
+    Font = "Comic Sans MS",
+    Width = 100,
+    Height = 40,
+    DrawChar = '\u2588',
+    FontSize = 28
+}));
 
 public class TickMsg : CalliopeMsg { }
 
@@ -87,73 +90,5 @@ public class FadeInChar
         var red = (byte)(pct * 20);
 
         return AnsiTextHelper.ColorText(_initChar.ToString(), new() { Red = red, Green = grn, Blue = blu });
-    }
-}
-
-public class TextEffect : ICalliopeProgram<TextEffectState>
-{
-    private readonly List<List<RainbowChar>> _renderComponents;
-
-    public TextEffect()
-    {
-        var renderLines = Calliope.PrintString("Calliope", new CalliopeOptions
-        {
-            Effect = CalliopeEffect.None,
-            Font = "Comic Sans MS",
-            Width = 100,
-            Height = 40,
-            DrawChar = '\u2588',
-            FontSize = 28
-        }).Replace("\r\n", "\n").Split('\n');
-
-        _renderComponents = renderLines.Select(line => line.Select((x, i) => new RainbowChar(x, i * 6)).ToList()).ToList();
-    }
-
-    public (TextEffectState, CalliopeCmd?) Init()
-    {
-        return (new(), Tick());
-    }
-
-    public (TextEffectState, CalliopeCmd?) Update(TextEffectState state, CalliopeMsg msg)
-    {
-        if (msg is KeyPressMsg kpm)
-        {
-            if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
-            {
-                return (state, CalliopeCmd.Quit);
-            }
-        }
-        if (msg is TickMsg)
-        {
-            if (state.Frame > 100000)
-                return (state, CalliopeCmd.Quit);
-
-            return (state with { Frame = state.Frame + 2 }, Tick());
-        }
-
-        return (state, null);
-    }
-
-    public string View(TextEffectState state)
-    {
-        var sb = new StringBuilder();
-        foreach (var line in _renderComponents)
-        {
-            foreach (var c in line)
-            {
-                sb.Append(c.View(state.Frame));
-            }
-            sb.AppendLine();
-        }
-        return sb.ToString();
-    }
-
-    private CalliopeCmd Tick()
-    {
-        return CalliopeCmd.Make(async () =>
-        {
-            await Task.Delay(TimeSpan.FromSeconds(1) / 60);
-            return new TickMsg();
-        });
     }
 }
