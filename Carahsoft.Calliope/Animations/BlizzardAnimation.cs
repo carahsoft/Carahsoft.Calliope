@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 namespace Carahsoft.Calliope.Animations
 {
 
-    public class BlizzardMsg : CalliopeMsg
-    {
-        public required Guid BlizzardId { get; init; }
-    }
+    public class BlizzardMsg : CalliopeMsg { }
+
     public class BlizzardAnimation : CalliopeAnimation
     {
 
@@ -132,10 +130,7 @@ namespace Carahsoft.Calliope.Animations
             return CalliopeCmd.Make(async () =>
             {
                 await Task.Delay(200);
-                return new BlizzardMsg
-                {
-                    BlizzardId = Guid.NewGuid()
-                };
+                return new BlizzardMsg();
             });
         }
     }
