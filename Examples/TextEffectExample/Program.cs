@@ -7,24 +7,34 @@ Console.ForegroundColor = ConsoleColor.Blue;
 Console.OutputEncoding = Encoding.UTF8;
 
 
-await Calliope.PrintAnimatedEffect(CalliopeAnimation.TwinkleAnimation("GALACTIC CRUSH", new CalliopeOptions
-{
-    Effect = CalliopeEffect.None,
-    Font = "Comic Sans MS",
-    Height = 20,
-    Width = Console.BufferWidth,
-    FontSize = 18
-}));
+//await Calliope.PrintAnimatedEffect(CalliopeAnimation.TwinkleAnimation("GALACTIC CRUSH", new CalliopeOptions
+//{
+//    Effect = CalliopeEffect.None,
+//    Font = "Comic Sans MS",
+//    Height = 20,
+//    Width = Console.BufferWidth,
+//    FontSize = 18
+//}));
 
-await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainbowAnimation("Calliope", new CalliopeOptions
+//await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainbowAnimation("Calliope", new CalliopeOptions
+//{
+//    Effect = CalliopeEffect.None,
+//    Font = "Comic Sans MS",
+//    Width = 100,
+//    Height = 40,
+//    DrawChar = '\u2588',
+//    FontSize = 28
+//}));
+
+await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainAnimation("Calliope", new CalliopeOptions
 {
     Effect = CalliopeEffect.None,
     Font = "Comic Sans MS",
     Width = 100,
     Height = 40,
-    DrawChar = '\u2588',
     FontSize = 28
 }));
+
 
 public class TickMsg : CalliopeMsg { }
 

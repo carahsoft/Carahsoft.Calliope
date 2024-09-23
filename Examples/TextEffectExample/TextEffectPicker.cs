@@ -14,7 +14,8 @@ namespace TextEffectExample
             [
                 new() { Value = "Rainbow" },
                 new() { Value = "Matrix" },
-                new() { Value = "Twinkle" }
+                new() { Value = "Twinkle" },
+                new() { Value = "Rain"}
             ]
         );
         private readonly string[] _renderLines;
@@ -46,26 +47,7 @@ namespace TextEffectExample
 
         public string View()
         {
-            if (Selection == null)
-            {
-                return _picker.View();
-            }
-            if (Selection == "Rainbow")
-            {
-                var renderComponents = _renderLines
-                    .Select(line => line.Select((x, i) => new RainbowChar(x, i * 6)).ToList())
-                    .ToList();
-                var sb = new StringBuilder();
-                foreach (var line in renderComponents)
-                {
-                    foreach (var c in line)
-                    {
-                        sb.Append(c.View(Frame));
-                    }
-                    sb.AppendLine();
-                }
-                return sb.ToString();
-            }
+
             return "";
         }
     }

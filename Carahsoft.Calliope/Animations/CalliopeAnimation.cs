@@ -29,5 +29,8 @@ namespace Carahsoft.Calliope.Animations
 
         public static TwinkleAnimation TwinkleAnimation(string renderText, CalliopeOptions options)
             => new TwinkleAnimation(renderText, options);
+
+        public static BlizzardAnimation RainAnimation(string renderText, CalliopeOptions options)
+    => new BlizzardAnimation(renderText, options);
     }
 }
