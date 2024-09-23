@@ -19,8 +19,8 @@ FruitCart.Add(new Fruit() { Type = "Strawberry", Quantity =1350, Price = 1.00m }
 var myTable = new ConsoleTable<Fruit>(FruitCart);
 
 
-myTable.ApplyStyle("Quantity", "#,##0");
-myTable.ApplyStyle(2, "$#,##0.00");
+myTable.ColOutputFormat("Quantity", "#,##0");
+myTable.ColOutputFormat(2, "$#,##0.00");
 
 Console.WriteLine("Table output:\n\n");
 Console.WriteLine(myTable.ToString());
@@ -32,7 +32,7 @@ Console.WriteLine(myTable.ToString());
 
 Console.WriteLine("\n\nPress Enter to see date in CSV Format:\n\n");
 Console.ReadLine();
-Console.WriteLine(myTable.ToCSV());
+Console.WriteLine(myTable.ToDelimitedString());
 
 Console.WriteLine("\n\nPress Enter to see date in XML Format:\n\n");
 Console.ReadLine();
@@ -43,7 +43,7 @@ Console.ReadLine();
 Console.WriteLine(myTable.ToJSON());
 
 
-public class Fruit
+public struct Fruit
 {
     public string Type { get; set; }
     public int Quantity { get; set; }
