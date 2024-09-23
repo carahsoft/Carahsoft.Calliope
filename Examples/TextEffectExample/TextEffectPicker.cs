@@ -8,8 +8,20 @@ using System.Threading.Tasks;
 
 namespace TextEffectExample
 {
-    public class TextEffectPicker : ICalliopeProgram<TextEffectPickerState>
+    public class TextEffectPicker : ICalliopeProgram
     {
+        private readonly FilterableSelectList _picker = new FilterableSelectList(
+            [
+                new() { Value = "Rainbow" },
+                new() { Value = "Matrix" },
+                new() { Value = "Twinkle" }
+            ]
+        );
+        private readonly string[] _renderLines;
+
+        public string? Selection { get; init; }
+        public int Frame { get; init; }
+
         public TextEffectPicker()
         {
             _renderLines = Calliope.PrintString("carahsoft", new CalliopeOptions
@@ -22,32 +34,23 @@ namespace TextEffectExample
             }).Replace("\r\n", "\n").Split('\n');
         }
 
-        private readonly FilterableSelectList _picker = new FilterableSelectList(
-            [
-                new() { Value = "Rainbow" },
-                new() { Value = "Matrix" },
-                new() { Value = "Twinkle" }
-            ]
-        );
-        private readonly string[] _renderLines;
-
-        public (TextEffectPickerState, CalliopeCmd?) Init()
+        public CalliopeCmd? Init()
         {
-            return (new(), null);
+            return null;
         }
 
-        public (TextEffectPickerState, CalliopeCmd?) Update(TextEffectPickerState state, CalliopeMsg msg)
+        public CalliopeCmd? Update(CalliopeMsg msg)
         {
             throw new NotImplementedException();
         }
 
-        public string View(TextEffectPickerState state)
+        public string View()
         {
-            if (state.Selection == null)
+            if (Selection == null)
             {
-                return _picker.View(state.SelectListState);
+                return _picker.View();
             }
-            if (state.Selection == "Rainbow")
+            if (Selection == "Rainbow")
             {
                 var renderComponents = _renderLines
                     .Select(line => line.Select((x, i) => new RainbowChar(x, i * 6)).ToList())
@@ -57,7 +60,7 @@ namespace TextEffectExample
                 {
                     foreach (var c in line)
                     {
-                        sb.Append(c.View(state.Frame));
+                        sb.Append(c.View(Frame));
                     }
                     sb.AppendLine();
                 }
@@ -65,12 +68,5 @@ namespace TextEffectExample
             }
             return "";
         }
-    }
-
-    public record TextEffectPickerState
-    {
-        public FilterableSelectListState SelectListState { get; init; }
-        public string? Selection { get; init; }
-        public int Frame { get; init; }
     }
 }

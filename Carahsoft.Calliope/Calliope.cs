@@ -52,8 +52,8 @@ namespace Carahsoft.Calliope
             skConverter.Print();
         }
 
-        public static async Task PrintAnimatedEffect<T>(
-            CalliopeAnimation<T> animator)
+        public static async Task PrintAnimatedEffect(
+            CalliopeAnimation animator)
         {
             await NewProgram(animator).RunAsync();
         }
@@ -67,9 +67,10 @@ namespace Carahsoft.Calliope
             return skConverter.ToString();
         }
 
-        public static CalliopeProgramBuilder<TModel> NewProgram<TModel>(ICalliopeProgram<TModel> program)
+        public static CalliopeProgramBuilder<TProgram> NewProgram<TProgram>(TProgram program)
+            where TProgram : ICalliopeProgram
         {
-            return new CalliopeProgramBuilder<TModel>(program);
+            return new CalliopeProgramBuilder<TProgram>(program);
         }
 
         public static (TModel, CalliopeCmd?) Return<TModel>(TModel model, CalliopeCmd? cmd = null)

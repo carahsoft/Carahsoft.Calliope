@@ -2,50 +2,49 @@
 
 await Calliope.NewProgram(new CounterProgram()).RunAsync();
 
-public record CounterState
+public class CounterProgram : ICalliopeProgram
 {
-    public int Count { get; init; }
-}
+    public int Count { get; private set; }
 
-public class CounterProgram : ICalliopeProgram<CounterState>
-{
-    public (CounterState, CalliopeCmd?) Init()
+    public CalliopeCmd? Init()
     {
-        return (new(), null);
+        return null;
     }
 
-    public (CounterState, CalliopeCmd?) Update(CounterState state, CalliopeMsg msg)
+    public CalliopeCmd? Update(CalliopeMsg msg)
     {
         if (msg is KeyPressMsg kpm)
         {
             if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
             {
                 // If the user pressed ctrl+c, returning the Quit command exits the program
-                return (state, CalliopeCmd.Quit);
+                return CalliopeCmd.Quit;
             }
 
             if (kpm.Key == ConsoleKey.RightArrow)
             {
                 // Right arrow means increment the count!
                 // null command means we don't need any extra effects right now.
-                return (state with { Count = state.Count + 1 }, null);
+                Count++;
+                return null;
             }
             if (kpm.Key == ConsoleKey.LeftArrow)
             {
-                return (state with { Count = state.Count - 1 }, null);
+                Count--;
+                return null;
             }
         }
 
         // Ignore any other messages we get
-        return (state, null);
+        return null;
     }
 
-    public string View(CounterState state)
+    public string View()
     {
         // The string returned from the View function is what is rendered on screen!
         return
             $"""
-            Your count is currently {state.Count}!!
+            Your count is currently {Count}!!
             →: Increment
             ←: Decrement
             ctrl+c: Quit

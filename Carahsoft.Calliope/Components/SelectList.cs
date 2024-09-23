@@ -13,83 +13,84 @@ namespace Carahsoft.Calliope.Components
         public string? FilterValue { get; set; }
     }
 
-    public record SelectListState
+    public class SelectList : ICalliopeProgram
     {
-        public int Index { get; init; }
-        public string? Choice { get; init; }
+        public int Index { get; set; }
+        public string? Choice { get; set; }
         public List<SelectListItem> Items { get; set; } = new List<SelectListItem>();
         public int MaxHeight { get; set; } = 10;
-    }
 
-    public class SelectList : ICalliopeProgram<SelectListState>
-    {
-        public (SelectListState, CalliopeCmd?) Init()
+        public CalliopeCmd? Init()
         {
-            return (new(), null);
+            return null;
         }
 
-        public (SelectListState, CalliopeCmd?) Update(SelectListState state, CalliopeMsg msg)
+        public CalliopeCmd? Update(CalliopeMsg msg)
         {
             if (msg is KeyPressMsg kpm)
             {
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
                 {
-                    return (state with { Choice = null }, CalliopeCmd.Quit);
+                    Choice = null;
+                    return CalliopeCmd.Quit;
                 }
 
                 if (kpm.Key == ConsoleKey.DownArrow || kpm.Key == ConsoleKey.J)
                 {
-                    var updatedIndex = state.Index + 1;
-                    if (updatedIndex > state.Items.Count - 1)
+                    var updatedIndex = Index + 1;
+                    if (updatedIndex > Items.Count - 1)
                         updatedIndex = 0;
 
-                    return (state with { Index = updatedIndex }, null);
+                    Index = updatedIndex;
+                    return null;
                 }
 
                 if (kpm.Key == ConsoleKey.UpArrow || kpm.Key == ConsoleKey.K)
                 {
-                    var updatedIndex = state.Index - 1;
+                    var updatedIndex = Index - 1;
                     if (updatedIndex < 0)
-                        updatedIndex = state.Items.Count - 1;
+                        updatedIndex = Items.Count - 1;
 
-                    return (state with { Index = updatedIndex }, null);
+                    Index = updatedIndex;
+                    return null;
                 }
 
                 if (kpm.Key == ConsoleKey.Enter)
                 {
-                    return (state with { Choice = state.Items[state.Index].Value }, CalliopeCmd.Quit);
+                    Choice = Items[Index].Value;
+                    return CalliopeCmd.Quit;
                 }
             }
 
-            return (state, null);
+            return null;
         }
 
-        public string View(SelectListState state)
+        public string View()
         {
-            var height = state.Items.Count > state.MaxHeight ?
-                state.MaxHeight : state.Items.Count;
+            var height = Items.Count > MaxHeight ?
+                MaxHeight : Items.Count;
 
-            var startIndex = Math.Max(state.Index - (height / 2), 0);
+            var startIndex = Math.Max(Index - (height / 2), 0);
             var endIndex = startIndex + height;
-            if (endIndex > state.Items.Count)
+            if (endIndex > Items.Count)
             {
-                endIndex = state.Items.Count;
-                startIndex = state.Items.Count - height;
+                endIndex = Items.Count;
+                startIndex = Items.Count - height;
             }
 
             var sb = new StringBuilder();
 
             for (int i = startIndex; i < endIndex; i++)
             {
-                if (i == state.Index)
+                if (i == Index)
                 {
                     sb.AppendLine(
-                        AnsiTextHelper.ColorText(state.Items[i].Value,
+                        AnsiTextHelper.ColorText(Items[i].Value,
                         new() { Red = 45, Green = 156, Blue = 218 }));
                 }
                 else
                 {
-                    sb.AppendLine(state.Items[i].Value);
+                    sb.AppendLine(Items[i].Value);
                 }
             }
 
