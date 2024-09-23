@@ -187,8 +187,8 @@ namespace Carahsoft.Calliope.Table
                 sb.Append(string.Format(c.AlignString, c.Name));
                 sb.Append(" | ");
 
-                _spacer.Append(string.Empty.PadLeft(c.Width, '-'));
-                _spacer.Append("-+-");
+                spacer.Append(string.Empty.PadLeft(c.Width, '-'));
+                spacer.Append("-+-");
             }
             sb.Append('\n');
             sb.Append(spacer.ToString());
