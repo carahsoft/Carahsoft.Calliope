@@ -55,52 +55,58 @@ using Carahsoft.Calliope;
 // We don't care about the last state value, so we can just ignore the returned state here.
 await Calliope.NewProgram(new CounterProgram()).RunAsync();
 
-// This defines our state model.
-public record CounterState
+// This defines our program class. In the Elm world, our program contains the Init, Update,
+// and View functions, and also is our state model.
+public class CounterProgram : ICalliopeProgram
 {
-    public int Count { get; init; }
-}
+    // This is the state we are tracking
+    public int Count { get; set; }
 
-// This defines our program class
-public class CounterProgram : ICalliopeProgram<CounterState>
-{
-    // Init returns the initial state of our program, and is called when the program starts up.
-    // Note that this also returns an optional CalliopeCmd, which we will get into later. For now,
-    // we return null because we don't need to execute any commands.
-    public (CounterState, CalliopeCmd?) Init()
+    // Init is called when the program starts up. This returns an optional CalliopeCmd object
+    // which we will get into later. For now, we return null because we don't need to execute
+    // any commands.
+    public CalliopeCmd? Init()
     {
-        return (new(), null);
+        return null;
     }
 
     // Update is called whenever a message is sent to the application. Here, we look for
     // KeyPressMsg messages, which are sent whenever the user presses any key in the terminal
     // window.
-    public (CounterState, CalliopeCmd?) Update(CounterState state, CalliopeMsg msg)
+    public CalliopeCmd? Update(CounterState state, CalliopeMsg msg)
     {
         if (msg is KeyPressMsg kpm)
         {
             // If the user pressed ctrl+c, returning the Quit command exits the program
             if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
-                return (state, CalliopeCmd.Quit);
+                return CalliopeCmd.Quit;
 
             // Right arrow means increment the count!
             if (kpm.Key == ConsoleKey.RightArrow)
-                return (state with { Count = state.Count + 1 }, null);
+            {
+                Count = Count + 1;
+                return null;
+            }
+
             // Left arrow means decrement the count!
             if (kpm.Key == ConsoleKey.LeftArrow)
-                return (state with { Count = state.Count - 1 }, null);
+            {
+                Count = Count - 1;
+                return null;
+            }
         }
 
         // Ignore any other messages we get
-        return (state, null);
+        return null;
     }
 
     // The string returned from the View function is what is rendered on screen!
-    public string View(CounterState state)
+    // View is always called after the Update method completes.
+    public string View()
     {
         return
             $"""
-            Your count is currently {state.Count}!!
+            Your count is currently {Count}!!
             →: Increment
             ←: Decrement
             ctrl+c: Quit
@@ -111,14 +117,14 @@ public class CounterProgram : ICalliopeProgram<CounterState>
 
 ### Commands
 
-In the above example, we sent the `CalliopeCmd.Quit` command when the user presses control + c. The `Quit` command is a special command that instructs the Calliope framework to cleanly exit and return the final state of the program as the return value of the `RunAsync` method. However, in practice commands are used for much more than just quitting your application.
+In the above example, we returned the `CalliopeCmd.Quit` command when the user presses control + c. The `Quit` command is a special command that instructs the Calliope framework to cleanly exit and return the final state of the program as the return value of the `RunAsync` method. However, in practice commands are used for much more than just quitting your application.
 
 A `CalliopeCmd` is just an async function that returns a `CalliopeMsg`, i.e. a `Func<Task<CalliopeMsg>>`. The `CalliopeMsg` that is returned from the command is passed to the `Update` function upon completion of the command. It represents any I/O operations or long running tasks that your program might need to perform. This might include loading data from an API, interacting with the filesystem, or just initiating a delayed effect with `Task.Delay`. All I/O and long running operations should be performed within a `CalliopeCmd` to ensure the program remains responsive for the user.
 
 
 ## Calliope ASCII Rendering
 
-
+Calliope can render text to ASCII art using the []
 
 ## Roadmap
 
