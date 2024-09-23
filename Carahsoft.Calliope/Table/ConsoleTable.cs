@@ -1,21 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.JavaScript;
+﻿using System.Data;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Table
 {
-
-
     /// <summary>
     /// This class is used for outputting a System.Data.DataTable or an IEnnumberable of objects in a table to the console.  
     /// Sorting and text formatting are supported.
