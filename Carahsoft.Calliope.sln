@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Carahsoft.Calliope", "Carahsoft.Calliope\Carahsoft.Calliope.csproj", "{2663EE96-0597-4415-9FA3-ED6DC08070C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Carahsoft.Calliope.Example", "Carahsoft.Calliope.Example\Carahsoft.Calliope.Example.csproj", "{BBAF966B-8095-41EA-839C-C49B8622EF83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalliopePrintExample", "Examples\CalliopePrintExample\CalliopePrintExample.csproj", "{BBAF966B-8095-41EA-839C-C49B8622EF83}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{9059C6CB-6B5F-4758-B7CF-0B43D22B8983}"
 EndProject
@@ -13,13 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadingBarExample", "Exampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FullscreenExample", "Examples\FullscreenExample\FullscreenExample.csproj", "{CED2D87B-A796-4372-8B69-4273850DF32D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerTextExample", "HackerTextExample\HackerTextExample.csproj", "{A030528B-3E66-4B21-B839-80D859BBFE55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerTextExample", "Examples\HackerTextExample\HackerTextExample.csproj", "{A030528B-3E66-4B21-B839-80D859BBFE55}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextEffectExample", "Examples\TextEffectExample\TextEffectExample.csproj", "{24D4950A-F2CB-421E-BC4E-2B867345A29D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CounterExample", "Examples\CounterExample\CounterExample.csproj", "{88E3E412-4BE1-4B09-9ADA-250C0429520A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableExample", "TableExample\TableExample.csproj", "{3570EFCD-C413-419C-9C00-3A7BF9EE1DB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableExample", "Examples\TableExample\TableExample.csproj", "{3570EFCD-C413-419C-9C00-3A7BF9EE1DB4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiSelectExample", "Examples\MultiSelectExample\MultiSelectExample.csproj", "{BE9099BE-5DC3-4E33-B2DB-C5B881F73584}"
 EndProject
