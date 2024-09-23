@@ -58,7 +58,9 @@ namespace Carahsoft.Calliope.AnsiConsole
         public async Task<TProgram> RunAsync()
         {
             var ctrlCRestore = Console.TreatControlCAsInput;
+            var encodingRestore = Console.OutputEncoding;
             Console.TreatControlCAsInput = true;
+            Console.OutputEncoding = Encoding.UTF8;
             Console.Write(AnsiConstants.HideCursor);
 
             if (_opts.Fullscreen)
@@ -147,6 +149,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             });
 
             Console.TreatControlCAsInput = ctrlCRestore;
+            Console.OutputEncoding = encodingRestore;
             Console.Write(AnsiConstants.ShowCursor);
             if (_opts.Fullscreen)
                 Console.Write(AnsiConstants.DisableAltScreenBuffer);

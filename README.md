@@ -121,6 +121,85 @@ In the above example, we returned the `CalliopeCmd.Quit` command when the user p
 
 A `CalliopeCmd` is just an async function that returns a `CalliopeMsg`, i.e. a `Func<Task<CalliopeMsg>>`. The `CalliopeMsg` that is returned from the command is passed to the `Update` function upon completion of the command. It represents any I/O operations or long running tasks that your program might need to perform. This might include loading data from an API, interacting with the filesystem, or just initiating a delayed effect with `Task.Delay`. All I/O and long running operations should be performed within a `CalliopeCmd` to ensure the program remains responsive for the user.
 
+Here is the above example, modified to increment the state automatically once every second:
+
+```csharp
+using Carahsoft.Calliope;
+
+await Calliope.NewProgram(new CounterProgram()).RunAsync();
+
+public class TickUpMsg : CalliopeMsg { }
+
+public class CounterProgram : ICalliopeProgram
+{
+    public int Count { get; set; }
+
+    public CalliopeCmd? Init()
+    {
+        // Before we were returning null here because we didn't need
+        // to do anything on startup. Now, we want to start our count
+        // ticking up every second, so we return a CalliopeCmd that
+        // waits 1 second and then sends a TickUpMsg to our Update
+        // function
+        return Tick();
+    }
+
+    public CalliopeCmd? Update(CalliopeMsg msg)
+    {
+        if (msg is KeyPressMsg kpm)
+        {
+            if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
+                return CalliopeCmd.Quit;
+
+            if (kpm.Key == ConsoleKey.RightArrow)
+            {
+                Count = Count + 1;
+                return null;
+            }
+
+            if (kpm.Key == ConsoleKey.LeftArrow)
+            {
+                Count = Count - 1;
+                return null;
+            }
+        }
+
+        // If we received our TickUpMsg, increment the count and
+        // start the 1 second countdown again.
+        if (msg is TickUpMsg)
+        {
+            Count = Count + 1;
+            return Tick();
+        }
+
+        return null;
+    }
+
+    public string View()
+    {
+        return
+            $"""
+            Your count is currently {Count}!!
+            →: Increment
+            ←: Decrement
+            ctrl+c: Quit
+            """;
+    }
+
+    // Tick returns a CalliopeCmd that waits for 1 second before
+    // returning a TickUpMsg. The TickUpMsg will then be passed to
+    // the Update function.
+    private CalliopeCmd Tick()
+    {
+        return CalliopeCmd.Make(async () =>
+        {
+            await Task.Delay(1000);
+            return new TickUpMsg();
+        });
+    }
+}
+```
+
 
 ## Calliope ASCII Rendering
 
