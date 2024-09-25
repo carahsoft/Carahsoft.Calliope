@@ -73,12 +73,6 @@ namespace Carahsoft.Calliope
             return new CalliopeProgramBuilder<TProgram>(program);
         }
 
-        public static (TModel, CalliopeCmd?) Return<TModel>(TModel model, CalliopeCmd? cmd = null)
-        {
-            return (model, cmd);
-        }
-
-
         public static void EnableHackerText()
         {
             if (_hackerWriter == null)

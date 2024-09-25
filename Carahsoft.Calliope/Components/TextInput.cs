@@ -56,6 +56,11 @@ namespace Carahsoft.Calliope.Components
                     CursorIndex = Text.Length;
                     return null;
                 }
+                if (char.IsControl(kpm.KeyChar))
+                {
+                    // do nothing
+                    return null;
+                }
 
                 var updatedText = preCursor + kpm.KeyChar + postCursor;
                 _cursor.CursorChar = kpm.KeyChar;
