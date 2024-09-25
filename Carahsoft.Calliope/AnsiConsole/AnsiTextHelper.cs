@@ -48,5 +48,64 @@ namespace Carahsoft.Calliope.AnsiConsole
 
             return sb.ToString(); 
         }
+
+        /// <summary>
+        /// Calculates the length of a line
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string TruncateLineToLength(string? text, int length)
+        {
+            if (string.IsNullOrEmpty(text))
+                return "";
+
+            if (text.Contains('\r') || text.Contains('\n'))
+            {
+                throw new ArgumentException("Multi-line string passed to LineDisplayLength", nameof(text));
+            }
+
+            bool escape = false;
+            int count = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (count >= length)
+                {
+                    return text[..i];
+                }
+
+                var c = text[i];
+                // Cancel escape if we are at the end of the sequence
+                if (escape && ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')))
+                {
+                    escape = false;
+                    continue;
+                }
+
+                if (escape)
+                {
+                    continue;
+                }
+
+                if (c == '\x1b')
+                {
+                    escape = true;
+                    continue;
+                }
+                if (c == '\t')
+                {
+                    // tab moves to the next tabstop every 8 chars
+                    var tabstop = i % 8;
+                    count += 8 - tabstop;
+                    if (count >= length)
+                        return text[..(i - 1)];
+
+                    continue;
+                }
+                // TODO: handle full width chars
+
+                count++;
+            }
+            return text;
+        }
     }
 }

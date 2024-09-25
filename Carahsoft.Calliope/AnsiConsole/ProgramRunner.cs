@@ -34,6 +34,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         private string[] _previousRender;
         private int _screenHeight = 0;
         private int _screenWidth = 0;
+        private bool _flush;
 
         public ProgramRunner(TProgram program, ProgramOptions opts)
         {
@@ -106,6 +107,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                     {
                         _screenHeight = Console.BufferHeight;
                         _screenWidth = Console.BufferWidth;
+                        _flush = true;
 
                         // if screen shrunk and we painted more than the new
                         // height lines, ignore lines from the top
@@ -254,7 +256,6 @@ namespace Carahsoft.Calliope.AnsiConsole
                 _renderLock.Release();
             }
 
-
             if (renderLines.Length > _screenHeight)
             {
                 renderLines = renderLines[^_screenHeight..];
@@ -268,7 +269,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                 //Console.SetCursorPosition(0, 0);
                 for (int i = _linesRendered - 1; i >= 0; i--)
                 {
-                    if (i >= renderLines.Length || string.IsNullOrEmpty(renderLines[i]))
+                    if (_flush || i >= renderLines.Length || string.IsNullOrEmpty(renderLines[i]))
                     {
                         sb.Append(AnsiConstants.ClearLine);
                     }
@@ -286,19 +287,22 @@ namespace Carahsoft.Calliope.AnsiConsole
 
             for (int i = 0; i < renderLines.Length; i++)
             {
-                // TODO: length overflow check
                 if (i != 0)
                     sb.AppendLine();
                 else
                     sb.Append("\x1b[" + _screenWidth + "D");
 
-                if (!(i < _linesRendered && skipLines[i]))
-                    sb.Append(renderLines[i] + AnsiConstants.ClearRight);
+                if (i >= _linesRendered || !skipLines[i])
+                {
+                    var renderLine = AnsiTextHelper.TruncateLineToLength(renderLines[i], _screenWidth);
+                    sb.Append(renderLine + AnsiConstants.ClearRight);
+                }
             }
             _linesRendered = renderLines.Length;
 
+            _flush = false;
             _opts.StandardOut.Write(sb.ToString());
-            _previousRender = renderLines;
+            _previousRender = renderLines!;
         }
     }
 }
