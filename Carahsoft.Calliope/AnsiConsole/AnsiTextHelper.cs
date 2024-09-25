@@ -50,30 +50,33 @@ namespace Carahsoft.Calliope.AnsiConsole
         }
 
         /// <summary>
-        /// Calculates the length of a line
+        /// Truncates the given line to the given length, ignoring
+        /// unprinted ANSI escape sequences in the line. Line must be
+        /// a single line string without newlines.
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static string TruncateLineToLength(string? text, int length)
+        /// <remarks>
+        /// Currently does not support full-width characters
+        /// </remarks>
+        public static string TruncateLineToLength(string? line, int length)
         {
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(line))
                 return "";
 
-            if (text.Contains('\r') || text.Contains('\n'))
+            if (line.Contains('\r') || line.Contains('\n'))
             {
-                throw new ArgumentException("Multi-line string passed to LineDisplayLength", nameof(text));
+                throw new ArgumentException("Multi-line string passed to LineDisplayLength", nameof(line));
             }
 
             bool escape = false;
             int count = 0;
-            for (int i = 0; i < text.Length; i++)
+            for (int i = 0; i < line.Length; i++)
             {
                 if (count >= length)
                 {
-                    return text[..i];
+                    return line[..i];
                 }
 
-                var c = text[i];
+                var c = line[i];
                 // Cancel escape if we are at the end of the sequence
                 if (escape && ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')))
                 {
@@ -97,15 +100,16 @@ namespace Carahsoft.Calliope.AnsiConsole
                     var tabstop = i % 8;
                     count += 8 - tabstop;
                     if (count >= length)
-                        return text[..(i - 1)];
+                        return line[..(i - 1)];
 
                     continue;
                 }
                 // TODO: handle full width chars
 
+                // this assumes the only other characters passed to this method are printable
                 count++;
             }
-            return text;
+            return line;
         }
     }
 }
