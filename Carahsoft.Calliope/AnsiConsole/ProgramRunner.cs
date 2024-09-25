@@ -264,7 +264,12 @@ namespace Carahsoft.Calliope.AnsiConsole
             var sb = new StringBuilder();
 
             bool[] skipLines = new bool[_linesRendered];
-            if (_linesRendered > 0)
+            if (_flush && _opts.Fullscreen)
+            {
+                sb.Append(AnsiConstants.ClearDisplay);
+                Console.SetCursorPosition(0, 0);
+            }
+            else if (_linesRendered > 0)
             {
                 //Console.SetCursorPosition(0, 0);
                 for (int i = _linesRendered - 1; i >= 0; i--)
