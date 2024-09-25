@@ -72,12 +72,12 @@ namespace Carahsoft.Calliope.AnsiConsole
             var encodingRestore = Console.OutputEncoding;
             Console.TreatControlCAsInput = true;
             Console.OutputEncoding = Encoding.UTF8;
-            Console.Write(AnsiConstants.HideCursor);
+            _opts.StandardOut.Write(AnsiConstants.HideCursor);
 
             if (_opts.Fullscreen)
             {
-                Console.Write(AnsiConstants.EnableAltScreenBuffer);
-                Console.Write(AnsiConstants.ClearDisplay);
+                _opts.StandardOut.Write(AnsiConstants.EnableAltScreenBuffer);
+                _opts.StandardOut.Write(AnsiConstants.ClearDisplay);
                 Console.SetCursorPosition(0, 0);
             }
 
@@ -161,9 +161,9 @@ namespace Carahsoft.Calliope.AnsiConsole
 
             Console.TreatControlCAsInput = ctrlCRestore;
             Console.OutputEncoding = encodingRestore;
-            Console.Write(AnsiConstants.ShowCursor);
+            _opts.StandardOut.Write(AnsiConstants.ShowCursor);
             if (_opts.Fullscreen)
-                Console.Write(AnsiConstants.DisableAltScreenBuffer);
+                _opts.StandardOut.Write(AnsiConstants.DisableAltScreenBuffer);
 
             // Return the final state of the program to the caller
             return _program;
@@ -297,7 +297,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             }
             _linesRendered = renderLines.Length;
 
-            Console.Write(sb.ToString());
+            _opts.StandardOut.Write(sb.ToString());
             _previousRender = renderLines;
         }
     }
