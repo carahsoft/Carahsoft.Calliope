@@ -170,16 +170,8 @@ namespace Carahsoft.Calliope.Animations
         {
             return CalliopeCmd.Make(async () =>
             {
-<<<<<<< HEAD
-                await Task.Delay(100);
-                return new BlizzardMsg
-                {
-                    BlizzardId = Guid.NewGuid()
-                };
-=======
                 await Task.Delay(200);
                 return new BlizzardMsg();
->>>>>>> c8bc53b56a445256b4e72100ca26bb5395b09673
             });
         }
     }
