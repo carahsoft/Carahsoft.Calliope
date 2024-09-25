@@ -105,9 +105,12 @@ namespace Carahsoft.Calliope.AnsiConsole
 
                     if (Console.BufferHeight != _screenHeight || Console.BufferWidth != _screenWidth)
                     {
+                        if (Console.BufferHeight < _screenHeight || Console.BufferWidth < _screenWidth)
+                        {
+                            _flush = true;
+                        }
                         _screenHeight = Console.BufferHeight;
                         _screenWidth = Console.BufferWidth;
-                        _flush = true;
 
                         // if screen shrunk and we painted more than the new
                         // height lines, ignore lines from the top
