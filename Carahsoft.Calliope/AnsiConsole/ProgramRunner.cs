@@ -198,19 +198,20 @@ namespace Carahsoft.Calliope.AnsiConsole
                     {
                         _quitting = true;
                     }
-
-                    if (msg is BatchMsg batch)
+                    else if (msg is BatchMsg batch)
                     {
                         foreach (var batchCommand in batch.Commands)
                         {
                             await _commandChannel.Writer.WriteAsync(batchCommand);
                         }
                     }
+                    else
+                    {
+                        var cmd = await UpdateProgram(msg);
 
-                    var cmd = await UpdateProgram(msg);
-
-                    if (cmd != null)
-                        await _commandChannel.Writer.WriteAsync(cmd);
+                        if (cmd != null)
+                            await _commandChannel.Writer.WriteAsync(cmd);
+                    }
                 }
             }
         }
