@@ -198,7 +198,8 @@ namespace Carahsoft.Calliope.AnsiConsole
                     {
                         _quitting = true;
                     }
-                    else if (msg is BatchMsg batch)
+
+                    if (msg is BatchMsg batch)
                     {
                         foreach (var batchCommand in batch.Commands)
                         {
