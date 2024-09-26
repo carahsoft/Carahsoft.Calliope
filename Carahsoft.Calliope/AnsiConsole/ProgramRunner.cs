@@ -73,6 +73,9 @@ namespace Carahsoft.Calliope.AnsiConsole
             var encodingRestore = Console.OutputEncoding;
             Console.TreatControlCAsInput = true;
             Console.OutputEncoding = Encoding.UTF8;
+            if (_opts.StandardOut == null)
+                _opts.StandardOut = Console.Out;
+
             _opts.StandardOut.Write(AnsiConstants.HideCursor);
 
             if (_opts.Fullscreen)

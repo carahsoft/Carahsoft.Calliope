@@ -16,6 +16,6 @@ namespace Carahsoft.Calliope.AnsiConsole
         /// Set this is you are redirecting Console.Out to handle log messages
         /// while ensuring Calliope can still write to the console
         /// </summary>
-        public TextWriter StandardOut { get; set; } = Console.Out;
+        public TextWriter? StandardOut { get; set; }
     }
 }

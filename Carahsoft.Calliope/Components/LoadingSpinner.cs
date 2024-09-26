@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Carahsoft.Calliope.AnsiConsole;
 
 namespace Carahsoft.Calliope.Components
 {
     public class LoadingSpinner : ICalliopeProgram
     {
-        private const string BRAILLE_LOADER = "⣽⣾⣷⣯⣟⡿⢿⣻";
+        public const string DotFrames = "⣽⣾⣷⣯⣟⡿⢿⣻";
+        public const string DotSpinFrames = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+        public const string SingleDotFrames = "⠈⠐⠠⢀⡀⠄⠂⠁";
+        public const string DashFrames = @"\|/-";
 
         private int _frame;
         private bool _spinning;
+
+        public string? Frames { get; set; }
+        public RgbPixel? Color { get; set; }
+        public TimeSpan? TimeBetweenFrames { get; set; }
 
         public CalliopeCmd? Init()
         {
@@ -23,10 +26,6 @@ namespace Carahsoft.Calliope.Components
             if (msg is SpinMsg && _spinning)
             {
                 _frame++;
-                if (_frame >= BRAILLE_LOADER.Length)
-                {
-                    _frame = 0;
-                }
                 return Spin();
             }
 
@@ -36,7 +35,9 @@ namespace Carahsoft.Calliope.Components
         public string View()
         {
             if (_spinning)
-                return BRAILLE_LOADER[_frame].ToString();
+            {
+                return GetFrame(Frames ?? DashFrames);
+            }
 
             return "";
         }
@@ -46,7 +47,11 @@ namespace Carahsoft.Calliope.Components
             _spinning = true;
             return CalliopeCmd.Make(async () =>
             {
-                await Task.Delay(100);
+                if (TimeBetweenFrames != null)
+                    await Task.Delay(TimeBetweenFrames.Value);
+                else
+                    await Task.Delay(100);
+
                 return new SpinMsg();
             });
         }
@@ -55,6 +60,14 @@ namespace Carahsoft.Calliope.Components
         {
             _spinning = false;
             _frame = 0;
+        }
+
+        private string GetFrame(string frames)
+        {
+            var frameChar = frames[_frame % frames.Length].ToString();
+            if (Color != null)
+                return AnsiTextHelper.ColorText(frameChar, Color.Value);
+            return frameChar;
         }
 
         private class SpinMsg : CalliopeMsg { }
