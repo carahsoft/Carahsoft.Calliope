@@ -222,7 +222,15 @@ namespace Carahsoft.Calliope.AnsiConsole
             {
                 while (_commandChannel.Reader.TryRead(out var cmd))
                 {
-                    var msg = await cmd.CommandFunc();
+                    CalliopeMsg msg;
+                    try
+                    {
+                        msg = await cmd.CommandFunc();
+                    }
+                    catch (Exception ex)
+                    {
+                        msg = new ErrorMsg(ex);
+                    }
                     await _messageChannel.Writer.WriteAsync(msg);
                 }
             }
