@@ -30,11 +30,12 @@ public class LoadingBarExample : ICalliopeProgram
 
     public CalliopeCmd? Update(CalliopeMsg msg)
     {
-        if (msg is QuitMsg)
-            return CalliopeCmd.Quit;
-
         if (msg is KeyPressMsg kpm)
         {
+            if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
+            {
+                return CalliopeCmd.Quit;
+            }
             if (kpm.Key == ConsoleKey.RightArrow)
             {
                 var updatedPercent = _lb.Percent + 5;
@@ -54,6 +55,10 @@ public class LoadingBarExample : ICalliopeProgram
 
     public string View()
     {
-        return _lb.View();
+        return $"""
+            Gradient loading bar example: press right arrow to progress the
+            loading bar, and left arrow to decrease progress.
+            {_lb.View()}
+            """;
     }
 }

@@ -19,6 +19,10 @@ public class LoadingSpinnerExample : ICalliopeProgram
     {
         if (msg is KeyPressMsg kpm)
         {
+            if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
+            {
+                return CalliopeCmd.Quit;
+            }
             if (kpm.Key == ConsoleKey.D1)
             {
                 _spin.Frames = LoadingSpinner.DotFrames;

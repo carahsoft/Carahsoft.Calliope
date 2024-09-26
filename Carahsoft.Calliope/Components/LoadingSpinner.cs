@@ -9,11 +9,23 @@ namespace Carahsoft.Calliope.Components
         public const string SingleDotFrames = "⠈⠐⠠⢀⡀⠄⠂⠁";
         public const string DashFrames = @"\|/-";
 
-        private int _frame;
+        private uint _frame;
         private bool _spinning;
 
+        /// <summary>
+        /// String of characters that correspond to the different frames
+        /// displayed as the loading spinner. Defaults to <see cref="DashFrames"/>.
+        /// The <see cref="LoadingSpinner"/> class has several other available
+        /// default spinners, or you can supply your own here.
+        /// </summary>
         public string? Frames { get; set; }
+        /// <summary>
+        /// If supplied, this is the color that the spinner will be rendered as.
+        /// </summary>
         public RgbPixel? Color { get; set; }
+        /// <summary>
+        /// Defaults to 100ms
+        /// </summary>
         public TimeSpan? TimeBetweenFrames { get; set; }
 
         public CalliopeCmd? Init()
@@ -64,7 +76,7 @@ namespace Carahsoft.Calliope.Components
 
         private string GetFrame(string frames)
         {
-            var frameChar = frames[_frame % frames.Length].ToString();
+            var frameChar = frames[(int)(_frame % frames.Length)].ToString();
             if (Color != null)
                 return AnsiTextHelper.ColorText(frameChar, Color.Value);
             return frameChar;
