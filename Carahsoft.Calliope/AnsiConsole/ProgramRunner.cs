@@ -103,8 +103,6 @@ namespace Carahsoft.Calliope.AnsiConsole
             {
                 while (await _renderTimer.WaitForNextTickAsync())
                 {
-                    if (_quitting)
-                        break;
 
                     if (Console.BufferHeight != _screenHeight || Console.BufferWidth != _screenWidth)
                     {
@@ -136,10 +134,16 @@ namespace Carahsoft.Calliope.AnsiConsole
                     }
                     catch (Exception ex)
                     {
+                        await _messageChannel.Writer.WriteAsync(new ErrorMsg(ex));
+                        // TODO: do we need to panic here?
                         Console.Error.WriteLine(ex);
                         Environment.Exit(1);
                     }
+
                     _updated = false;
+
+                    if (_quitting)
+                        break;
                 }
             });
 
