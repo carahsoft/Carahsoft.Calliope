@@ -2,7 +2,7 @@
 {
     public abstract class CalliopeRenderer : IRenderer
     {
-        public abstract char CharAtPoint(int x, int y, RgbPixel pixel, CalliopeOptions options);
+        public abstract char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options);
 
         /// <summary>
         /// Calculate the perceived brightness of the given pixel
@@ -12,7 +12,7 @@
         /// A byte from 0-100, 0 being completely black and
         /// 100 being completely white
         /// </returns>
-        internal static byte PerceivedBrightness(RgbPixel pixel)
+        internal static byte PerceivedBrightness(RgbColor pixel)
         {
             var dr = (decimal)pixel.Red / 255;
             var dg = (decimal)pixel.Green / 255;

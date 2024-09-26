@@ -123,7 +123,7 @@ namespace Carahsoft.Calliope.Components
             _selectList.Items = filteredItems;
             sb.AppendLine(_selectList.View());
 
-            RgbPixel helpColor = new() { Blue = 100, Red = 100, Green = 100 };
+            RgbColor helpColor = new() { Blue = 100, Red = 100, Green = 100 };
             var help = Searching switch
             {
                 true => AnsiTextHelper.ColorText("[Esc]-clear [Enter]-search", helpColor),

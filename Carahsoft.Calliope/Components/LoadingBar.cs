@@ -10,9 +10,9 @@ namespace Carahsoft.Calliope.Components
 {
     public class LoadingBarOptions
     {
-        public RgbPixel? Color { get; set; }
-        public RgbPixel? GradientStart { get; set; }
-        public RgbPixel? GradientEnd { get; set; }
+        public RgbColor? Color { get; set; }
+        public RgbColor? GradientStart { get; set; }
+        public RgbColor? GradientEnd { get; set; }
     }
 
     public class LoadingBar : ICalliopeProgram
@@ -28,7 +28,7 @@ namespace Carahsoft.Calliope.Components
         public LoadingBar(LoadingBarOptions options)
         {
             if (options.Color == null)
-                options.Color = new RgbPixel { Blue = 255, Green = 255, Red = 255 };
+                options.Color = new RgbColor { Blue = 255, Green = 255, Red = 255 };
             _options = options;
         }
 
@@ -54,7 +54,7 @@ namespace Carahsoft.Calliope.Components
 
             if (_options.GradientStart != null && _options.GradientEnd != null)
             {
-                return AnsiTextHelper.GradientLine(
+                return AnsiTextHelper.ColorTextGradient(
                     loadedString + unloadedString,
                     _options.GradientStart.Value,
                     _options.GradientEnd.Value)

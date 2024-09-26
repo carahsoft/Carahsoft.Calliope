@@ -17,8 +17,8 @@ public class LoadingBarExample : ICalliopeProgram
     {
         _lb = new LoadingBar(new LoadingBarOptions
         {
-            GradientStart = new RgbPixel { Red = 45, Green = 156, Blue = 218 },
-            GradientEnd = new RgbPixel { Red = 255, Green = 99, Blue = 88 }
+            GradientStart = new RgbColor { Red = 45, Green = 156, Blue = 218 },
+            GradientEnd = new RgbColor { Red = 255, Green = 99, Blue = 88 }
         });
     }
 

@@ -85,7 +85,7 @@ namespace Carahsoft.Calliope.Animations
                 var p = (decimal)(i % 100) / 100;
                 var g = (byte)(p * 255);
                 var ig = (byte)(255 - g);
-                RgbPixel c = i switch
+                RgbColor c = i switch
                 {
                     int x when x < 100 => new(255, g, 0),
                     int x when x < 200 => new(ig, 255, 0),

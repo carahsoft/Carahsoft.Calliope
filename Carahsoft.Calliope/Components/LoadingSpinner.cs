@@ -22,7 +22,7 @@ namespace Carahsoft.Calliope.Components
         /// <summary>
         /// If supplied, this is the color that the spinner will be rendered as.
         /// </summary>
-        public RgbPixel? Color { get; set; }
+        public RgbColor? Color { get; set; }
         /// <summary>
         /// Defaults to 100ms
         /// </summary>

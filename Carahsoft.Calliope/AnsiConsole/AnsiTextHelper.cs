@@ -8,7 +8,7 @@ namespace Carahsoft.Calliope.AnsiConsole
 {
     public static class AnsiTextHelper
     {
-        public static string ColorText(string text, RgbPixel color, RgbPixel? background = null)
+        public static string ColorText(string text, RgbColor color, RgbColor? background = null)
         {
             var sb = new StringBuilder();
             sb.Append("\x1b[");
@@ -26,7 +26,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             return sb.ToString(); 
         }
 
-        public static string GradientLine(string text, RgbPixel start, RgbPixel end)
+        public static string ColorTextGradient(string text, RgbColor start, RgbColor end)
         {
             var sb = new StringBuilder();
             var steps = text.Length;
@@ -37,7 +37,7 @@ namespace Carahsoft.Calliope.AnsiConsole
 
             foreach (var step in Enumerable.Range(0, steps))
             {
-                var color = new RgbPixel
+                var color = new RgbColor
                 {
                     Red = (byte)((step * stepR) + start.Red),
                     Green = (byte)((step * stepG) + start.Green),
@@ -106,8 +106,9 @@ namespace Carahsoft.Calliope.AnsiConsole
                 }
                 // TODO: handle full width chars
 
-                // this assumes the only other characters passed to this method are printable
-                count++;
+                // This should catch most unprintable characters
+                if (!char.IsControl(c))
+                    count++;
             }
             return line;
         }

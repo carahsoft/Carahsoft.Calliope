@@ -145,7 +145,7 @@ namespace Carahsoft.Calliope
             var bmp = SKBitmap.FromImage(image);
 
             _pixels = bmp.Pixels
-                .Select(x => new RgbPixel { Red = x.Red, Green = x.Green, Blue = x.Blue })
+                .Select(x => new RgbColor { Red = x.Red, Green = x.Green, Blue = x.Blue })
                 .ToArray();
             _bytes = bmp.Bytes;
         }
@@ -159,7 +159,7 @@ namespace Carahsoft.Calliope
         private ConsoleColor _color;
         private ConsoleColor _bgcolor;
         private byte[] _bytes;
-        private RgbPixel[] _pixels;
+        private RgbColor[] _pixels;
         private char[] _outputChars;
         private readonly char _drawChar;
         private readonly char _spaceChar;
@@ -170,11 +170,11 @@ namespace Carahsoft.Calliope
         private readonly IRenderer _renderer;
     }
 
-    public record struct RgbPixel
+    public record struct RgbColor
     {
-        public RgbPixel() { }
+        public RgbColor() { }
 
-        public RgbPixel(byte red, byte green, byte blue)
+        public RgbColor(byte red, byte green, byte blue)
         {
             Red = red;
             Green = green;

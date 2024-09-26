@@ -8,7 +8,7 @@ namespace Carahsoft.Calliope.Renderers
 {
     public class DefaultRenderer : CalliopeRenderer
     {
-        public override char CharAtPoint(int x, int y, RgbPixel pixel, CalliopeOptions options)
+        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options)
         {
             return PerceivedBrightness(pixel) > 90 ? options.SpaceChar : options.DrawChar;
         }

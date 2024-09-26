@@ -10,7 +10,7 @@ namespace Carahsoft.Calliope.Renderers
     {
         private readonly Random _rand = new Random();
 
-        public override char CharAtPoint(int x, int y, RgbPixel pixel, CalliopeOptions options)
+        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options)
         {
             var line = _rand.Next(100);
 
