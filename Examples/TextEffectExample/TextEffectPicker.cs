@@ -56,6 +56,10 @@ namespace TextEffectExample
         {
             if (msg is KeyPressMsg kpm)
             {
+                if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
+                {
+                    return CalliopeCmd.Quit;
+                }
                 if (kpm.Key == ConsoleKey.D1)
                 {
                     _selectedIndex = 0;
@@ -91,7 +95,7 @@ namespace TextEffectExample
             };
             sb.AppendLine(rendered);
             sb.AppendLine(
-                Calliope.ColorText("Press 1-3 to cycle between the different effects!",
+                Calliope.ColorText("Press 1-3 to cycle between the different effects! ctrl+c to quit.",
                 RgbColors.Grey));
             sb.Append(GetDisplayFor("Rainbow", 1));
             sb.Append(GetDisplayFor("Twinkle", 2));

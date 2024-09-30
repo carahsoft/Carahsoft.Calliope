@@ -6,6 +6,7 @@ using TextEffectExample;
 
 await Calliope.NewProgram(new TextEffectPicker()).Fullscreen().RunAsync();
 
+/*
 Console.ForegroundColor = ConsoleColor.Blue;
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -38,4 +39,4 @@ await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainAnimation("Calliope", n
     FontSize = 28
 }));
 
-
+*/
