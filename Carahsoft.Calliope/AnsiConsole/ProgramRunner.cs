@@ -1,4 +1,5 @@
 ﻿using Carahsoft.Calliope.Constants;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Channels;
 
@@ -69,6 +70,11 @@ namespace Carahsoft.Calliope.AnsiConsole
         /// </returns>
         public async Task<TProgram> RunAsync()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                WindowsConsole.SetWindowsConsoleMode();
+            }
+
             var ctrlCRestore = Console.TreatControlCAsInput;
             var encodingRestore = Console.OutputEncoding;
             Console.TreatControlCAsInput = true;
