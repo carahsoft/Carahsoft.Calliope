@@ -10,8 +10,6 @@ using System.Threading.Tasks;
 namespace Carahsoft.Calliope.Animations
 {
 
-    public class BlizzardMsg : CalliopeMsg { }
-
     public class BlizzardAnimation : CalliopeAnimation
     {
 
@@ -174,5 +172,7 @@ namespace Carahsoft.Calliope.Animations
                 return new BlizzardMsg();
             });
         }
+
+        private class BlizzardMsg : CalliopeMsg { }
     }
 }

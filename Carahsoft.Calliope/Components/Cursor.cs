@@ -8,10 +8,6 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Components
 {
-    public class BlinkMsg : CalliopeMsg { }
-    public class StartBlinkMsg : CalliopeMsg { }
-    public class StopBlinkMsg : CalliopeMsg { }
-
     public class Cursor : ICalliopeProgram
     {
         /// <summary>
@@ -58,9 +54,8 @@ namespace Carahsoft.Calliope.Components
             if (CursorVisible)
             {
                 return AnsiTextHelper.ColorText(CursorChar.ToString(),
-                    //new() { Red = 45, Green = 156, Blue = 218 },
-                    new() { },
-                    new() { Red = 255, Green = 255, Blue = 255 });
+                    RgbColors.Black,
+                    RgbColors.White);
             }
             else
             {
@@ -86,5 +81,9 @@ namespace Carahsoft.Calliope.Components
                 return new BlinkMsg();
             });
         }
+        private class BlinkMsg : CalliopeMsg { }
+        private class StartBlinkMsg : CalliopeMsg { }
+        private class StopBlinkMsg : CalliopeMsg { }
+
     }
 }

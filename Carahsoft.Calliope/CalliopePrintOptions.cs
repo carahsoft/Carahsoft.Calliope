@@ -16,7 +16,7 @@ namespace Carahsoft.Calliope
         public RgbColor? StartColor { get; set; }
         public RgbColor? EndColor { get; set; }
         public RgbColor? BackgroundColor { get; set; }
-        public char DrawChar { get; set; } = '\u2580';
+        public char DrawChar { get; set; } = CalliopeCharacters.HalfBlock;
         public char SpaceChar { get; set; } = ' ';
         public bool AntiAliasing { get; set; } = true;
         public CalliopeEffect Effect { get; set; } = CalliopeEffect.None;

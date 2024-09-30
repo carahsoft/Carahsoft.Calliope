@@ -147,7 +147,11 @@ namespace Carahsoft.Calliope
     }
 
 
-    public record struct RgbColor
+    /// <summary>
+    /// Struct representing console colors available to print in
+    /// consoles supporting 24 bit TrueColor
+    /// </summary>
+    public readonly record struct RgbColor
     {
         public RgbColor() { }
 
@@ -161,6 +165,25 @@ namespace Carahsoft.Calliope
         public byte Red { get; init; }
         public byte Green { get; init; }
         public byte Blue { get; init; }
+
+        /// <summary>
+        /// Implicitly convert from SKColor to RgbColor. Does not support
+        /// alpha channel.
+        /// </summary>
+        /// <param name="color"></param>
+        public static implicit operator RgbColor(SKColor color)
+        {
+            return new(color.Red, color.Green, color.Blue);
+        }
+
+        /// <summary>
+        /// Explicitly convert to SKColor
+        /// </summary>
+        /// <param name="color"></param>
+        public static explicit operator SKColor(RgbColor color)
+        {
+            return new(color.Red, color.Green, color.Blue);
+        }
     }
 
     /// <summary>
@@ -169,7 +192,10 @@ namespace Carahsoft.Calliope
     public static class RgbColors
     {
         public static RgbColor Red { get; } = new RgbColor(255, 0, 0);
-        public static RgbColor Green { get; } = new RgbColor(0, 128, 0);
+        public static RgbColor Green { get; } = new RgbColor(0, 175, 0);
         public static RgbColor Blue { get; } = new RgbColor(0, 0, 255);
+        public static RgbColor CarahBlue { get; } = new RgbColor(49, 85, 164);
+        public static RgbColor White { get; } = new RgbColor(255, 255, 255);
+        public static RgbColor Black { get; } = new RgbColor(0, 0, 0);
     }
 }

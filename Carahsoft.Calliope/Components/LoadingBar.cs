@@ -28,7 +28,7 @@ namespace Carahsoft.Calliope.Components
         public LoadingBar(LoadingBarOptions options)
         {
             if (options.Color == null)
-                options.Color = new RgbColor { Blue = 255, Green = 255, Red = 255 };
+                options.Color = RgbColors.White;
             _options = options;
         }
 

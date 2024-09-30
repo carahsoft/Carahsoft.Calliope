@@ -16,15 +16,15 @@ Console.OutputEncoding = Encoding.UTF8;
 //    FontSize = 18
 //}));
 
-//await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainbowAnimation("Calliope", new CalliopeOptions
-//{
-//    Effect = CalliopeEffect.None,
-//    Font = "Comic Sans MS",
-//    Width = 100,
-//    Height = 40,
-//    DrawChar = '\u2588',
-//    FontSize = 28
-//}));
+await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainbowAnimation("Calliope", new CalliopePrintOptions
+{
+    Effect = CalliopeEffect.None,
+    Font = "Comic Sans MS",
+    Width = 100,
+    Height = 34,
+    DrawChar = '\u2588',
+    FontSize = 28
+}));
 
 await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainAnimation("Calliope", new CalliopePrintOptions
 {

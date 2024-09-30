@@ -72,7 +72,7 @@ public class LoadingSpinnerExample : ICalliopeProgram
     {
         if (index == _selectedIndex)
         {
-            return AnsiTextHelper.ColorText($"({index}) {name} ", new(45, 156, 218));
+            return Calliope.ColorText($"({index}) {name} ", new(45, 156, 218));
         }
         else
         {

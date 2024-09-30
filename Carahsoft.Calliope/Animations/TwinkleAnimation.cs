@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Animations
 {
-    public class TwinkleMsg : CalliopeMsg { }
-
     public class TwinkleAnimation : CalliopeAnimation
     {
         private readonly Random rand = new Random();
@@ -87,5 +85,7 @@ namespace Carahsoft.Calliope.Animations
                 return new TwinkleMsg();
             });
         }
+
+        private class TwinkleMsg : CalliopeMsg { }
     }
 }
