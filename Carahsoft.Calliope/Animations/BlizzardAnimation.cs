@@ -44,7 +44,7 @@ namespace Carahsoft.Calliope.Animations
                 }
             }
 
-            if (msg is BlizzardMsg tm)
+            if (msg is BlizzardMsg)
             {
                 Render = GenerateText();
                 return Snow();
