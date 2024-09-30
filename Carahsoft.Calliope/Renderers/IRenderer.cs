@@ -8,6 +8,6 @@ namespace Carahsoft.Calliope.Renderers
 {
     public interface IRenderer
     {
-        char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options);
+        char CharAtPoint(int x, int y, RgbColor pixel, CalliopePrintOptions options);
     }
 }

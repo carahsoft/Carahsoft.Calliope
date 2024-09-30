@@ -9,7 +9,7 @@ namespace Carahsoft.Calliope.Renderers
     public class UnicornRenderer : CalliopeRenderer
     {
         private readonly Random _rand = new Random();
-        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options)
+        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopePrintOptions options)
         {
             var line = _rand.Next() % 15;
             var val = PerceivedBrightness(pixel) > 90;

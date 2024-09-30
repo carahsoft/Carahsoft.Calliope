@@ -8,119 +8,72 @@ namespace Carahsoft.Calliope
     {
         public SkiaConverter(
             string bannerText,
-            CalliopeOptions? options = null)
+            CalliopePrintOptions? options = null)
         {
-            _options = options ?? new CalliopeOptions();
+            _options = options ?? new CalliopePrintOptions();
             BannerText = bannerText;
             Width = _options.Width;
             Height = _options.Height;
             FontName = _options.Font;
             FontSize = _options.FontSize;
-            _color = _options.FontStartColor;
-            _drawChar = _options.DrawChar;
-            _spaceChar = _options.SpaceChar;
-            _drawThreshold = _options.DrawThreshold;
-            _antiAliasing = _options.AntiAliasing;
-            _bgcolor = _options.ConsoleBackgroundColor;
             _renderer = _options.Renderer ?? CalliopeRenderer.RendererFromEffect(_options.Effect);
-            DrawText();
-            
-            _outputChars = new char[Width * Height];
-            _matrix = new int[Height, Width];
-
-
-            ConvertToMatrix();
-            RemovePadding();
         }
 
         public void Print()
         {
-            var fgSnap = Console.ForegroundColor;
-            var bgSnap = Console.BackgroundColor;
-
-            Console.ForegroundColor = _color;
-            Console.BackgroundColor = _bgcolor;
-
             Console.WriteLine(ToString());
-
-            Console.ForegroundColor = fgSnap;
-            Console.BackgroundColor = bgSnap;
         }
 
-        private void ConvertToMatrix()
+        private char[] ConvertToMatrix(RgbColor[] pixels)
         {
+            var outputChars = new char[Width * Height];
             for (var i = 0; i < Height; i++)
             {
                 for (var j = 0; j < Width; j++)
                 {
                     var idx = (i * Width) + j;
-                    var px = _pixels[idx];
-                    _outputChars[idx] = _renderer.CharAtPoint(i, j, px, _options);
+                    var px = pixels[idx];
+                    outputChars[idx] = _renderer.CharAtPoint(i, j, px, _options);
                 }
             }
-
-            var offset = 0;
-            
-            for (var i = 0; i < Height; i++)
-            {
-                for (var j = 0; j < Width; j++)
-                {
-                    _matrix[i, j] = _bytes[offset] >= _drawThreshold ? 0 : 1;
-                    offset += 4; //advance 4 bytes (r, g, b, opacity)
-                }
-            }
+            return outputChars;
         }
 
-        private void RemovePadding()
+        private string RenderWithoutPadding()
         {
-            List<int[]> lines = new();
+            var pixels = DrawText();
+            var outputChars = ConvertToMatrix(pixels);
+            var sb = new StringBuilder();
             for (var i = 0; i < Height; i++)
             {
                 var blankLine = true;
-                int[] line = new int[Width];
+                char[] line = new char[Width];
                 for (var j = 0; j < Width; j++)
                 {
-                    if (_matrix[i, j] > 0)
+                    var cur = outputChars[(i * Width) + j];
+                    if (cur != _options.SpaceChar)
                     {
                         blankLine = false;
-                        break;
                     }
-                    line[j] = _matrix[i, j];
+                    line[j] = cur;
                 }
+
                 if (!blankLine)
                 {
-                    lines.Add(line);
+                    foreach (var c in line)
+                        sb.Append(c);
+                    sb.AppendLine();
                 }
             }
+            return sb.ToString();
         }
 
         public override string ToString()
         {
-            var sb = new StringBuilder();
-
-            /*
-            for (var i = 0; i < Height; i++)
-            {
-                for (var j = 0; j < Width; j++)
-                {
-                    sb.Append(GetCharAt(i, j, _matrix[i, j]));
-                }
-                sb.Append('\n');
-            }
-            */
-            for (int i = 0; i < Height; i++)
-            {
-                for (int j = 0; j < Width; j++)
-                {
-                    sb.Append(_outputChars[(i * Width) + j]);
-                }
-                sb.Append('\n');
-            }
-
-            return sb.ToString();
+            return RenderWithoutPadding();
         }
 
-        private void DrawText()
+        private RgbColor[] DrawText()
         {
             var skInfo = new SKImageInfo(Width, Height);
             using var surface = SKSurface.Create(skInfo);
@@ -131,7 +84,7 @@ namespace Carahsoft.Calliope
             using (var paint = new SKPaint())
             {
                 paint.TextSize = FontSize;
-                paint.IsAntialias = _antiAliasing;
+                paint.IsAntialias = _options.AntiAliasing;
                 paint.Color = SKColors.Black;
                 paint.IsStroke = false;
                 paint.Typeface = SKTypeface.FromFamilyName(FontName);
@@ -144,10 +97,9 @@ namespace Carahsoft.Calliope
             using var image = surface.Snapshot();
             var bmp = SKBitmap.FromImage(image);
 
-            _pixels = bmp.Pixels
+            return bmp.Pixels
                 .Select(x => new RgbColor { Red = x.Red, Green = x.Green, Blue = x.Blue })
                 .ToArray();
-            _bytes = bmp.Bytes;
         }
 
         public string BannerText { get; }
@@ -156,17 +108,7 @@ namespace Carahsoft.Calliope
         public string FontName { get; }
         public int FontSize { get; }
 
-        private ConsoleColor _color;
-        private ConsoleColor _bgcolor;
-        private byte[] _bytes;
-        private RgbColor[] _pixels;
-        private char[] _outputChars;
-        private readonly char _drawChar;
-        private readonly char _spaceChar;
-        private readonly byte _drawThreshold;
-        private readonly bool _antiAliasing;
-        private readonly int[,] _matrix;
-        private readonly CalliopeOptions _options;
+        private readonly CalliopePrintOptions _options;
         private readonly IRenderer _renderer;
     }
 

@@ -31,7 +31,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         private int _linesRendered = 0;
         private bool _updated = true;
         private bool _quitting = false;
-        private string[] _previousRender;
+        private string[]? _previousRender;
         private int _screenHeight = 0;
         private int _screenWidth = 0;
         private bool _flush;
@@ -326,7 +326,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             _linesRendered = renderLines.Length;
 
             _flush = false;
-            _opts.StandardOut.Write(sb.ToString());
+            _opts.StandardOut!.Write(sb.ToString());
             _previousRender = renderLines!;
         }
     }

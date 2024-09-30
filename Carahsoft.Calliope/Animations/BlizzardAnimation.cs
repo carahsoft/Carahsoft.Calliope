@@ -21,7 +21,7 @@ namespace Carahsoft.Calliope.Animations
         private string Render { get; set; }
 
 
-        public BlizzardAnimation(string bannerText, CalliopeOptions options): base(bannerText, options)
+        public BlizzardAnimation(string bannerText, CalliopePrintOptions options): base(bannerText, options)
         {
             SnowMap = new int[Options.Width, Options.Height];
 

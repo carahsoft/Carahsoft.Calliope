@@ -8,7 +8,7 @@ namespace Carahsoft.Calliope.Renderers
 {
     public class ScanlineGradientRenderer : CalliopeRenderer
     {
-        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options)
+        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopePrintOptions options)
         {
             var line = (int)(((double)x / options.Height) * 8);
             var val = PerceivedBrightness(pixel) > 90;

@@ -2,7 +2,7 @@
 {
     public abstract class CalliopeRenderer : IRenderer
     {
-        public abstract char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options);
+        public abstract char CharAtPoint(int x, int y, RgbColor pixel, CalliopePrintOptions options);
 
         /// <summary>
         /// Calculate the perceived brightness of the given pixel

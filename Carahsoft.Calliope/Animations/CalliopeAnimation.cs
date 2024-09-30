@@ -9,9 +9,9 @@ namespace Carahsoft.Calliope.Animations
     public abstract class CalliopeAnimation : ICalliopeProgram
     {
         public string RenderText { get; }
-        public CalliopeOptions Options { get; }
+        public CalliopePrintOptions Options { get; }
 
-        protected CalliopeAnimation(string renderText, CalliopeOptions options)
+        protected CalliopeAnimation(string renderText, CalliopePrintOptions options)
         {
             RenderText = renderText;
             Options = options;
@@ -24,13 +24,13 @@ namespace Carahsoft.Calliope.Animations
         public abstract string View();
 
 
-        public static RainbowAnimation RainbowAnimation(string renderText, CalliopeOptions options)
+        public static RainbowAnimation RainbowAnimation(string renderText, CalliopePrintOptions options)
             => new RainbowAnimation(renderText, options);
 
-        public static TwinkleAnimation TwinkleAnimation(string renderText, CalliopeOptions options)
+        public static TwinkleAnimation TwinkleAnimation(string renderText, CalliopePrintOptions options)
             => new TwinkleAnimation(renderText, options);
 
-        public static BlizzardAnimation RainAnimation(string renderText, CalliopeOptions options)
+        public static BlizzardAnimation RainAnimation(string renderText, CalliopePrintOptions options)
     => new BlizzardAnimation(renderText, options);
     }
 }

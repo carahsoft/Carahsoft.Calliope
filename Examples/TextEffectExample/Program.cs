@@ -26,7 +26,7 @@ Console.OutputEncoding = Encoding.UTF8;
 //    FontSize = 28
 //}));
 
-await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainAnimation("Calliope", new CalliopeOptions
+await Calliope.PrintAnimatedEffect(CalliopeAnimation.RainAnimation("Calliope", new CalliopePrintOptions
 {
     Effect = CalliopeEffect.None,
     Font = "Comic Sans MS",

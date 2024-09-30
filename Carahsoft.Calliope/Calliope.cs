@@ -25,7 +25,7 @@ namespace Carahsoft.Calliope
             byte drawThreshold = 255,
             bool antiAliasing = true)
         {
-            Print(bannerText, new CalliopeOptions
+            Print(bannerText, new CalliopePrintOptions
             {
                 AntiAliasing = antiAliasing,
                 Width = width,
@@ -41,7 +41,7 @@ namespace Carahsoft.Calliope
 
         public static void Print(
             string bannerText,
-            CalliopeOptions options)
+            CalliopePrintOptions options)
         {
             var skConverter = new SkiaConverter(
                 bannerText: bannerText,
@@ -58,7 +58,7 @@ namespace Carahsoft.Calliope
             await NewProgram(animator).RunAsync();
         }
 
-        public static string PrintString(string bannerText, CalliopeOptions options)
+        public static string PrintString(string bannerText, CalliopePrintOptions options)
         {
             var skConverter = new SkiaConverter(
                 bannerText: bannerText,

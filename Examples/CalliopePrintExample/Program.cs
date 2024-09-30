@@ -16,7 +16,7 @@ Calliope.Print(
     antiAliasing: false
 );
 
-Calliope.Print("carahsoft", new CalliopeOptions
+Calliope.Print("carahsoft", new CalliopePrintOptions
 {
     //Font = "Ubuntu Mono",
     Font = "Trebuchet MS",
@@ -29,7 +29,7 @@ Calliope.Print("carahsoft", new CalliopeOptions
     DrawChar = '\u2588'
 });
 
-Calliope.Print("carahsoft", new CalliopeOptions
+Calliope.Print("carahsoft", new CalliopePrintOptions
 {
     //Font = "Ubuntu Mono",
     Font = "Trebuchet MS",
@@ -42,7 +42,7 @@ Calliope.Print("carahsoft", new CalliopeOptions
     Effect = CalliopeEffect.ScanlineGradient
 });
 
-Calliope.Print("CARAHSOFT", new CalliopeOptions
+Calliope.Print("CARAHSOFT", new CalliopePrintOptions
 {
     Font = "Trebuchet MS",
     Width = 65,
@@ -53,7 +53,7 @@ Calliope.Print("CARAHSOFT", new CalliopeOptions
     Effect = CalliopeEffect.Phoenix
 });
 
-Calliope.Print("UNICORN", new CalliopeOptions
+Calliope.Print("UNICORN", new CalliopePrintOptions
 {
     Font = "Fira Code NF",
     Width = 70,

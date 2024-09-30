@@ -203,7 +203,7 @@ public class CounterProgram : ICalliopeProgram
 
 ## Calliope ASCII Rendering
 
-Calliope can render text to ASCII art using the []
+Calliope can render text to ASCII art using the `Calliope.Print` and `Calliope.PrintString` methods. The `CalliopePrintOptions` class has all of the available options
 
 ## Roadmap
 

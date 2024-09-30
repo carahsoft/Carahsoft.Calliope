@@ -13,7 +13,7 @@ namespace Carahsoft.Calliope.Renderers
         private const char DARK = '\u2593';
         //private const char FULL = '\u2588';
 
-        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options)
+        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopePrintOptions options)
         {
             var brightness = PerceivedBrightness(pixel);
 

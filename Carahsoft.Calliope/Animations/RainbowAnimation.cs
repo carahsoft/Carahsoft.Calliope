@@ -9,7 +9,7 @@ namespace Carahsoft.Calliope.Animations
 
         public int Frame { get; private set; }
 
-        public RainbowAnimation(string renderText, CalliopeOptions options)
+        public RainbowAnimation(string renderText, CalliopePrintOptions options)
             : base(renderText, options)
         {
             var renderLines = Calliope.PrintString(renderText, options).Replace("\r\n", "\n").Split('\n');

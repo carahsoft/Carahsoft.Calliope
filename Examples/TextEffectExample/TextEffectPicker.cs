@@ -25,7 +25,7 @@ namespace TextEffectExample
 
         public TextEffectPicker()
         {
-            _renderLines = Calliope.PrintString("carahsoft", new CalliopeOptions
+            _renderLines = Calliope.PrintString("carahsoft", new CalliopePrintOptions
             {
                 Effect = CalliopeEffect.None,
                 Font = "Trebuchet MS",

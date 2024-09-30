@@ -8,7 +8,7 @@ namespace Carahsoft.Calliope.Renderers
 {
     public class PhoenixRenderer : CalliopeRenderer
     {
-        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopeOptions options)
+        public override char CharAtPoint(int x, int y, RgbColor pixel, CalliopePrintOptions options)
         {
             var line = (int)((((double)(y) / options.Width)) * 8);
             var val = PerceivedBrightness(pixel) > 90;

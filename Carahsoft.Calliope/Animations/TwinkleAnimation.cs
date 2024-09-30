@@ -17,7 +17,7 @@ namespace Carahsoft.Calliope.Animations
         private string Render { get; set; }
 
 
-        public TwinkleAnimation(string bannerText, CalliopeOptions options)
+        public TwinkleAnimation(string bannerText, CalliopePrintOptions options)
             : base(bannerText, options)
         {
             // always display with the GalacticCrush effect
