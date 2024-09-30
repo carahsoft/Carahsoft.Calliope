@@ -31,10 +31,8 @@ namespace Carahsoft.Calliope
                 Width = width,
                 DrawChar = drawChar,
                 SpaceChar = spaceChar,
-                DrawThreshold = drawThreshold,
                 Font = font,
                 FontSize = fontSize,
-                FontStartColor = fontColor,
                 Height = height
             });
         }
@@ -83,10 +81,33 @@ namespace Carahsoft.Calliope
             _hackerWriter.Hackify = true;
         }
 
-        public static void EnableHAckerText()
+        public static void DisableHackerText()
         {
             if(_hackerWriter!=null)
                 _hackerWriter.Hackify = false;
+        }
+
+        public static string ColorText(string text, RgbColor color, RgbColor? background = null)
+        {
+            return AnsiTextHelper.ColorText(text, color, background);
+        }
+
+        public static string ColorTextGradient(string text, RgbColor start, RgbColor end, RgbColor? background = null)
+        {
+            return AnsiTextHelper.ColorTextGradient(text, start, end, background);
+        }
+
+        /// <summary>
+        /// Truncates the given line to the given length, ignoring
+        /// unprinted ANSI escape sequences in the line. Line must be
+        /// a single line string without newlines.
+        /// </summary>
+        /// <remarks>
+        /// Currently does not support full-width characters
+        /// </remarks>
+        public static string TruncateLineToLength(string? line, int length)
+        {
+            return AnsiTextHelper.TruncateLineToLength(line, length);
         }
     }
 }

@@ -15,11 +15,12 @@ namespace Carahsoft.Calliope
         public int FontSize { get; set; } = 18;
         public RgbColor? StartColor { get; set; }
         public RgbColor? EndColor { get; set; }
-        public RgbColor? ConsoleBackgroundColor { get; set; }
+        public RgbColor? BackgroundColor { get; set; }
         public char DrawChar { get; set; } = '\u2580';
         public char SpaceChar { get; set; } = ' ';
         public bool AntiAliasing { get; set; } = true;
         public CalliopeEffect Effect { get; set; } = CalliopeEffect.None;
         public IRenderer? Renderer { get; set; } = null;
+        public bool RemovePadding { get; set; } = false;
     }
 }

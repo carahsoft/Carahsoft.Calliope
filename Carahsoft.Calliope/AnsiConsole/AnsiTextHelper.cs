@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.AnsiConsole
 {
-    public static class AnsiTextHelper
+    internal static class AnsiTextHelper
     {
         public static string ColorText(string text, RgbColor color, RgbColor? background = null)
         {
@@ -26,7 +26,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             return sb.ToString(); 
         }
 
-        public static string ColorTextGradient(string text, RgbColor start, RgbColor end)
+        public static string ColorTextGradient(string text, RgbColor start, RgbColor end, RgbColor? background = null)
         {
             var sb = new StringBuilder();
             var steps = text.Length;
@@ -43,7 +43,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                     Green = (byte)((step * stepG) + start.Green),
                     Blue = (byte)((step * stepB) + start.Blue),
                 };
-                sb.Append(ColorText(text[step].ToString(), color));
+                sb.Append(ColorText(text[step].ToString(), color, background));
             }
 
             return sb.ToString(); 

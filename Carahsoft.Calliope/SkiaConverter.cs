@@ -1,6 +1,7 @@
 ﻿using SkiaSharp;
 ﻿using Carahsoft.Calliope.Renderers;
 using System.Text;
+using Carahsoft.Calliope.AnsiConsole;
 
 namespace Carahsoft.Calliope
 {
@@ -44,24 +45,39 @@ namespace Carahsoft.Calliope
             var pixels = DrawText();
             var outputChars = ConvertToMatrix(pixels);
             var sb = new StringBuilder();
-            for (var i = 0; i < Height; i++)
+            if (_options.RemovePadding)
             {
-                var blankLine = true;
-                char[] line = new char[Width];
-                for (var j = 0; j < Width; j++)
+                for (var i = 0; i < Height; i++)
                 {
-                    var cur = outputChars[(i * Width) + j];
-                    if (cur != _options.SpaceChar)
+                    var blankLine = true;
+                    char[] line = new char[Width];
+                    for (var j = 0; j < Width; j++)
                     {
-                        blankLine = false;
+                        var cur = outputChars[(i * Width) + j];
+                        if (cur != _options.SpaceChar)
+                        {
+                            blankLine = false;
+                        }
+                        line[j] = cur;
                     }
-                    line[j] = cur;
-                }
 
-                if (!blankLine)
+                    if (!blankLine)
+                    {
+                        foreach (var c in line)
+                            sb.Append(c);
+                        sb.AppendLine();
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < Height; i++)
                 {
-                    foreach (var c in line)
-                        sb.Append(c);
+                    for (var j = 0; j < Width; j++)
+                    {
+                        var cur = outputChars[(i * Width) + j];
+                        sb.Append(cur);
+                    }
                     sb.AppendLine();
                 }
             }
@@ -70,7 +86,25 @@ namespace Carahsoft.Calliope
 
         public override string ToString()
         {
-            return RenderWithoutPadding();
+            var render = RenderWithoutPadding();
+
+            if (_options.StartColor != null)
+            {
+                if (_options.EndColor != null)
+                {
+                    return AnsiTextHelper.ColorTextGradient(
+                        render,
+                        _options.StartColor.Value,
+                        _options.EndColor.Value,
+                        _options.BackgroundColor);
+                }
+                return AnsiTextHelper.ColorText(
+                    render,
+                    _options.StartColor.Value,
+                    _options.BackgroundColor);
+            }
+
+            return render;
         }
 
         private RgbColor[] DrawText()
@@ -112,6 +146,7 @@ namespace Carahsoft.Calliope
         private readonly IRenderer _renderer;
     }
 
+
     public record struct RgbColor
     {
         public RgbColor() { }
@@ -126,5 +161,15 @@ namespace Carahsoft.Calliope
         public byte Red { get; init; }
         public byte Green { get; init; }
         public byte Blue { get; init; }
+    }
+
+    /// <summary>
+    /// Named colors
+    /// </summary>
+    public static class RgbColors
+    {
+        public static RgbColor Red { get; } = new RgbColor(255, 0, 0);
+        public static RgbColor Green { get; } = new RgbColor(0, 128, 0);
+        public static RgbColor Blue { get; } = new RgbColor(0, 0, 255);
     }
 }

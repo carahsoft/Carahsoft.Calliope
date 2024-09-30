@@ -73,7 +73,7 @@ namespace Carahsoft.Calliope.Animations
 
             // sb.Append("🚜");
 
-            foreach (char c in rendered)
+            foreach (char c in rendered.Replace("\r\n", "\n"))
             {
 
                 if (c == '\n')

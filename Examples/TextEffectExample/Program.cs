@@ -98,6 +98,6 @@ public class FadeInChar
         var blu = (byte)(pct * 20);
         var red = (byte)(pct * 20);
 
-        return AnsiTextHelper.ColorText(_initChar.ToString(), new() { Red = red, Green = grn, Blue = blu });
+        return Calliope.ColorText(_initChar.ToString(), new() { Red = red, Green = grn, Blue = blu });
     }
 }
