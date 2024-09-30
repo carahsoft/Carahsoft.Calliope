@@ -39,7 +39,7 @@ namespace TextEffectExample
                 Height = 20,
             };
             _rainbow = new RainbowAnimation("carahsoft", rainbowOptions);
-            _twinkle = new TwinkleAnimation("carahsoft", twinkleOptions);
+            _twinkle = new ChristmasAnimation("carahsoft", twinkleOptions);
             _blizzard = new BlizzardAnimation("carahsoft", blizzardOptions);
         }
 
@@ -98,7 +98,7 @@ namespace TextEffectExample
                 Calliope.ColorText("Press 1-3 to cycle between the different effects! ctrl+c to quit.",
                 RgbColors.Grey));
             sb.Append(GetDisplayFor("Rainbow", 1));
-            sb.Append(GetDisplayFor("Twinkle", 2));
+            sb.Append(GetDisplayFor("Christmas", 2));
             sb.Append(GetDisplayFor("Blizzard", 3));
             return sb.ToString();
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Animations
 {
-    public class TwinkleAnimation : CalliopeAnimation
+    public class ChristmasAnimation : CalliopeAnimation
     {
         private readonly Random rand = new Random();
 
@@ -15,7 +15,7 @@ namespace Carahsoft.Calliope.Animations
         private string Render { get; set; }
 
 
-        public TwinkleAnimation(string bannerText, CalliopePrintOptions options)
+        public ChristmasAnimation(string bannerText, CalliopePrintOptions options)
             : base(bannerText, options)
         {
             // always display with the GalacticCrush effect

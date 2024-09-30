@@ -27,8 +27,8 @@ namespace Carahsoft.Calliope.Animations
         public static RainbowAnimation RainbowAnimation(string renderText, CalliopePrintOptions options)
             => new RainbowAnimation(renderText, options);
 
-        public static TwinkleAnimation TwinkleAnimation(string renderText, CalliopePrintOptions options)
-            => new TwinkleAnimation(renderText, options);
+        public static ChristmasAnimation TwinkleAnimation(string renderText, CalliopePrintOptions options)
+            => new ChristmasAnimation(renderText, options);
 
         public static BlizzardAnimation RainAnimation(string renderText, CalliopePrintOptions options)
             => new BlizzardAnimation(renderText, options);
