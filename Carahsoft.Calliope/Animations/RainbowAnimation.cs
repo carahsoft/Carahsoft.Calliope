@@ -43,13 +43,15 @@ namespace Carahsoft.Calliope.Animations
         public override string View()
         {
             var sb = new StringBuilder();
-            foreach (var line in _renderComponents)
+            for (int i = 0; i < _renderComponents.Count; i++)
             {
-                foreach (var c in line)
+                foreach (var c in _renderComponents[i])
                 {
                     sb.Append(c.View(Frame));
                 }
-                sb.AppendLine();
+
+                if (i != _renderComponents.Count - 1)
+                    sb.AppendLine();
             }
             return sb.ToString();
         }

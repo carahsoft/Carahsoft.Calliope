@@ -58,19 +58,23 @@ namespace Carahsoft.Calliope.Animations
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (char c in rendered)
+            foreach (char c in rendered.Replace("\r\n", "\n"))
             {
                 if (rand.Next(100) < 10 && c != ' ')
                 {
                     sb.Append(AnsiTextHelper.ColorText(c.ToString(), new((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255))));
                 }
-                else
+                else if (c != ' ')
                 {
                     if (rand.Next(2) == 1)
                         sb.Append(AnsiTextHelper.ColorText(c.ToString(), new(0, (byte)(100 + rand.Next(155)), 0)));
 
                     else
                         sb.Append(AnsiTextHelper.ColorText(c.ToString(), new((byte)(100 + rand.Next(155)), 0, 0)));
+                }
+                else
+                {
+                    sb.Append(c);
                 }
             }
 

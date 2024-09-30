@@ -60,6 +60,7 @@ namespace Carahsoft.Calliope.AnsiConsole
 
             if (line.Contains('\r') || line.Contains('\n'))
             {
+                return line;
                 throw new ArgumentException("Multi-line string passed to LineDisplayLength", nameof(line));
             }
 

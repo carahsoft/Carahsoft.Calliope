@@ -1,4 +1,5 @@
 ﻿using Carahsoft.Calliope;
+using Carahsoft.Calliope.Animations;
 using Carahsoft.Calliope.Components;
 using System;
 using System.Collections.Generic;
@@ -10,45 +11,104 @@ namespace TextEffectExample
 {
     public class TextEffectPicker : ICalliopeProgram
     {
-        private readonly FilterableSelectList _picker = new FilterableSelectList(
-            [
-                new() { Value = "Rainbow" },
-                new() { Value = "Matrix" },
-                new() { Value = "Twinkle" },
-                new() { Value = "Rain"}
-            ]
-        );
-        private readonly string[] _renderLines;
+        private CalliopeAnimation _rainbow;
+        private CalliopeAnimation _twinkle;
+        private CalliopeAnimation _blizzard;
 
-        public string? Selection { get; init; }
-        public int Frame { get; init; }
+        private int _selectedIndex;
 
         public TextEffectPicker()
         {
-            _renderLines = Calliope.PrintString("carahsoft", new CalliopePrintOptions
+            var rainbowOptions = new CalliopePrintOptions
             {
-                Effect = CalliopeEffect.None,
                 Font = "Trebuchet MS",
                 Width = 100,
                 Height = 20,
                 DrawChar = '\u2588'
-            }).Replace("\r\n", "\n").Split('\n');
+            };
+            var twinkleOptions = new CalliopePrintOptions
+            {
+                Font = "Trebuchet MS",
+                Width = 100,
+                Height = 20,
+            };
+            var blizzardOptions = new CalliopePrintOptions
+            {
+                Font = "Trebuchet MS",
+                Width = 100,
+                Height = 20,
+            };
+            _rainbow = new RainbowAnimation("carahsoft", rainbowOptions);
+            _twinkle = new TwinkleAnimation("carahsoft", twinkleOptions);
+            _blizzard = new BlizzardAnimation("carahsoft", blizzardOptions);
         }
 
         public CalliopeCmd? Init()
         {
-            return null;
+            return CalliopeCmd.Combine(
+                _rainbow.Init(),
+                _twinkle.Init(),
+                _blizzard.Init()
+            );
         }
 
         public CalliopeCmd? Update(CalliopeMsg msg)
         {
-            throw new NotImplementedException();
+            if (msg is KeyPressMsg kpm)
+            {
+                if (kpm.Key == ConsoleKey.D1)
+                {
+                    _selectedIndex = 0;
+                    return null;
+                }
+                if (kpm.Key == ConsoleKey.D2)
+                {
+                    _selectedIndex = 1;
+                    return null;
+                }
+                if (kpm.Key == ConsoleKey.D3)
+                {
+                    _selectedIndex = 2;
+                    return null;
+                }
+            }
+
+            return CalliopeCmd.Combine(
+                _rainbow.Update(msg),
+                _twinkle.Update(msg),
+                _blizzard.Update(msg)
+            );
         }
 
         public string View()
         {
+            var sb = new StringBuilder();
+            var rendered = _selectedIndex switch
+            {
+                0 => _rainbow.View(),
+                1 => _twinkle.View(),
+                _ => _blizzard.View()
+            };
+            sb.AppendLine(rendered);
+            sb.AppendLine(
+                Calliope.ColorText("Press 1-3 to cycle between the different effects!",
+                RgbColors.Grey));
+            sb.Append(GetDisplayFor("Rainbow", 1));
+            sb.Append(GetDisplayFor("Twinkle", 2));
+            sb.Append(GetDisplayFor("Blizzard", 3));
+            return sb.ToString();
+        }
 
-            return "";
+        private string GetDisplayFor(string name, int key)
+        {
+            if (_selectedIndex == key - 1)
+            {
+                return Calliope.ColorText($"[ {key} - {name} ]   ", RgbColors.CarahBlue);
+            }
+            else
+            {
+                return Calliope.ColorText($"[ {key} - {name} ]   ", RgbColors.Grey);
+            }
         }
     }
 }
