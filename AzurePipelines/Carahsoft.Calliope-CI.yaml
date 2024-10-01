@@ -6,7 +6,7 @@ trigger:
     include:
     - Carahsoft.Calliope
 variables:
-  BaseVersion: 0.0
+  BaseVersion: 0.1
   BuildPlatform: AnyCPU
   ProjectName: Carahsoft.Calliope
   Solution: Carahsoft.Calliope.sln
