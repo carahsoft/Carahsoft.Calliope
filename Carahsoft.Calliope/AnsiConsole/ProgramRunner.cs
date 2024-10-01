@@ -121,7 +121,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                         if (_screenHeight < _linesRendered)
                         {
                             _linesRendered = _screenHeight;
-                            _previousRender = _previousRender[^_linesRendered..];
+                            _previousRender = _previousRender![^_linesRendered..];
                         }
 
                         await _messageChannel.Writer.WriteAsync(new WindowSizeChangeMsg
@@ -270,12 +270,20 @@ namespace Carahsoft.Calliope.AnsiConsole
 
         private async Task RenderBuffer()
         {
-            // TODO: Check if we need a render and skip render if not
             string?[] renderLines;
             await _renderLock.WaitAsync();
             try
             {
-                renderLines = _program.View().Replace("\r\n", "\n").Split("\n");
+                var view = _program.View();
+                using var reader = new StringReader(view);
+                List<string> lines = [];
+                var line = await reader.ReadLineAsync();
+                while (line != null)
+                {
+                    lines.Add(line);
+                    line = await reader.ReadLineAsync();
+                }
+                renderLines = [.. lines];
             }
             finally
             {
@@ -297,14 +305,13 @@ namespace Carahsoft.Calliope.AnsiConsole
             }
             else if (_linesRendered > 0)
             {
-                //Console.SetCursorPosition(0, 0);
                 for (int i = _linesRendered - 1; i >= 0; i--)
                 {
                     if (_flush || i >= renderLines.Length || string.IsNullOrEmpty(renderLines[i]))
                     {
                         sb.Append(AnsiConstants.ClearLine);
                     }
-                    else if (_previousRender[i] == renderLines[i])
+                    else if (_previousRender![i] == renderLines[i])
                     {
                         skipLines[i] = true;
                     }

@@ -203,14 +203,19 @@ public class CounterProgram : ICalliopeProgram
 
 ## Calliope ASCII Rendering
 
-Calliope can render text to ASCII art using the `Calliope.Print` and `Calliope.PrintString` methods. The `CalliopePrintOptions` class has all of the available options
+Calliope can render text to ASCII art using the `Calliope.Print` and `Calliope.PrintString` methods. The `CalliopePrintOptions` class has all of the available options for customizing the output string.
 
 ## Roadmap
 
-- [ ] Do things
-- [x] Do other things
+- [ ] Multi font support for different operating systems
+- [ ] Enable custom ASCII fonts (e.g. FIGlet via [Figgle](https://github.com/drewnoakes/figgle))
+- [ ] Focused element support (Focus/Blur) for more complex apps
+- [ ] Mouse support
+- [ ] Full width character support (using [wcwidth](https://github.com/spectreconsole/wcwidth)?)
+- [ ] Implement `Style` class to easily style many components together
+- [ ] Detect older terminals without TrueColor support and use color approximation to render colors in less depth
 
-### For SkiaSharp + single executable:
+## For SkiaSharp + single executable:
 If you are using the text-to-ascii functions and want to produce a single packaged executable file, you will need to add the following line to your .*proj file:
 
 ```xml
