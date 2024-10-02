@@ -107,6 +107,9 @@ namespace Carahsoft.Calliope.AnsiConsole
             if (cmd != null)
                 await _commandChannel.Writer.WriteAsync(cmd);
 
+            var messageLoopTask = Task.Run(MessageLoop);
+            var commandLoopTask = Task.Run(CommandLoop);
+
             // Render screen in background task while primary thread waits on user input
             var renderTask = Task.Run(async () =>
             {
@@ -151,12 +154,14 @@ namespace Carahsoft.Calliope.AnsiConsole
                     _updated = false;
 
                     if (_quitting)
+                    {
+                        await messageLoopTask;
+                        await commandLoopTask;
+                        await RenderBuffer();
                         break;
+                    }
                 }
             });
-
-            var messageLoopTask = Task.Run(MessageLoop);
-            var commandLoopTask = Task.Run(CommandLoop);
 
             // Start key capture
             await Task.Run(async () =>
@@ -231,6 +236,13 @@ namespace Carahsoft.Calliope.AnsiConsole
                         if (cmd != null)
                             await _commandChannel.Writer.WriteAsync(cmd);
                     }
+
+                    if (_quitting)
+                    {
+                        // tell the command loop to shutdown
+                        await _commandChannel.Writer.WriteAsync(new ShutdownCmd());
+                        return;
+                    }
                 }
             }
         }
@@ -242,6 +254,9 @@ namespace Carahsoft.Calliope.AnsiConsole
             {
                 while (_commandChannel.Reader.TryRead(out var cmd))
                 {
+                    if (cmd is ShutdownCmd)
+                        return;
+
                     _ = Task.Run(async () =>
                     {
                         CalliopeMsg msg;
@@ -349,6 +364,16 @@ namespace Carahsoft.Calliope.AnsiConsole
             _flush = false;
             _opts.StandardOut!.Write(sb.ToString());
             _previousRender = renderLines!;
+        }
+
+        /// <summary>
+        /// Special internal cmd class that tells the command loop to shutdown
+        /// </summary>
+        private class ShutdownCmd : CalliopeCmd
+        {
+            public ShutdownCmd() : base((Func<CalliopeMsg>)(() => null!))
+            {
+            }
         }
     }
 }
