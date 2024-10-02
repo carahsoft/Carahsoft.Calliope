@@ -139,26 +139,28 @@ namespace Carahsoft.Calliope.AnsiConsole
                     if (!_updated)
                         continue;
 
-                    try
-                    {
-                        await RenderBuffer();
-                    }
-                    catch (Exception ex)
-                    {
-                        await _messageChannel.Writer.WriteAsync(new ErrorMsg(ex));
-                        // TODO: do we need to panic here?
-                        Console.Error.WriteLine(ex);
-                        Environment.Exit(1);
-                    }
-
-                    _updated = false;
-
                     if (_quitting)
                     {
                         await messageLoopTask;
                         await commandLoopTask;
                         await RenderBuffer();
-                        break;
+                        return;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            await RenderBuffer();
+                        }
+                        catch (Exception ex)
+                        {
+                            await _messageChannel.Writer.WriteAsync(new ErrorMsg(ex));
+                            // TODO: do we need to panic here?
+                            Console.Error.WriteLine(ex);
+                            Environment.Exit(1);
+                        }
+
+                        _updated = false;
                     }
                 }
             });
