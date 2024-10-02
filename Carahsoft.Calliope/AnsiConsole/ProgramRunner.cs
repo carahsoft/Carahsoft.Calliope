@@ -1,4 +1,5 @@
 ﻿using Carahsoft.Calliope.Constants;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Channels;
@@ -7,6 +8,8 @@ namespace Carahsoft.Calliope.AnsiConsole
 {
     public class ProgramRunner<TProgram> where TProgram : ICalliopeProgram
     {
+        private const double MIN_KEY_RATE = 1000 / 60;
+
         private readonly TProgram _program;
         private readonly ProgramOptions _opts;
         private readonly TimeSpan _framerate;
@@ -109,7 +112,6 @@ namespace Carahsoft.Calliope.AnsiConsole
             {
                 while (await _renderTimer.WaitForNextTickAsync())
                 {
-
                     if (Console.BufferHeight != _screenHeight || Console.BufferWidth != _screenWidth)
                     {
                         _flush = true;
@@ -174,6 +176,8 @@ namespace Carahsoft.Calliope.AnsiConsole
                 }
             });
 
+            await renderTask;
+
             Console.TreatControlCAsInput = ctrlCRestore;
             Console.OutputEncoding = encodingRestore;
             _opts.StandardOut.Write(AnsiConstants.ShowCursor);
@@ -192,8 +196,12 @@ namespace Carahsoft.Calliope.AnsiConsole
                 {
                     return Console.ReadKey(true);
                 }
-                // Delay 1 frame before checking again
-                await Task.Delay(_framerate);
+                // Check for user input at minimum 60 times per second
+                var delay = (int)Math.Min(
+                    _framerate.TotalMilliseconds,
+                    MIN_KEY_RATE
+                );
+                await Task.Delay(delay);
             }
             return null;
         }

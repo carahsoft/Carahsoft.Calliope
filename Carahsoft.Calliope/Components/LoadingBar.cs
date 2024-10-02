@@ -40,6 +40,9 @@ namespace Carahsoft.Calliope.Components
 
         public CalliopeCmd? Update(CalliopeMsg msg)
         {
+            if (msg is SetPercentMsg spm)
+                Percent = spm.Percent;
+
             return null;
         }
 
@@ -64,6 +67,11 @@ namespace Carahsoft.Calliope.Components
             return AnsiTextHelper.ColorText(
                 loadedString + unloadedString + $" {Percent}%",
                 _options.Color!.Value);
+        }
+
+        public class SetPercentMsg : CalliopeMsg
+        {
+            public int Percent { get; set; }
         }
     }
 }
