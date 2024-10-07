@@ -71,38 +71,14 @@ namespace Carahsoft.Calliope
             }
             else
             {
-                // Don't mind me there is a time crunch
-                if (_options is MANKAPrintOptions)
+                for (var i = 0; i < Height; i++)
                 {
-                    for (var i = 0; i < Height / 2; i++)
+                    for (var j = 0; j < Width; j++)
                     {
-                        for (var j = 0; j < Width; j++)
-                        {
-                            sb.Append(' ');
-                        }
-                        sb.AppendLine();
+                        var cur = outputChars[(i * Width) + j];
+                        sb.Append(cur);
                     }
-                    for (var i = 0; i < Height/2; i++)
-                    {
-                        for (var j = 0; j < Width; j++)
-                        {
-                            var cur = outputChars[(i * Width) + j];
-                             sb.Append(cur);
-                        }
-                        sb.AppendLine();
-                    }
-                }
-                else
-                {
-                    for (var i = 0; i < Height; i++)
-                    {
-                        for (var j = 0; j < Width; j++)
-                        {
-                            var cur = outputChars[(i * Width) + j];
-                            sb.Append(cur);
-                        }
-                        sb.AppendLine();
-                    }
+                    sb.AppendLine();
                 }
             }
             return sb.ToString();
