@@ -23,4 +23,6 @@ namespace Carahsoft.Calliope
         public IRenderer? Renderer { get; set; } = null;
         public bool RemovePadding { get; set; } = false;
     }
+
+    public class MANKAPrintOptions : CalliopePrintOptions {  }
 }

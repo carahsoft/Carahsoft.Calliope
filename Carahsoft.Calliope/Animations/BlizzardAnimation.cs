@@ -161,9 +161,6 @@ namespace Carahsoft.Calliope.Animations
 
         }
 
-      
-
-
         private CalliopeCmd Snow()
         {
             return CalliopeCmd.Make(async () =>
