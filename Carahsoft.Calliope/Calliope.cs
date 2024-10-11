@@ -13,31 +13,6 @@ namespace Carahsoft.Calliope
 
         private static HackerWriter _hackerWriter;
 
-        [Obsolete("Use Print(string, CalliopePrintOptions) instead")]
-        public static void Print(
-            string bannerText,
-            int width = 120,
-            int height = 28,
-            string font = "Roboto",
-            int fontSize = 18,
-            ConsoleColor fontColor = ConsoleColor.DarkRed,
-            char drawChar = '\u2580',
-            char spaceChar = ' ',
-            byte drawThreshold = 255,
-            bool antiAliasing = true)
-        {
-            Print(bannerText, new CalliopePrintOptions
-            {
-                AntiAliasing = antiAliasing,
-                Width = width,
-                DrawChar = drawChar,
-                SpaceChar = spaceChar,
-                Font = font,
-                FontSize = fontSize,
-                Height = height
-            });
-        }
-
         /// <summary>
         /// Print the ASCII text directly to StandardOut
         /// </summary>

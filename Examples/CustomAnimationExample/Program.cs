@@ -2,7 +2,7 @@
 using Carahsoft.Calliope.Animations;
 using System.Text;
 
-await Calliope.PrintAnimatedEffect(new CustomAnimation("carahsoft", new CalliopePrintOptions
+await Calliope.PrintAnimatedEffect(new CustomAnimation("Calliope", new CalliopePrintOptions
 {
     Height = 28,
     Width = 100,
@@ -53,7 +53,7 @@ public class CustomAnimation : CalliopeAnimation
         var sb = new StringBuilder();
         foreach (var line in _render.Replace("\r\n", "\n").Split('\n'))
         {
-            if (!_blinkOn)
+            if (_blinkOn)
             {
                 sb.AppendLine(Calliope.ColorText(line, RgbColors.CarahBlue));
             }

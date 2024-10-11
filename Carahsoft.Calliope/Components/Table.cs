@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Carahsoft.Calliope.Components
 {
-    public class Table<T> : ICalliopeProgram
+    public class Table : ICalliopeProgram
     {
         private readonly DataTable _table;
         private ScrollView _sv = new();

@@ -13,7 +13,7 @@ Calliope.Print("HACKERMAN", new CalliopePrintOptions()
     StartColor = RgbColors.Green,
 });
 
-Calliope.Print("carahsoft", new CalliopePrintOptions()
+Calliope.Print("Calliope", new CalliopePrintOptions()
 {
     Effect = CalliopeEffect.ScanlineGradient,
     Height = 20,

@@ -38,9 +38,9 @@ namespace TextEffectExample
                 Width = 100,
                 Height = 20,
             };
-            _rainbow = new RainbowAnimation("carahsoft", rainbowOptions);
-            _twinkle = new ChristmasAnimation("carahsoft", twinkleOptions);
-            _blizzard = new BlizzardAnimation("carahsoft", blizzardOptions);
+            _rainbow = new RainbowAnimation("Calliope", rainbowOptions);
+            _twinkle = new ChristmasAnimation("calliope", twinkleOptions);
+            _blizzard = new BlizzardAnimation("calliope", blizzardOptions);
         }
 
         public CalliopeCmd? Init()

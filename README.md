@@ -1,44 +1,13 @@
-# Carahsoft.Calliope
+![Calliope Logo](Images/calliope_banner.png)
 
-```
-                                    ███     ███
-           ███████                 ████    ████
-         ██████████                ████    ████     ███
-        ███████████                ████    ████    ████
-       ██████  ████                ████    ████     ███
-      █████     ███                ████    ████
-      ████                         ████    ████
-     ████                          ████    ████                          ██
-     ████               ███████    ████    ████     ██       ██████     ████ ██████        ███████
-    ████              ██████████   ████    ████    ████    █████████    ████████████     ██████████
-    ███              ███████████   ████    ████    ████   ███████████   ████████████    ████████████
-   ████             ██████  ████   ████    ████    ████   █████  ████   ██████  █████   █████   ████
-   ████             ████    ████   ████    ████    ████  ████     ███   ████     ████  ████    ████
-   ███              ███     ████   ████    ████    ████  ████     ████  ████      ███  ███   ██████
-   ███             ████     ████   ████    ████    ████  ███      ████   ███      ███  ██████████
-   ███             ████     ████   ████    ████    ████  ███      ████   ███      ███  ████████
-   ████        ███ ████      ███   ████    ████    ████  ███      ███    ███      ███  █████
-   ████      █████ ████      ███   ████    ████    ████  ████     ███    ███     ████  ████       ██
-    █████  ███████  ████   █████   ████    ████    ████  █████  █████    ████   █████  ██████   ████
-    █████████████   █████████████  ████    ████    ████   ██████████     ███████████    ████████████
-     ██████████      ████████████  ████    ████    ████    ████████      ██████████      ███████████
-       ███████        ███████ ███  ███     ███     ███      ██████       █████████        ████████
-                                                                         ███
-                                                                         ███
-                                                                         ███
-                                                                         ███
-                                                                         ███
-                                                                         ███
-                                                                         ███
-                                                                         ███
-```
+# Carahsoft.Calliope
 
 A C# library for quickly writing awesome, responsive console apps.
 
 ## What does it do?
 
-- Render text in any font into ASCII art, with optional different effects and animations
 - MVU framework for rendering responsive, easy to write interactive console apps
+- Render text in any font into ASCII art, with optional different effects and animations
 - Easy ANSI color support for rendering 24 bit color (on supported terminals)
 
 
@@ -203,7 +172,41 @@ public class CounterProgram : ICalliopeProgram
 
 ## Calliope ASCII Rendering
 
-Calliope can render text to ASCII art using the `Calliope.Print` and `Calliope.PrintString` methods. The `CalliopePrintOptions` class has all of the available options for customizing the output string.
+Calliope can render text to ASCII art using the `Calliope.Print` and `Calliope.PrintString` methods. The `CalliopePrintOptions` class has all of the available options for customizing the output string. All core rendering & ANSI helper functions are available on the `Calliope` static class.
+
+```
+                                    ███     ███
+           ███████                 ████    ████
+         ██████████                ████    ████     ███
+        ███████████                ████    ████    ████
+       ██████  ████                ████    ████     ███
+      █████     ███                ████    ████
+      ████                         ████    ████
+     ████                          ████    ████                          ██
+     ████               ███████    ████    ████     ██       ██████     ████ ██████        ███████
+    ████              ██████████   ████    ████    ████    █████████    ████████████     ██████████
+    ███              ███████████   ████    ████    ████   ███████████   ████████████    ████████████
+   ████             ██████  ████   ████    ████    ████   █████  ████   ██████  █████   █████   ████
+   ████             ████    ████   ████    ████    ████  ████     ███   ████     ████  ████    ████
+   ███              ███     ████   ████    ████    ████  ████     ████  ████      ███  ███   ██████
+   ███             ████     ████   ████    ████    ████  ███      ████   ███      ███  ██████████
+   ███             ████     ████   ████    ████    ████  ███      ████   ███      ███  ████████
+   ████        ███ ████      ███   ████    ████    ████  ███      ███    ███      ███  █████
+   ████      █████ ████      ███   ████    ████    ████  ████     ███    ███     ████  ████       ██
+    █████  ███████  ████   █████   ████    ████    ████  █████  █████    ████   █████  ██████   ████
+    █████████████   █████████████  ████    ████    ████   ██████████     ███████████    ████████████
+     ██████████      ████████████  ████    ████    ████    ████████      ██████████      ███████████
+       ███████        ███████ ███  ███     ███     ███      ██████       █████████        ████████
+                                                                         ███
+                                                                         ███
+                                                                         ███
+                                                                         ███
+                                                                         ███
+                                                                         ███
+                                                                         ███
+                                                                         ███
+```
+
 
 ## Roadmap
 
@@ -214,6 +217,9 @@ Calliope can render text to ASCII art using the `Calliope.Print` and `Calliope.P
 - [ ] Full width character support (using [wcwidth](https://github.com/spectreconsole/wcwidth)?)
 - [ ] Implement `Style` class to easily style many components together
 - [ ] Detect older terminals without TrueColor support and use color approximation to render colors in less depth
+- [ ] Net standard 2.0 version
+- [ ] Source generator for creating ASCII art during compile time (requires net standard 2.0 version)
+- [ ] Automatically calculate height/width of ascii text render based on font size and string length
 
 ## For SkiaSharp + single executable:
 If you are using the text-to-ascii functions and want to produce a single packaged executable file, you will need to add the following line to your .*proj file:

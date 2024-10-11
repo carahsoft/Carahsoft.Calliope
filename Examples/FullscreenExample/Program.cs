@@ -2,7 +2,7 @@
 using Carahsoft.Calliope;
 using Carahsoft.Calliope.Components;
 
-var table = new FullscreenTable(
+var longText = new FullscreenExample(
     """
     X
     XX
@@ -48,15 +48,15 @@ var table = new FullscreenTable(
     X
     """);
 
-await Calliope.NewProgram(table).Fullscreen().RunAsync();
+await Calliope.NewProgram(longText).Fullscreen().RunAsync();
 
 
-public class FullscreenTable : ICalliopeProgram
+public class FullscreenExample : ICalliopeProgram
 {
     private readonly string _view;
     private readonly ScrollView _sv = new();
 
-    public FullscreenTable(string view)
+    public FullscreenExample(string view)
     {
         _view = view;
     }

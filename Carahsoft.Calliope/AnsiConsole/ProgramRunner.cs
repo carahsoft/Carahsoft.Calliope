@@ -115,6 +115,14 @@ namespace Carahsoft.Calliope.AnsiConsole
             {
                 while (await _renderTimer.WaitForNextTickAsync())
                 {
+                    if (_quitting)
+                    {
+                        await messageLoopTask;
+                        await commandLoopTask;
+                        await RenderBuffer();
+                        return;
+                    }
+
                     if (Console.BufferHeight != _screenHeight || Console.BufferWidth != _screenWidth)
                     {
                         _flush = true;
@@ -139,29 +147,19 @@ namespace Carahsoft.Calliope.AnsiConsole
                     if (!_updated)
                         continue;
 
-                    if (_quitting)
+                    try
                     {
-                        await messageLoopTask;
-                        await commandLoopTask;
                         await RenderBuffer();
-                        return;
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        try
-                        {
-                            await RenderBuffer();
-                        }
-                        catch (Exception ex)
-                        {
-                            await _messageChannel.Writer.WriteAsync(new ErrorMsg(ex));
-                            // TODO: do we need to panic here?
-                            Console.Error.WriteLine(ex);
-                            Environment.Exit(1);
-                        }
-
-                        _updated = false;
+                        await _messageChannel.Writer.WriteAsync(new ErrorMsg(ex));
+                        // TODO: do we need to panic here?
+                        Console.Error.WriteLine(ex);
+                        Environment.Exit(1);
                     }
+
+                    _updated = false;
                 }
             });
 
