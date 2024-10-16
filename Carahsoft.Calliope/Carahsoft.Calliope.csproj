@@ -15,6 +15,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>console;ascii;art;mvu;ansi;elm;bubbletea;bubble;tea</PackageTags>
     <AssemblyVersion>0.1.0</AssemblyVersion>
+    <Copyright>Copyright (c) Carahsoft Technology Corp. 2024</Copyright>
+    <FileVersion>0.1.0</FileVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
