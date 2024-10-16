@@ -4,6 +4,7 @@
     <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <VersionPrefix>0.1.0</VersionPrefix>
     <LangVersion>12.0</LangVersion>
     <Title>$(AssemblyName)</Title>
     <Company>Carahsoft</Company>
@@ -14,9 +15,9 @@
     <RepositoryUrl>https://github.com/carahsoft/Carahsoft.Calliope</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>console;ascii;art;mvu;ansi;elm;bubbletea;bubble;tea</PackageTags>
-    <AssemblyVersion>0.1.0</AssemblyVersion>
+    <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
     <Copyright>Copyright (c) Carahsoft Technology Corp. 2024</Copyright>
-    <FileVersion>0.1.0</FileVersion>
+    <FileVersion>$(VersionPrefix)</FileVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
