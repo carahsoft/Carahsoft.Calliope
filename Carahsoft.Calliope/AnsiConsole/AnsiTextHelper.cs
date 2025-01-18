@@ -4,22 +4,25 @@ namespace Carahsoft.Calliope.AnsiConsole
 {
     internal static class AnsiTextHelper
     {
-        public static string ColorText(string text, RgbColor color, RgbColor? background = null)
+        public static string ColorText(string text, RgbColor? color = null, RgbColor? background = null)
         {
-            var sb = new StringBuilder();
+            if (color == null && background == null)
+                return text;
+
+            if (color == null)
+                color = RgbColors.Grey;
+
+            var sb = new StringBuilder(text.Length + 28);
             sb.Append("\x1b[");
-            sb.Append($"38;2;{(int)color.Red};{(int)color.Green};{(int)color.Blue}");
-            
+            sb.Append($"38;2;{(int)color.Value.Red};{(int)color.Value.Green};{(int)color.Value.Blue}");
+
             if (background != null)
-            {
-                sb.Append(';');
-                sb.Append($"48;2;{(int)background.Value.Red};{(int)background.Value.Green};{(int)background.Value.Blue}");
-            }
+                sb.Append($";48;2;{(int)background.Value.Red};{(int)background.Value.Green};{(int)background.Value.Blue}");
 
             sb.Append("m");
             sb.Append(text);
             sb.Append("\x1b[0m");
-            return sb.ToString(); 
+            return sb.ToString();
         }
 
         public static string ColorTextGradient(string text, RgbColor start, RgbColor end, RgbColor? background = null)
@@ -42,7 +45,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                 sb.Append(ColorText(text[step].ToString(), color, background));
             }
 
-            return sb.ToString(); 
+            return sb.ToString();
         }
 
         /// <summary>
