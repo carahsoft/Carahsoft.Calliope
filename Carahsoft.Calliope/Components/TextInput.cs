@@ -8,8 +8,22 @@ namespace Carahsoft.Calliope.Components
 {
     public class TextInput : ICalliopeProgram
     {
+        public enum CursorPosition { Unchaned, Start, End, };
+
         private readonly Cursor _cursor = new();
-        public string Text { get; set; } = "";
+
+        private string text = "";
+        public string Text
+        {
+            get { return text; }
+            set
+            {
+                text = value;
+                if (text.Length < CursorIndex)
+                    CursorIndex = text.Length - 1;
+            }
+        }
+
         public bool Enabled { get; set; }
         public int CursorIndex { get; set; }
 
@@ -31,7 +45,7 @@ namespace Carahsoft.Calliope.Components
 
                 if (kpm.Key == ConsoleKey.Backspace)
                 {
-                    Text = string.IsNullOrEmpty(Text) ?  Text : preCursor[..^1] + postCursor;
+                    Text = string.IsNullOrEmpty(Text) ? Text : preCursor[..^1] + postCursor;
                     CursorIndex = CursorIndex - 1 < 0 ? 0 : CursorIndex - 1;
                     return null;
                 }
@@ -87,6 +101,23 @@ namespace Carahsoft.Calliope.Components
         public static CalliopeCmd StopBlinking()
         {
             return Cursor.StopBlinking();
+        }
+
+        public void SetText(string text, CursorPosition possition)
+        {
+            Text = text;
+
+            switch (possition)
+            {
+                case CursorPosition.Start:
+                    CursorIndex = 0;
+                    break;
+                case CursorPosition.End:
+                    CursorIndex = Text.Length - 1;
+                    break;
+                case CursorPosition.Unchaned:
+                    break;
+            }
         }
 
         private string InsertCursor()
