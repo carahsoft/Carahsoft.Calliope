@@ -9,7 +9,23 @@ namespace Carahsoft.Calliope.Components
     public class TextInput : ICalliopeProgram
     {
         private readonly Cursor _cursor = new();
-        public string Text { get; set; } = "";
+
+        private string _text = string.Empty;
+        public string Text
+        {
+            get
+            {
+                return _text;
+            }
+            set
+            {
+                _text = value;
+
+                if (value.Length < CursorIndex)
+                    CursorIndex = value.Length - 1;
+            }
+        }
+
         public bool Enabled { get; set; }
         public int CursorIndex { get; set; }
 
