@@ -215,7 +215,7 @@ Calliope can render text to ASCII art using the `Calliope.Print` and `Calliope.P
 - [ ] Focused element support (Focus/Blur) for more complex apps
 - [ ] Mouse support
 - [ ] Full width character support (using [wcwidth](https://github.com/spectreconsole/wcwidth)?)
-- [ ] Implement `Style` class to easily style many components together
+- [x] Implement `Style` class to easily style many components together
 - [ ] Detect older terminals without TrueColor support and use color approximation to render colors in less depth
 - [ ] Net standard 2.0 version
 - [ ] Source generator for creating ASCII art during compile time (requires net standard 2.0 version)
