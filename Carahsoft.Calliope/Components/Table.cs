@@ -14,6 +14,8 @@ namespace Carahsoft.Calliope.Components
         private ScrollView _sv = new();
 
         public ScrollView ScrollView { get { return _sv; } }
+        public Style? HeaderStyle { get; set; }
+        public Style? RowStyle { get; set; }
 
         public Table(DataTable table)
         {
