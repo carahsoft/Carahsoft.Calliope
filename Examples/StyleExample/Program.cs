@@ -45,10 +45,10 @@ public class StyleDemoProgram : ICalliopeProgram
 
     public string View()
     {
-        var title = Style.BoldStyle.WithForegroundColor(new RgbColor(255, 215, 0))
+        var title = Style.Bold.WithForegroundColor(new RgbColor(255, 215, 0))
             .Apply($"Style Demo - {_demoNames[_currentDemo]}");
         
-        var navigation = Style.ItalicStyle.WithForegroundColor(new RgbColor(128, 128, 128))
+        var navigation = Style.Italic.WithForegroundColor(new RgbColor(128, 128, 128))
             .Apply("Press ← → (or P/N) to navigate, Ctrl+C to quit");
 
         var demo = _currentDemo switch
@@ -92,13 +92,13 @@ public class StyleDemoProgram : ICalliopeProgram
         return $"""
         Text Formatting Options:
         
-        {Style.BoldStyle.Apply("Bold text")}
-        {Style.ItalicStyle.Apply("Italic text")}
-        {Style.UnderlineStyle.Apply("Underlined text")}
-        {Style.DefaultStyle.WithStrikethrough().Apply("Strikethrough text")}
+        {Style.Bold.Apply("Bold text")}
+        {Style.Italic.Apply("Italic text")}
+        {Style.Underline.Apply("Underlined text")}
+        {Style.Default.WithStrikethrough().Apply("Strikethrough text")}
         
         Combined formatting:
-        {Style.BoldStyle.WithItalic().WithUnderline().WithForegroundColor(new RgbColor(255, 100, 50)).Apply("Bold italic underlined colored text")}
+        {Style.Bold.WithItalic().WithUnderline().WithForegroundColor(new RgbColor(255, 100, 50)).Apply("Bold italic underlined colored text")}
         """;
     }
 
@@ -112,14 +112,14 @@ public class StyleDemoProgram : ICalliopeProgram
                 new() { Value = "Option 2" },
                 new() { Value = "Option 3" },
             },
-            SelectedStyle = Style.BoldStyle.WithForegroundColor(new RgbColor(0, 255, 0)),
-            ItemStyle = Style.DefaultStyle.WithForegroundColor(new RgbColor(200, 200, 200))
+            SelectedStyle = Style.Bold.WithForegroundColor(new RgbColor(0, 255, 0)),
+            ItemStyle = Style.Default.WithForegroundColor(new RgbColor(200, 200, 200))
         };
 
         var textInput = new TextInput
         {
             Text = "Styled input text",
-            Style = Style.DefaultStyle.WithForegroundColor(new RgbColor(100, 200, 255))
+            Style = Style.Default.WithForegroundColor(new RgbColor(100, 200, 255))
                 .WithBackgroundColor(new RgbColor(30, 30, 50))
         };
 

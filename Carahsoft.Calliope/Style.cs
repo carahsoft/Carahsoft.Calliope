@@ -7,10 +7,10 @@ namespace Carahsoft.Calliope
     {
         public RgbColor? ForegroundColor { get; private set; }
         public RgbColor? BackgroundColor { get; private set; }
-        public bool Bold { get; private set; }
-        public bool Italic { get; private set; }
-        public bool Underline { get; private set; }
-        public bool Strikethrough { get; private set; }
+        public bool IsBold { get; private set; }
+        public bool IsItalic { get; private set; }
+        public bool IsUnderline { get; private set; }
+        public bool IsStrikethrough { get; private set; }
 
         public Style() { }
 
@@ -18,40 +18,40 @@ namespace Carahsoft.Calliope
         {
             ForegroundColor = foreground;
             BackgroundColor = background;
-            Bold = bold;
-            Italic = italic;
-            Underline = underline;
-            Strikethrough = strikethrough;
+            IsBold = bold;
+            IsItalic = italic;
+            IsUnderline = underline;
+            IsStrikethrough = strikethrough;
         }
 
         public Style WithForegroundColor(RgbColor color)
         {
-            return new Style(color, BackgroundColor, Bold, Italic, Underline, Strikethrough);
+            return new Style(color, BackgroundColor, IsBold, IsItalic, IsUnderline, IsStrikethrough);
         }
 
         public Style WithBackgroundColor(RgbColor color)
         {
-            return new Style(ForegroundColor, color, Bold, Italic, Underline, Strikethrough);
+            return new Style(ForegroundColor, color, IsBold, IsItalic, IsUnderline, IsStrikethrough);
         }
 
         public Style WithBold(bool bold = true)
         {
-            return new Style(ForegroundColor, BackgroundColor, bold, Italic, Underline, Strikethrough);
+            return new Style(ForegroundColor, BackgroundColor, bold, IsItalic, IsUnderline, IsStrikethrough);
         }
 
         public Style WithItalic(bool italic = true)
         {
-            return new Style(ForegroundColor, BackgroundColor, Bold, italic, Underline, Strikethrough);
+            return new Style(ForegroundColor, BackgroundColor, IsBold, italic, IsUnderline, IsStrikethrough);
         }
 
         public Style WithUnderline(bool underline = true)
         {
-            return new Style(ForegroundColor, BackgroundColor, Bold, Italic, underline, Strikethrough);
+            return new Style(ForegroundColor, BackgroundColor, IsBold, IsItalic, underline, IsStrikethrough);
         }
 
         public Style WithStrikethrough(bool strikethrough = true)
         {
-            return new Style(ForegroundColor, BackgroundColor, Bold, Italic, Underline, strikethrough);
+            return new Style(ForegroundColor, BackgroundColor, IsBold, IsItalic, IsUnderline, strikethrough);
         }
 
         public string Apply(string text)
@@ -67,27 +67,27 @@ namespace Carahsoft.Calliope
             var hasStyles = false;
 
             // Text formatting
-            if (Bold)
+            if (IsBold)
             {
                 sb.Append("1");
                 hasStyles = true;
             }
             
-            if (Italic)
+            if (IsItalic)
             {
                 if (hasStyles) sb.Append(";");
                 sb.Append("3");
                 hasStyles = true;
             }
             
-            if (Underline)
+            if (IsUnderline)
             {
                 if (hasStyles) sb.Append(";");
                 sb.Append("4");
                 hasStyles = true;
             }
             
-            if (Strikethrough)
+            if (IsStrikethrough)
             {
                 if (hasStyles) sb.Append(";");
                 sb.Append("9");
@@ -131,34 +131,34 @@ namespace Carahsoft.Calliope
         }
 
         // Static factory methods for common styles
-        public static Style DefaultStyle => new Style();
+        public static Style Default => new Style();
         
-        public static Style BoldStyle => new Style().WithBold();
+        public static Style Bold => new Style().WithBold();
         
-        public static Style ItalicStyle => new Style().WithItalic();
+        public static Style Italic => new Style().WithItalic();
         
-        public static Style UnderlineStyle => new Style().WithUnderline();
+        public static Style Underline => new Style().WithUnderline();
 
-        public static Style Red => DefaultStyle.WithForegroundColor(RgbColors.Red);
+        public static Style Red => Default.WithForegroundColor(RgbColors.Red);
         
-        public static Style Green => DefaultStyle.WithForegroundColor(RgbColors.Green);
+        public static Style Green => Default.WithForegroundColor(RgbColors.Green);
         
-        public static Style Blue => DefaultStyle.WithForegroundColor(RgbColors.Blue);
+        public static Style Blue => Default.WithForegroundColor(RgbColors.Blue);
         
-        public static Style Yellow => DefaultStyle.WithForegroundColor(RgbColors.Yellow);
+        public static Style Yellow => Default.WithForegroundColor(RgbColors.Yellow);
         
-        public static Style Cyan => DefaultStyle.WithForegroundColor(RgbColors.Cyan);
+        public static Style Cyan => Default.WithForegroundColor(RgbColors.Cyan);
         
-        public static Style Magenta => DefaultStyle.WithForegroundColor(RgbColors.Magenta);
+        public static Style Magenta => Default.WithForegroundColor(RgbColors.Magenta);
         
-        public static Style White => DefaultStyle.WithForegroundColor(RgbColors.White);
+        public static Style White => Default.WithForegroundColor(RgbColors.White);
         
-        public static Style Black => DefaultStyle.WithForegroundColor(RgbColors.Black);
+        public static Style Black => Default.WithForegroundColor(RgbColors.Black);
 
         // Convenience methods for creating styles
-        public static Style FromColor(RgbColor color) => DefaultStyle.WithForegroundColor(color);
+        public static Style FromColor(RgbColor color) => Default.WithForegroundColor(color);
         
         public static Style FromColors(RgbColor foreground, RgbColor background) => 
-            DefaultStyle.WithForegroundColor(foreground).WithBackgroundColor(background);
+            Default.WithForegroundColor(foreground).WithBackgroundColor(background);
     }
 }
