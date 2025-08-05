@@ -199,5 +199,7 @@ namespace Carahsoft.Calliope
         public static RgbColor Black { get; } = new RgbColor(0, 0, 0);
         public static RgbColor Grey { get; } = new RgbColor(100, 100, 100);
         public static RgbColor Magenta { get; } = new RgbColor(255, 0, 255);
+        public static RgbColor Yellow { get; } = new RgbColor(255, 255, 0);
+        public static RgbColor Cyan { get; } = new RgbColor(0, 255, 255);
     }
 }

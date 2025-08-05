@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadingSpinnerExample", "Ex
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomAnimationExample", "Examples\CustomAnimationExample\CustomAnimationExample.csproj", "{1CDA5BBC-CCC4-4C37-BC03-6233BF177E5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleExample", "Examples\StyleExample\StyleExample.csproj", "{BDF5034F-5E2B-328B-CA81-A9700A5A1D3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{1CDA5BBC-CCC4-4C37-BC03-6233BF177E5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CDA5BBC-CCC4-4C37-BC03-6233BF177E5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CDA5BBC-CCC4-4C37-BC03-6233BF177E5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDF5034F-5E2B-328B-CA81-A9700A5A1D3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDF5034F-5E2B-328B-CA81-A9700A5A1D3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDF5034F-5E2B-328B-CA81-A9700A5A1D3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDF5034F-5E2B-328B-CA81-A9700A5A1D3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{BE9099BE-5DC3-4E33-B2DB-C5B881F73584} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
 		{E70A9485-4A9C-41BC-AF8F-1B64755A9332} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
 		{1CDA5BBC-CCC4-4C37-BC03-6233BF177E5A} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
+		{BDF5034F-5E2B-328B-CA81-A9700A5A1D3A} = {9059C6CB-6B5F-4758-B7CF-0B43D22B8983}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {43F417E6-E7BB-4010-80CF-727F32D2A059}

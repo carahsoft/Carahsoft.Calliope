@@ -11,6 +11,7 @@ namespace Carahsoft.Calliope.Components
         private readonly Cursor _cursor = new();
 
         private string _text = string.Empty;
+        public Style? Style { get; set; }
         public string Text
         {
             get
@@ -92,7 +93,8 @@ namespace Carahsoft.Calliope.Components
 
         public string View()
         {
-            return InsertCursor();
+            var text = InsertCursor();
+            return Style?.Apply(text) ?? text;
         }
 
         public static CalliopeCmd StartBlinking()

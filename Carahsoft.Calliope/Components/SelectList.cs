@@ -19,6 +19,8 @@ namespace Carahsoft.Calliope.Components
         public string? Choice { get; set; }
         public List<SelectListItem> Items { get; set; } = new List<SelectListItem>();
         public int MaxHeight { get; set; } = 10;
+        public Style? SelectedStyle { get; set; }
+        public Style? ItemStyle { get; set; }
 
         public CalliopeCmd? Init()
         {
@@ -84,13 +86,14 @@ namespace Carahsoft.Calliope.Components
             {
                 if (i == Index)
                 {
-                    sb.AppendLine(
-                        AnsiTextHelper.ColorText(Items[i].Value,
-                        new() { Red = 45, Green = 156, Blue = 218 }));
+                    var selectedText = SelectedStyle?.Apply(Items[i].Value) ?? 
+                        AnsiTextHelper.ColorText(Items[i].Value, new() { Red = 45, Green = 156, Blue = 218 });
+                    sb.AppendLine(selectedText);
                 }
                 else
                 {
-                    sb.AppendLine(Items[i].Value);
+                    var itemText = ItemStyle?.Apply(Items[i].Value) ?? Items[i].Value;
+                    sb.AppendLine(itemText);
                 }
             }
 
