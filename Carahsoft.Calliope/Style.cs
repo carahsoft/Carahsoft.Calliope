@@ -29,9 +29,19 @@ namespace Carahsoft.Calliope
             return new Style(color, BackgroundColor, IsBold, IsItalic, IsUnderline, IsStrikethrough);
         }
 
+        public Style WithForegroundColor(AdaptiveColor color)
+        {
+            return new Style(color.GetColor(), BackgroundColor, IsBold, IsItalic, IsUnderline, IsStrikethrough);
+        }
+
         public Style WithBackgroundColor(RgbColor color)
         {
             return new Style(ForegroundColor, color, IsBold, IsItalic, IsUnderline, IsStrikethrough);
+        }
+
+        public Style WithBackgroundColor(AdaptiveColor color)
+        {
+            return new Style(ForegroundColor, color.GetColor(), IsBold, IsItalic, IsUnderline, IsStrikethrough);
         }
 
         public Style WithBold(bool bold = true)
@@ -158,7 +168,18 @@ namespace Carahsoft.Calliope
         // Convenience methods for creating styles
         public static Style FromColor(RgbColor color) => Default.WithForegroundColor(color);
         
+        public static Style FromColor(AdaptiveColor color) => Default.WithForegroundColor(color);
+        
         public static Style FromColors(RgbColor foreground, RgbColor background) => 
+            Default.WithForegroundColor(foreground).WithBackgroundColor(background);
+        
+        public static Style FromColors(AdaptiveColor foreground, RgbColor background) => 
+            Default.WithForegroundColor(foreground).WithBackgroundColor(background);
+        
+        public static Style FromColors(RgbColor foreground, AdaptiveColor background) => 
+            Default.WithForegroundColor(foreground).WithBackgroundColor(background);
+        
+        public static Style FromColors(AdaptiveColor foreground, AdaptiveColor background) => 
             Default.WithForegroundColor(foreground).WithBackgroundColor(background);
     }
 }

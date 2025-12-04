@@ -187,6 +187,58 @@ namespace Carahsoft.Calliope
     }
 
     /// <summary>
+    /// Adaptive color that selects between light and dark variants based on terminal background
+    /// </summary>
+    public readonly record struct AdaptiveColor
+    {
+        public AdaptiveColor(RgbColor lightBackground, RgbColor darkBackground)
+        {
+            Light = lightBackground;
+            Dark = darkBackground;
+        }
+
+        public RgbColor Light { get; init; }
+        public RgbColor Dark { get; init; }
+
+        /// <summary>
+        /// Gets the appropriate color based on the current terminal background
+        /// </summary>
+        public RgbColor GetColor()
+        {
+            return TerminalBackgroundDetector.IsLightBackground ? Light : Dark;
+        }
+
+        /// <summary>
+        /// Implicitly convert AdaptiveColor to RgbColor by selecting the appropriate variant
+        /// </summary>
+        public static implicit operator RgbColor(AdaptiveColor adaptiveColor)
+        {
+            return adaptiveColor.GetColor();
+        }
+    }
+
+    /// <summary>
+    /// Utility class for detecting terminal background type
+    /// </summary>
+    public static class TerminalBackgroundDetector
+    {
+        private static bool _isLightBackground = false;
+
+        /// <summary>
+        /// Determines if the terminal has a light background
+        /// </summary>
+        public static bool IsLightBackground => _isLightBackground;
+
+        /// <summary>
+        /// Sets the background type (called by ProgramRunner during initialization)
+        /// </summary>
+        internal static void SetBackgroundType(bool isLight)
+        {
+            _isLightBackground = isLight;
+        }
+    }
+
+    /// <summary>
     /// Named colors
     /// </summary>
     public static class RgbColors

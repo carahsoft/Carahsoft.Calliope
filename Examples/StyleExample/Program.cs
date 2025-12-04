@@ -80,6 +80,9 @@ public class StyleDemoProgram : ICalliopeProgram
         {Style.Yellow.Apply("Yellow text")}
         {Style.Cyan.Apply("Cyan text")}
         {Style.Magenta.Apply("Magenta text")}
+
+        Adaptive:
+        {Style.Default.WithForegroundColor(new AdaptiveColor { Dark = RgbColors.Yellow, Light = RgbColors.CarahBlue }).Apply("Adaptive text")}
         
         With background colors:
         {Style.White.WithBackgroundColor(new RgbColor(255, 0, 0)).Apply("White on red")}

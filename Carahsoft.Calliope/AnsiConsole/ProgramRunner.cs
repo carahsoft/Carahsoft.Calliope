@@ -85,6 +85,9 @@ namespace Carahsoft.Calliope.AnsiConsole
             if (_opts.StandardOut == null)
                 _opts.StandardOut = Console.Out;
 
+            // Detect terminal background type for AdaptiveColor support
+            DetectTerminalBackgroundType();
+
             _opts.StandardOut.Write(AnsiConstants.HideCursor);
 
             if (_opts.Fullscreen)
@@ -364,6 +367,92 @@ namespace Carahsoft.Calliope.AnsiConsole
             _flush = false;
             _opts.StandardOut!.Write(sb.ToString());
             _previousRender = renderLines!;
+        }
+
+        /// <summary>
+        /// Detects whether the terminal has a light or dark background
+        /// </summary>
+        private void DetectTerminalBackgroundType()
+        {
+            try
+            {
+                // Query terminal for background color using ANSI escape sequence
+                // This sends OSC 11 (Operating System Command) to query background color
+                _opts.StandardOut!.Write("\x1b]11;?\x1b\\");
+                _opts.StandardOut.Flush();
+                
+                // Wait briefly for response
+                var startTime = DateTime.Now;
+                var response = "";
+                
+                while ((DateTime.Now - startTime).TotalMilliseconds < 50 && Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(true);
+                    response += key.KeyChar;
+                }
+
+                // Parse response if we got one
+                if (response.Contains("rgb:"))
+                {
+                    var rgbStart = response.IndexOf("rgb:");
+                    if (rgbStart >= 0)
+                    {
+                        var rgbPart = response.Substring(rgbStart + 4);
+                        if (rgbPart.IndexOf('\u001b') > 0)
+                            rgbPart = rgbPart.Substring(0, rgbPart.IndexOf('\u001b'));
+                        var parts = rgbPart.Split('/');
+                        if (parts.Length >= 3)
+                        {
+                            // Parse hex values and calculate luminance
+                            if (int.TryParse(parts[0], System.Globalization.NumberStyles.HexNumber, null, out var r) &&
+                                int.TryParse(parts[1], System.Globalization.NumberStyles.HexNumber, null, out var g) &&
+                                int.TryParse(parts[2], System.Globalization.NumberStyles.HexNumber, null, out var b))
+                            {
+                                // Convert 16-bit values to 8-bit
+                                r = r >> 8;
+                                g = g >> 8;
+                                b = b >> 8;
+                                
+                                // Calculate luminance using standard formula
+                                var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0;
+                                TerminalBackgroundDetector.SetBackgroundType(luminance > 0.5);
+                                return;
+                            }
+                            else
+                            {
+                                _opts.StandardOut.Write(rgbPart);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // If detection fails, fall through to heuristic
+            }
+
+            // Fallback: Use heuristic based on environment variables
+            var isLight = DetectUsingHeuristics();
+            TerminalBackgroundDetector.SetBackgroundType(isLight);
+        }
+
+        private static bool DetectUsingHeuristics()
+        {
+            // Check environment variables that might indicate theme
+            var colorTerm = Environment.GetEnvironmentVariable("COLORFGBG");
+            if (!string.IsNullOrEmpty(colorTerm))
+            {
+                // COLORFGBG format is "foreground;background"
+                var parts = colorTerm.Split(';');
+                if (parts.Length == 2 && int.TryParse(parts[1], out var bgColor))
+                {
+                    // Standard terminal colors: 0-7 are dark, 8-15 are light
+                    return bgColor >= 7;
+                }
+            }
+
+            // Default to dark background assumption (most common)
+            return false;
         }
 
         /// <summary>
