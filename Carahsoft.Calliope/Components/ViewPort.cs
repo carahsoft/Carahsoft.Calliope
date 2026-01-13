@@ -8,6 +8,7 @@ namespace Carahsoft.Calliope.Components
 {
     public class ViewPort
     {
+        private const string AnsiReset = "\x1b[0m";
         private int _height;
 
         public List<string> Text { get; set; } = [];
@@ -61,7 +62,8 @@ namespace Carahsoft.Calliope.Components
                 }
                 for (int i = 0; i < Text.Count; i++)
                 {
-                    sb.AppendLine(Text[i]);
+                    sb.Append(Text[i]);
+                    sb.AppendLine(AnsiReset);
                 }
                 if (!PadTop)
                 {
@@ -75,7 +77,8 @@ namespace Carahsoft.Calliope.Components
             {
                 for (int i = RowIndex; i < RowIndex + _height; i++)
                 {
-                    sb.AppendLine(Text[i]);
+                    sb.Append(Text[i]);
+                    sb.AppendLine(AnsiReset);
                 }
             }
             return sb.ToString();

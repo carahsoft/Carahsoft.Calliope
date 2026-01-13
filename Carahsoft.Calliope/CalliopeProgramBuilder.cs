@@ -13,6 +13,7 @@ namespace Carahsoft.Calliope
         private readonly TProgram _program;
 
         private bool _fullscreen;
+        private bool _enableMouse;
         private int _framerate;
         private TextWriter? _stdOut;
 
@@ -56,6 +57,16 @@ namespace Carahsoft.Calliope
         }
 
         /// <summary>
+        /// Enables mouse tracking for mouse wheel scroll events
+        /// </summary>
+        /// <returns></returns>
+        public CalliopeProgramBuilder<TProgram> EnableMouse()
+        {
+            _enableMouse = true;
+            return this;
+        }
+
+        /// <summary>
         /// Build the <see cref="ProgramRunner{TProgram}"/>. The <see cref="ProgramRunner{TProgram}"/>
         /// reference can be used to send messages to the executing program using the
         /// <see cref="ProgramRunner{TProgram}.SendAsync(CalliopeMsg)"/> method.
@@ -66,6 +77,7 @@ namespace Carahsoft.Calliope
             var opts = new ProgramOptions
             {
                 Fullscreen = _fullscreen,
+                EnableMouse = _enableMouse,
             };
 
             if (_framerate > 0)

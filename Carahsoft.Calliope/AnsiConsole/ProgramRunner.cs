@@ -94,6 +94,11 @@ namespace Carahsoft.Calliope.AnsiConsole
                 Console.SetCursorPosition(0, 0);
             }
 
+            if (_opts.EnableMouse)
+            {
+                _opts.StandardOut.Write(AnsiConstants.EnableMouseTracking);
+            }
+
             _screenHeight = Console.BufferHeight;
             _screenWidth = Console.BufferWidth;
             await _messageChannel.Writer.WriteAsync(new WindowSizeChangeMsg
@@ -168,16 +173,15 @@ namespace Carahsoft.Calliope.AnsiConsole
             {
                 while (true)
                 {
-                    var key = await GetKeyWithTimeoutAsync();
-                    if (key == null)
+                    var input = await GetInputWithTimeoutAsync();
+                    if (input == null)
                         break;
 
-                    await _messageChannel.Writer.WriteAsync(new KeyPressMsg
-                    {
-                        Key = key.Value.Key,
-                        KeyChar = key.Value.KeyChar,
-                        Modifiers = key.Value.Modifiers
-                    });
+                    // Skip ignored mouse events (clicks, etc.)
+                    if (input is IgnoredMouseMsg)
+                        continue;
+
+                    await _messageChannel.Writer.WriteAsync(input);
                 }
             });
 
@@ -185,6 +189,8 @@ namespace Carahsoft.Calliope.AnsiConsole
 
             Console.TreatControlCAsInput = ctrlCRestore;
             Console.OutputEncoding = encodingRestore;
+            if (_opts.EnableMouse)
+                _opts.StandardOut.Write(AnsiConstants.DisableMouseTracking);
             _opts.StandardOut.Write(AnsiConstants.ShowCursor);
             if (_opts.Fullscreen)
                 _opts.StandardOut.Write(AnsiConstants.DisableAltScreenBuffer);
@@ -193,13 +199,36 @@ namespace Carahsoft.Calliope.AnsiConsole
             return _program;
         }
 
-        private async Task<ConsoleKeyInfo?> GetKeyWithTimeoutAsync()
+        private async Task<CalliopeMsg?> GetInputWithTimeoutAsync()
         {
             while (!_quitting)
             {
                 if (Console.KeyAvailable)
                 {
-                    return Console.ReadKey(true);
+                    var key = Console.ReadKey(true);
+
+                    // Check for mouse escape sequence: ESC [ <
+                    if (_opts.EnableMouse && key.Key == ConsoleKey.Escape)
+                    {
+                        var mouseMsg = await TryParseMouseSequenceAsync();
+                        if (mouseMsg != null)
+                            return mouseMsg;
+
+                        // If not a mouse sequence, return the ESC as a key press
+                        return new KeyPressMsg
+                        {
+                            Key = key.Key,
+                            KeyChar = key.KeyChar,
+                            Modifiers = key.Modifiers
+                        };
+                    }
+
+                    return new KeyPressMsg
+                    {
+                        Key = key.Key,
+                        KeyChar = key.KeyChar,
+                        Modifiers = key.Modifiers
+                    };
                 }
                 // Check for user input at minimum 60 times per second
                 var delay = (int)Math.Min(
@@ -211,6 +240,79 @@ namespace Carahsoft.Calliope.AnsiConsole
             return null;
         }
 
+        // Sentinel message to indicate a mouse event was consumed but should be ignored
+        private class IgnoredMouseMsg : CalliopeMsg { }
+        private static readonly IgnoredMouseMsg _ignoredMouseMsg = new();
+
+        private Task<CalliopeMsg?> TryParseMouseSequenceAsync()
+        {
+            // SGR mouse format: ESC [ < button ; x ; y M/m
+            // We've already consumed ESC. Escape sequences arrive as a burst,
+            // so if the next char isn't immediately available, it's just ESC.
+            if (!Console.KeyAvailable)
+                return Task.FromResult<CalliopeMsg?>(null); // Just an ESC key press
+
+            var next = Console.ReadKey(true);
+            if (next.KeyChar != '[')
+            {
+                // Not a CSI sequence
+                return Task.FromResult<CalliopeMsg?>(null);
+            }
+
+            // At this point we're committed to consuming a CSI sequence
+            // Read until we hit a letter (the terminator)
+            var sb = new StringBuilder();
+            var maxChars = 30;
+
+            while (Console.KeyAvailable && sb.Length < maxChars)
+            {
+                var c = Console.ReadKey(true);
+
+                // CSI sequences end with a letter
+                if (char.IsLetter(c.KeyChar))
+                {
+                    // Check if this is SGR mouse format: < button ; x ; y M/m
+                    var seq = sb.ToString();
+                    if (seq.StartsWith('<') && (c.KeyChar == 'M' || c.KeyChar == 'm'))
+                    {
+                        var result = ParseSgrMouse(seq.Substring(1));
+                        return Task.FromResult<CalliopeMsg?>(result);
+                    }
+                    // Some other CSI sequence - consumed and ignored
+                    return Task.FromResult<CalliopeMsg?>(_ignoredMouseMsg);
+                }
+
+                sb.Append(c.KeyChar);
+            }
+
+            // Incomplete sequence - consumed what we could
+            return Task.FromResult<CalliopeMsg?>(_ignoredMouseMsg);
+        }
+
+        private CalliopeMsg ParseSgrMouse(string data)
+        {
+            // Parse button;x;y
+            var parts = data.Split(';');
+            if (parts.Length != 3)
+                return _ignoredMouseMsg;
+
+            if (!int.TryParse(parts[0], out var button) ||
+                !int.TryParse(parts[1], out var x) ||
+                !int.TryParse(parts[2], out var y))
+                return _ignoredMouseMsg;
+
+            // Scroll wheel has bit 6 set (64). Bit 0 is direction (0=up, 1=down)
+            // Bits 2-4 are modifiers (shift=4, meta=8, ctrl=16)
+            if ((button & 64) != 0)
+            {
+                var direction = (button & 1) == 0 ? MouseWheelDirection.Up : MouseWheelDirection.Down;
+                return new MouseWheelMsg { Direction = direction, X = x, Y = y };
+            }
+
+            // Click events are ignored - use Ctrl+G to toggle mouse for text selection
+            return _ignoredMouseMsg;
+        }
+
         private async Task MessageLoop()
         {
             while (await _messageChannel.Reader.WaitToReadAsync())
@@ -220,6 +322,15 @@ namespace Carahsoft.Calliope.AnsiConsole
                     if (msg is QuitMsg)
                     {
                         _quitting = true;
+                    }
+
+                    if (msg is MouseToggleMsg mtm)
+                    {
+                        _opts.EnableMouse = mtm.Enable;
+                        _opts.StandardOut!.Write(mtm.Enable
+                            ? AnsiConstants.EnableMouseTracking
+                            : AnsiConstants.DisableMouseTracking);
+                        continue;
                     }
 
                     if (msg is BatchMsg batch)

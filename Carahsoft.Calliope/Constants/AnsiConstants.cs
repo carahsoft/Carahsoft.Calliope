@@ -16,5 +16,9 @@ namespace Carahsoft.Calliope.Constants
         public const string ShowCursor = "\x1b[?25h";
         public const string HideCursor = "\x1b[?25l";
         public const string ClearDisplay = "\x1b[2J";
+
+        // Mouse tracking - SGR extended mode (1006) for better coordinates
+        public const string EnableMouseTracking = "\x1b[?1000h\x1b[?1006h";
+        public const string DisableMouseTracking = "\x1b[?1000l\x1b[?1006l";
     }
 }

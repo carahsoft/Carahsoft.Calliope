@@ -20,10 +20,13 @@ namespace Carahsoft.Calliope.Components
             }
             set
             {
-                _text = value;
+                _text = value ?? string.Empty;
 
-                if (value.Length < CursorIndex)
-                    CursorIndex = value.Length - 1;
+                // Clamp cursor to valid range
+                if (CursorIndex > _text.Length)
+                    CursorIndex = _text.Length;
+                if (CursorIndex < 0)
+                    CursorIndex = 0;
             }
         }
 
@@ -43,13 +46,25 @@ namespace Carahsoft.Calliope.Components
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
                     return CalliopeCmd.Quit;
 
-                var preCursor = Text[..CursorIndex];
-                var postCursor = Text[CursorIndex..];
+                // Ensure cursor is in valid range before slicing
+                var safeIndex = Math.Clamp(CursorIndex, 0, Text.Length);
+                var preCursor = Text[..safeIndex];
+                var postCursor = Text[safeIndex..];
 
                 if (kpm.Key == ConsoleKey.Backspace)
                 {
-                    Text = string.IsNullOrEmpty(Text) ?  Text : preCursor[..^1] + postCursor;
-                    CursorIndex = CursorIndex - 1 < 0 ? 0 : CursorIndex - 1;
+                    if (safeIndex <= 0 || string.IsNullOrEmpty(Text))
+                        return null; // Nothing to delete
+                    Text = preCursor[..^1] + postCursor;
+                    CursorIndex = safeIndex - 1;
+                    return null;
+                }
+                if (kpm.Key == ConsoleKey.Delete)
+                {
+                    if (safeIndex >= Text.Length || string.IsNullOrEmpty(Text))
+                        return null; // Nothing to delete
+                    Text = preCursor + postCursor[1..];
+                    // CursorIndex stays the same
                     return null;
                 }
                 if (kpm.Key == ConsoleKey.RightArrow)
@@ -83,7 +98,7 @@ namespace Carahsoft.Calliope.Components
                 _cursor.CursorChar = kpm.KeyChar;
 
                 Text = updatedText;
-                CursorIndex = CursorIndex + 1;
+                CursorIndex = safeIndex + 1;
                 return null;
             }
 

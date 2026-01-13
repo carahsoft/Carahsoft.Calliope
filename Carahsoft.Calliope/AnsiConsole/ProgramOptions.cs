@@ -17,5 +17,10 @@ namespace Carahsoft.Calliope.AnsiConsole
         /// while ensuring Calliope can still write to the console
         /// </summary>
         public TextWriter? StandardOut { get; set; }
+
+        /// <summary>
+        /// Enable mouse tracking for mouse wheel events
+        /// </summary>
+        public bool EnableMouse { get; set; }
     }
 }
