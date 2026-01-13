@@ -11,7 +11,7 @@ namespace Carahsoft.Calliope.Table
 
     public class ColumnHeader
     {
-        string _formatString;
+        string? _formatString;
 
         /// <summary>
         /// Column Data Type.  
@@ -96,6 +96,6 @@ namespace Carahsoft.Calliope.Table
         /// <summary>
         /// Composit format string for data output
         /// </summary>
-        public string OutputFormat { get; set; }
+        public string? OutputFormat { get; set; }
     }
 }

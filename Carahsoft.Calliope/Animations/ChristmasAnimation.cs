@@ -12,7 +12,7 @@ namespace Carahsoft.Calliope.Animations
         private readonly Random rand = new Random();
 
         private Guid? LastTwinkle { get; set; }
-        private string Render { get; set; }
+        private string Render { get; set; } = string.Empty;
 
 
         public ChristmasAnimation(string bannerText, CalliopePrintOptions options)

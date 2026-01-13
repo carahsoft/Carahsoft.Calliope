@@ -11,7 +11,7 @@ namespace Carahsoft.Calliope
     public static class Calliope
     {
 
-        private static HackerWriter _hackerWriter;
+        private static HackerWriter? _hackerWriter;
 
         /// <summary>
         /// Print the ASCII text directly to StandardOut

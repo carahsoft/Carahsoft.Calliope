@@ -22,8 +22,9 @@ namespace Carahsoft.Calliope
             StandardOut.Write(value);
         }
 
-        public override void Write(string value)
+        public override void Write(string? value)
         {
+            if (value == null) return;
 
             if (Hackify)
             {
@@ -51,7 +52,7 @@ namespace Carahsoft.Calliope
             }
         }
 
-        public override void WriteLine(string value)
+        public override void WriteLine(string? value)
         {
             Write(value);
             Write('\n');

@@ -94,7 +94,7 @@ namespace Carahsoft.Calliope.Animations
                     int x when x < 300 => new(0, 255, g),
                     int x when x < 400 => new(0, ig, 255),
                     int x when x < 500 => new(g, 0, 255),
-                    int x when x < 600 => new(255, 0, ig),
+                    _ => new(255, 0, ig),
                 };
                 return AnsiTextHelper.ColorText(_displayChar.ToString(), c);
             }

@@ -30,7 +30,7 @@ Console.WriteLine(myTable.ToString()); //output the formatted table
 
 
 Console.WriteLine("\n\nEnter a column number to sort (descending) by (1-3)\n\n"); 
-int col = Int32.Parse(Console.In.ReadLine());
+int col = Int32.Parse(Console.In.ReadLine() ?? "1");
 myTable.Sort(col-1, SortDirection.DESC); //adjusts user input for zero based index.  Sorts the table greatest to smallest. 
 Console.WriteLine(myTable.ToString());  
 

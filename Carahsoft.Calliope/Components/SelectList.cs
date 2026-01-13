@@ -9,7 +9,7 @@ namespace Carahsoft.Calliope.Components
 {
     public class SelectListItem
     {
-        public string Value { get; set; }
+        public required string Value { get; set; }
         public string? FilterValue { get; set; }
     }
 

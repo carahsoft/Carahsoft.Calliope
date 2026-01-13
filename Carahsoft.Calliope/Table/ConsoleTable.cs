@@ -10,7 +10,7 @@ namespace Carahsoft.Calliope.Table
     public class ConsoleTable
     {
         protected DataTable _table;
-        public List<ColumnHeader> Columns;
+        public List<ColumnHeader> Columns = null!;
 
         /// <summary>
         /// Initializes a ConsoleTable supplying a DataTable onject
@@ -64,15 +64,15 @@ namespace Carahsoft.Calliope.Table
         /// <param name="colHeader"></param>
         private void SetWidth(ColumnHeader colHeader)
         {
-            DataColumn col = _table.Columns[colHeader.Name];
+            DataColumn? col = _table.Columns[colHeader.Name];
 
             string maxString = colHeader.FormatValue(_table.AsEnumerable()
-                                       .Select(row => row[col].ToString())
-                                       .OrderByDescending(st => st.Length).FirstOrDefault());
+                                       .Select(row => row[col!].ToString() ?? string.Empty)
+                                       .OrderByDescending(st => st!.Length).FirstOrDefault() ?? string.Empty);
 
             int width = maxString.Length;
 
-            if (width < col.ColumnName.Length)
+            if (col != null && width < col.ColumnName.Length)
             {
                 width = col.ColumnName.Length;
             }
@@ -98,7 +98,7 @@ namespace Carahsoft.Calliope.Table
         public void ColOutputFormat(string columnName, string formatString)
         {
             var col = Columns.Find(x => x.Name == columnName);
-            col.OutputFormat = formatString;
+            col!.OutputFormat = formatString;
             SetWidth(col);
         }
 
@@ -155,7 +155,7 @@ namespace Carahsoft.Calliope.Table
 
                 foreach (var c in Columns)
                 {
-                    string val = c.FormatValue(dr[c.Name].ToString());
+                    string val = c.FormatValue(dr[c.Name].ToString() ?? string.Empty);
 
                     if (c.Alignment == ColumnAlignment.Center)
                         val = val.PadRight((int)Math.Ceiling(((decimal)c.Width - val.Length) / 2 + val.Length), ' ');
@@ -288,15 +288,15 @@ namespace Carahsoft.Calliope.Table
 
             DataTable dt = new DataTable();
 
-            foreach (var o in testList[0].GetType().GetProperties())
+            foreach (var o in testList[0]!.GetType().GetProperties())
             {
                 dt.Columns.Add(o.Name, o.PropertyType);
             }
 
             foreach (var obj in testList)
             {
-                var alist = new List<object>();
-                foreach (var whatever in obj.GetType().GetProperties())
+                var alist = new List<object?>();
+                foreach (var whatever in obj!.GetType().GetProperties())
                 {
                     alist.Add(whatever.GetValue(obj));
                 }

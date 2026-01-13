@@ -16,7 +16,7 @@ namespace Carahsoft.Calliope.Animations
         private readonly Random rand = new Random();
         private int[,] SnowMap ;
 
-        private string Render { get; set; }
+        private string Render { get; set; } = string.Empty;
 
 
         public BlizzardAnimation(string bannerText, CalliopePrintOptions options): base(bannerText, options)
@@ -108,7 +108,6 @@ namespace Carahsoft.Calliope.Animations
 
         private int[] TractorPositions;
 
-        int tractor = 120;
         private void Tick()
         {
 
