@@ -2,7 +2,7 @@
 
 namespace Carahsoft.Calliope.AnsiConsole
 {
-    internal static class AnsiTextHelper
+    public static class AnsiTextHelper
     {
         public static string ColorText(string text, RgbColor color, RgbColor? background = null)
         {
@@ -43,6 +43,35 @@ namespace Carahsoft.Calliope.AnsiConsole
             }
 
             return sb.ToString(); 
+        }
+
+        /// <summary>
+        /// Strips ANSI escape sequences from a string, returning only the visible text.
+        /// </summary>
+        public static string StripAnsi(string? text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return "";
+
+            var sb = new StringBuilder();
+            bool escape = false;
+            foreach (var c in text)
+            {
+                if (escape && ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')))
+                {
+                    escape = false;
+                    continue;
+                }
+                if (escape)
+                    continue;
+                if (c == '\x1b')
+                {
+                    escape = true;
+                    continue;
+                }
+                sb.Append(c);
+            }
+            return sb.ToString();
         }
 
         /// <summary>

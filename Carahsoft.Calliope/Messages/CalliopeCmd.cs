@@ -51,7 +51,7 @@ namespace Carahsoft.Calliope
         public static CalliopeCmd Make(Func<CalliopeMsg> cmd) => new CalliopeCmd(cmd);
         public static CalliopeCmd Make(CalliopeMsg msg) => new CalliopeCmd(() => msg);
 
-        public static CalliopeCmd Quit => Make(() => new QuitMsg());
+        public static readonly CalliopeCmd Quit = Make(() => new QuitMsg());
 
         public static CalliopeCmd Combine(params CalliopeCmd?[] cmds)
         {

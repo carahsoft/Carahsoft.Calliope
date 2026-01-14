@@ -57,6 +57,18 @@ namespace Carahsoft.Calliope.Components
                     return null;
                 }
 
+                if (kpm.Key == ConsoleKey.PageDown)
+                {
+                    Index = Math.Min(Index + MaxHeight, Items.Count - 1);
+                    return null;
+                }
+
+                if (kpm.Key == ConsoleKey.PageUp)
+                {
+                    Index = Math.Max(Index - MaxHeight, 0);
+                    return null;
+                }
+
                 if (kpm.Key == ConsoleKey.Enter)
                 {
                     Choice = Items[Index].Value;
@@ -77,25 +89,46 @@ namespace Carahsoft.Calliope.Components
             if (endIndex > Items.Count)
             {
                 endIndex = Items.Count;
-                startIndex = Items.Count - height;
+                startIndex = Math.Max(Items.Count - height, 0);
             }
 
+            // Calculate max width from ALL items for consistent dialog width (strip ANSI codes for visible length)
+            var maxWidth = Items.Max(item => AnsiTextHelper.StripAnsi(item.Value).Length);
+            var lineWidth = maxWidth + 2; // prefix "> " (2 chars) + content
+
             var sb = new StringBuilder();
+            var dimColor = new RgbColor { Red = 100, Green = 100, Blue = 100 };
+
+            // Always show top line for consistent height (arrow with count or empty)
+            if (startIndex > 0)
+                sb.AppendLine(AnsiTextHelper.ColorText($"  ↑ {startIndex}".PadRight(lineWidth), dimColor));
+            else
+                sb.AppendLine(new string(' ', lineWidth));
 
             for (int i = startIndex; i < endIndex; i++)
             {
+                var prefix = i == Index ? "> " : "  ";
+                var visibleLen = AnsiTextHelper.StripAnsi(Items[i].Value).Length;
+                var padding = Math.Max(maxWidth - visibleLen, 0);
+                var text = prefix + Items[i].Value + new string(' ', padding);
                 if (i == Index)
                 {
-                    var selectedText = SelectedStyle?.Apply(Items[i].Value) ?? 
-                        AnsiTextHelper.ColorText(Items[i].Value, new() { Red = 45, Green = 156, Blue = 218 });
+                    var selectedText = SelectedStyle?.Apply(text) ??
+                        AnsiTextHelper.ColorText(text, new() { Red = 45, Green = 156, Blue = 218 });
                     sb.AppendLine(selectedText);
                 }
                 else
                 {
-                    var itemText = ItemStyle?.Apply(Items[i].Value) ?? Items[i].Value;
+                    var itemText = ItemStyle?.Apply(text) ?? text;
                     sb.AppendLine(itemText);
                 }
             }
+
+            // Always show bottom line for consistent height (arrow with count or empty) - no trailing newline
+            if (endIndex < Items.Count)
+                sb.Append(AnsiTextHelper.ColorText($"  ↓ {Items.Count - endIndex}".PadRight(lineWidth), dimColor));
+            else
+                sb.Append(new string(' ', lineWidth));
 
             return sb.ToString();
         }
