@@ -125,44 +125,92 @@ namespace Carahsoft.Calliope.Table
         }
 
         /// <summary>
-        /// Output entire table contents to table applying cell alignmnet and formatting
+        /// Output entire table contents to table applying cell alignment and formatting.
+        /// Uses ASCII borders by default for backwards compatibility.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
+            return ToString(TableBorder.Ascii);
+        }
+
+        /// <summary>
+        /// Output entire table contents to table applying cell alignment and formatting
+        /// with the specified border style.
+        /// </summary>
+        /// <param name="border">The border style to use for rendering</param>
+        /// <returns></returns>
+        public string ToString(TableBorder border)
+        {
             StringBuilder sb = new StringBuilder();
-            StringBuilder spacer = new StringBuilder();
 
-            sb.Append(" | ");
-
-            spacer.Append(" +-");
-
-            foreach (var c in Columns)
+            // Top border (skip for None)
+            if (!border.IsNone)
             {
-                sb.Append(string.Format(c.AlignString, c.Name));
-                sb.Append(" | ");
+                sb.Append(border.TopLeft);
+                for (int i = 0; i < Columns.Count; i++)
+                {
+                    sb.Append(new string(border.Horizontal, Columns[i].Width + 2));
+                    sb.Append(i < Columns.Count - 1 ? border.TopT : border.TopRight);
+                }
+                sb.Append('\n');
+            }
 
-                spacer.Append(string.Empty.PadLeft(c.Width, '-'));
-                spacer.Append("-+-");
+            // Header row
+            if (!border.IsNone) sb.Append(border.Vertical);
+            for (int i = 0; i < Columns.Count; i++)
+            {
+                var c = Columns[i];
+                if (i > 0 || !border.IsNone) sb.Append(' ');
+                sb.Append(string.Format(c.AlignString, c.Name));
+                if (i < Columns.Count - 1 || !border.IsNone) sb.Append(' ');
+                if (i < Columns.Count - 1 || !border.IsNone)
+                    sb.Append(border.Vertical);
             }
             sb.Append('\n');
-            sb.Append(spacer.ToString());
-            sb.Append('\n');
 
+            // Header separator (skip for None)
+            if (!border.IsNone)
+            {
+                sb.Append(border.LeftT);
+                for (int i = 0; i < Columns.Count; i++)
+                {
+                    sb.Append(new string(border.Horizontal, Columns[i].Width + 2));
+                    sb.Append(i < Columns.Count - 1 ? border.Cross : border.RightT);
+                }
+                sb.Append('\n');
+            }
+
+            // Data rows
             foreach (DataRow dr in _table.Rows)
             {
-                sb.Append(" | ");
+                if (!border.IsNone) sb.Append(border.Vertical);
 
-                foreach (var c in Columns)
+                for (int i = 0; i < Columns.Count; i++)
                 {
+                    var c = Columns[i];
                     string val = c.FormatValue(dr[c.Name].ToString() ?? string.Empty);
 
                     if (c.Alignment == ColumnAlignment.Center)
                         val = val.PadRight((int)Math.Ceiling(((decimal)c.Width - val.Length) / 2 + val.Length), ' ');
 
+                    if (i > 0 || !border.IsNone) sb.Append(' ');
                     sb.Append(string.Format(c.AlignString, val));
+                    if (i < Columns.Count - 1 || !border.IsNone) sb.Append(' ');
+                    if (i < Columns.Count - 1 || !border.IsNone)
+                        sb.Append(border.Vertical);
+                }
+                sb.Append('\n');
+            }
 
-                    sb.Append(" | ");
+            // Bottom border (skip for None)
+            if (!border.IsNone)
+            {
+                sb.Append(border.BottomLeft);
+                for (int i = 0; i < Columns.Count; i++)
+                {
+                    sb.Append(new string(border.Horizontal, Columns[i].Width + 2));
+                    sb.Append(i < Columns.Count - 1 ? border.BottomT : border.BottomRight);
                 }
                 sb.Append('\n');
             }
@@ -262,6 +310,7 @@ namespace Carahsoft.Calliope.Table
             }
             return sb.ToString();
         }
+
     }
 
     /// <summary>
@@ -307,8 +356,4 @@ namespace Carahsoft.Calliope.Table
         }
        
     }
-
-
-
-
 }
