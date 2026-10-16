@@ -12,6 +12,17 @@ namespace Carahsoft.Calliope.Components
         public int Index { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        /// <summary>
+        /// Set <see cref="Height"/> to the screen height whenever the window
+        /// is resized. Turn off when the view shares the screen with other
+        /// content and the parent sets its height.
+        /// </summary>
+        public bool AutoHeight { get; set; } = true;
+        /// <summary>
+        /// Quit the program when Ctrl+C is pressed. Turn off when the view
+        /// is part of a larger program that handles Ctrl+C itself.
+        /// </summary>
+        public bool QuitOnCtrlC { get; set; } = true;
 
         public CalliopeCmd? Init()
         {
@@ -25,7 +36,7 @@ namespace Carahsoft.Calliope.Components
             {
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
                 {
-                    return CalliopeCmd.Quit;
+                    return QuitOnCtrlC ? CalliopeCmd.Quit : null;
                 }
                 if (kpm.Key == ConsoleKey.DownArrow || kpm.Key == ConsoleKey.J)
                 {
@@ -83,13 +94,16 @@ namespace Carahsoft.Calliope.Components
             }
             if (msg is WindowSizeChangeMsg wmsg)
             {
+                Width = wmsg.ScreenWidth;
+                if (!AutoHeight)
+                    return null;
+
                 if (wmsg.ScreenHeight > Height && Index > lines.Length - wmsg.ScreenHeight
                     && wmsg.ScreenHeight <= lines.Length)
                 {
                     Index = lines.Length - wmsg.ScreenHeight;
                 }
                 Height = wmsg.ScreenHeight;
-                Width = wmsg.ScreenWidth;
                 return null;
             }
 

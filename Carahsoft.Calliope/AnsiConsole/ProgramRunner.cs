@@ -1,5 +1,6 @@
 ﻿using Carahsoft.Calliope.Constants;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Channels;
@@ -39,6 +40,9 @@ namespace Carahsoft.Calliope.AnsiConsole
         private int _screenHeight = 0;
         private int _screenWidth = 0;
         private bool _flush;
+        // An exception from the program's Update or View, rethrown by RunAsync
+        // once the terminal is restored
+        private Exception? _error;
 
         public ProgramRunner(TProgram program, ProgramOptions opts)
         {
@@ -71,6 +75,10 @@ namespace Carahsoft.Calliope.AnsiConsole
         /// <returns>
         /// Returns the final state of the program when the program exits cleanly.
         /// </returns>
+        /// <remarks>
+        /// If the program's Init, Update or View throws, the program stops,
+        /// the terminal is restored, and the exception is rethrown.
+        /// </remarks>
         public async Task<TProgram> RunAsync()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -99,6 +107,30 @@ namespace Carahsoft.Calliope.AnsiConsole
                 _opts.StandardOut.Write(AnsiConstants.EnableMouseTracking);
             }
 
+            try
+            {
+                await RunLoopsAsync();
+            }
+            finally
+            {
+                Console.TreatControlCAsInput = ctrlCRestore;
+                Console.OutputEncoding = encodingRestore;
+                if (_opts.EnableMouse)
+                    _opts.StandardOut.Write(AnsiConstants.DisableMouseTracking);
+                _opts.StandardOut.Write(AnsiConstants.ShowCursor);
+                if (_opts.Fullscreen)
+                    _opts.StandardOut.Write(AnsiConstants.DisableAltScreenBuffer);
+            }
+
+            if (_error != null)
+                ExceptionDispatchInfo.Throw(_error);
+
+            // Return the final state of the program to the caller
+            return _program;
+        }
+
+        private async Task RunLoopsAsync()
+        {
             _screenHeight = Console.BufferHeight;
             _screenWidth = Console.BufferWidth;
             await _messageChannel.Writer.WriteAsync(new WindowSizeChangeMsg
@@ -124,7 +156,8 @@ namespace Carahsoft.Calliope.AnsiConsole
                     {
                         await messageLoopTask;
                         await commandLoopTask;
-                        await RenderBuffer();
+                        if (_error == null)
+                            await RenderBuffer();
                         return;
                     }
 
@@ -142,7 +175,7 @@ namespace Carahsoft.Calliope.AnsiConsole
                             _previousRender = _previousRender![^_linesRendered..];
                         }
 
-                        await _messageChannel.Writer.WriteAsync(new WindowSizeChangeMsg
+                        _messageChannel.Writer.TryWrite(new WindowSizeChangeMsg
                         {
                             ScreenHeight = _screenHeight,
                             ScreenWidth = _screenWidth
@@ -158,10 +191,8 @@ namespace Carahsoft.Calliope.AnsiConsole
                     }
                     catch (Exception ex)
                     {
-                        await _messageChannel.Writer.WriteAsync(new ErrorMsg(ex));
-                        // TODO: do we need to panic here?
-                        Console.Error.WriteLine(ex);
-                        Environment.Exit(1);
+                        Fail(ex);
+                        return;
                     }
 
                     _updated = false;
@@ -181,22 +212,22 @@ namespace Carahsoft.Calliope.AnsiConsole
                     if (input is IgnoredMouseMsg)
                         continue;
 
-                    await _messageChannel.Writer.WriteAsync(input);
+                    _messageChannel.Writer.TryWrite(input);
                 }
             });
 
             await renderTask;
+        }
 
-            Console.TreatControlCAsInput = ctrlCRestore;
-            Console.OutputEncoding = encodingRestore;
-            if (_opts.EnableMouse)
-                _opts.StandardOut.Write(AnsiConstants.DisableMouseTracking);
-            _opts.StandardOut.Write(AnsiConstants.ShowCursor);
-            if (_opts.Fullscreen)
-                _opts.StandardOut.Write(AnsiConstants.DisableAltScreenBuffer);
-
-            // Return the final state of the program to the caller
-            return _program;
+        /// <summary>
+        /// Stops the program after its Update or View throws
+        /// </summary>
+        private void Fail(Exception ex)
+        {
+            _error ??= ex;
+            _quitting = true;
+            _messageChannel.Writer.TryComplete();
+            _commandChannel.Writer.TryComplete();
         }
 
         private async Task<CalliopeMsg?> GetInputWithTimeoutAsync()
@@ -337,21 +368,30 @@ namespace Carahsoft.Calliope.AnsiConsole
                     {
                         foreach (var batchCommand in batch.Commands)
                         {
-                            await _commandChannel.Writer.WriteAsync(batchCommand);
+                            _commandChannel.Writer.TryWrite(batchCommand);
                         }
                     }
                     else
                     {
-                        var cmd = await UpdateProgram(msg);
+                        CalliopeCmd? cmd;
+                        try
+                        {
+                            cmd = await UpdateProgram(msg);
+                        }
+                        catch (Exception ex)
+                        {
+                            Fail(ex);
+                            return;
+                        }
 
                         if (cmd != null)
-                            await _commandChannel.Writer.WriteAsync(cmd);
+                            _commandChannel.Writer.TryWrite(cmd);
                     }
 
                     if (_quitting)
                     {
                         // tell the command loop to shutdown
-                        await _commandChannel.Writer.WriteAsync(new ShutdownCmd());
+                        _commandChannel.Writer.TryWrite(new ShutdownCmd());
                         return;
                     }
                 }
@@ -379,7 +419,8 @@ namespace Carahsoft.Calliope.AnsiConsole
                         {
                             msg = new ErrorMsg(ex);
                         }
-                        await _messageChannel.Writer.WriteAsync(msg);
+                        // Fails if the program has stopped, in which case the message isn't needed
+                        _messageChannel.Writer.TryWrite(msg);
                     });
                 }
             }

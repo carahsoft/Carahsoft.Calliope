@@ -121,7 +121,8 @@ namespace Carahsoft.Calliope.Components
                 var bgLine = bgLines[topPad + i];
                 var bgStripped = AnsiTextHelper.StripAnsi(bgLine);
 
-                // Get the part of background before the popup (truncate to leftPad chars)
+                // Get the part of background before the popup (truncate to leftPad chars,
+                // which closes any style the cut leaves open)
                 string leftPart;
                 if (leftPad > 0 && bgStripped.Length > 0)
                 {
@@ -136,39 +137,8 @@ namespace Carahsoft.Calliope.Components
                     leftPart = new string(' ', leftPad);
                 }
 
-                // Get the part of background after the popup
-                var rightPart = "";
-                if (bgStripped.Length > popupEndCol)
-                {
-                    // Skip to the position after popup ends (accounting for ANSI codes)
-                    var visibleCount = 0;
-                    var rightStartIdx = 0;
-                    var inEscape = false;
-                    for (int j = 0; j < bgLine.Length; j++)
-                    {
-                        var c = bgLine[j];
-                        if (inEscape)
-                        {
-                            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
-                                inEscape = false;
-                        }
-                        else if (c == '\x1b')
-                        {
-                            inEscape = true;
-                        }
-                        else
-                        {
-                            visibleCount++;
-                            if (visibleCount == popupEndCol)
-                            {
-                                rightStartIdx = j + 1;
-                                break;
-                            }
-                        }
-                    }
-                    if (rightStartIdx > 0 && rightStartIdx < bgLine.Length)
-                        rightPart = bgLine.Substring(rightStartIdx);
-                }
+                // Get the part of background after the popup, with the styles that were active there
+                var rightPart = AnsiTextHelper.SkipVisible(bgLine, popupEndCol);
 
                 bgLines[topPad + i] = leftPart + popupLines[i] + rightPart;
             }

@@ -10,6 +10,10 @@ namespace Carahsoft.Calliope.Components
     public class SelectListItem
     {
         public required string Value { get; set; }
+        /// <summary>
+        /// The text <see cref="FilterableSelectList"/> searches, if different
+        /// from <see cref="Value"/>
+        /// </summary>
         public string? FilterValue { get; set; }
     }
 
@@ -21,6 +25,16 @@ namespace Carahsoft.Calliope.Components
         public int MaxHeight { get; set; } = 10;
         public Style? SelectedStyle { get; set; }
         public Style? ItemStyle { get; set; }
+        /// <summary>
+        /// Quit the program when Ctrl+C is pressed. Turn off when the list
+        /// is part of a larger program that handles Ctrl+C itself.
+        /// </summary>
+        public bool QuitOnCtrlC { get; set; } = true;
+        /// <summary>
+        /// Quit the program when an item is selected with Enter. When off,
+        /// Enter only sets <see cref="Choice"/>.
+        /// </summary>
+        public bool QuitOnSelect { get; set; } = true;
 
         public CalliopeCmd? Init()
         {
@@ -33,9 +47,15 @@ namespace Carahsoft.Calliope.Components
             {
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
                 {
+                    if (!QuitOnCtrlC)
+                        return null;
+
                     Choice = null;
                     return CalliopeCmd.Quit;
                 }
+
+                if (Items.Count == 0)
+                    return null;
 
                 if (kpm.Key == ConsoleKey.DownArrow || kpm.Key == ConsoleKey.J)
                 {
@@ -71,8 +91,9 @@ namespace Carahsoft.Calliope.Components
 
                 if (kpm.Key == ConsoleKey.Enter)
                 {
+                    Index = Math.Clamp(Index, 0, Items.Count - 1);
                     Choice = Items[Index].Value;
-                    return CalliopeCmd.Quit;
+                    return QuitOnSelect ? CalliopeCmd.Quit : null;
                 }
             }
 

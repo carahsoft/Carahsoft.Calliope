@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Carahsoft.Calliope.AnsiConsole;
 
 namespace Carahsoft.Calliope.Components
 {
@@ -28,6 +29,10 @@ namespace Carahsoft.Calliope.Components
                 SetRowIndex(RowIndex);
             }
         }
+        /// <summary>
+        /// The width of the <see cref="ViewPort"/>. Longer lines are cut to
+        /// this width. Zero or less means no limit.
+        /// </summary>
         public int Width { get; set; }
         public bool PadTop { get; set; }
 
@@ -62,7 +67,7 @@ namespace Carahsoft.Calliope.Components
                 }
                 for (int i = 0; i < Text.Count; i++)
                 {
-                    sb.Append(Text[i]);
+                    sb.Append(FitWidth(Text[i]));
                     sb.AppendLine(AnsiReset);
                 }
                 if (!PadTop)
@@ -77,11 +82,14 @@ namespace Carahsoft.Calliope.Components
             {
                 for (int i = RowIndex; i < RowIndex + _height; i++)
                 {
-                    sb.Append(Text[i]);
+                    sb.Append(FitWidth(Text[i]));
                     sb.AppendLine(AnsiReset);
                 }
             }
             return sb.ToString();
         }
+
+        private string FitWidth(string line) =>
+            Width > 0 ? AnsiTextHelper.TruncateLineToLength(line, Width) : line;
     }
 }
