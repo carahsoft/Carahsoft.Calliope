@@ -300,10 +300,10 @@ public class ComponentTests
         foreach (var line in lines)
             Assert.Equal(40, AnsiTextHelper.StripAnsi(line).Length);
 
-        // The 9-wide popup starts at column 15 of row 1. The text left of it closes the blue before the
-        // border starts, and the text right of it opens the blue again.
+        // The 9-wide, 3-line popup (it has no footer) starts at column 15 of row 2. The text left of it
+        // closes the blue before the border starts, and the text right of it opens the blue again.
         const string border = "\x1b[38;2;80;80;80m";
-        var row = lines[1];
+        var row = lines[2];
         Assert.StartsWith(blue + new string('x', 15) + Reset + border + "╭", row);
         Assert.EndsWith("╮" + Reset + Reset + blue + new string('x', 16) + Reset, row);
     }

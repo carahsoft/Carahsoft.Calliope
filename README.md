@@ -169,6 +169,44 @@ public class CounterProgram : ICalliopeProgram
 }
 ```
 
+`CalliopeCmd` also has helpers for timers like this one:
+
+- `CalliopeCmd.Delay(TimeSpan, msg)` sends a message after a delay.
+- `CalliopeCmd.Every(TimeSpan, () => msg)` sends a message repeatedly until the program quits.
+
+Commands can take a `CancellationToken` (`CalliopeCmd.Make(async token => ...)`), which is cancelled when the program quits. Give a command a key with `.WithKey("search")` and starting another command with the same key cancels the first, so a slow response to an old request is never delivered. `CalliopeCmd.Cancel("search")` cancels it outright, e.g. to stop an `Every` timer.
+
+## Components
+
+Calliope comes with components you can combine into larger apps. The interactive ones in `Carahsoft.Calliope.Components` come in two layers:
+
+- **State records and functions.** Each component is an immutable record (e.g. `FormState`) with static functions to update and render it (`Form.Update(state, key)`, `Form.Render(state, width)`). Update functions return the new state, or null for keys the component doesn't use, so your program can handle them instead. Nothing quits the program or blinks on its own, so these compose freely, and they're easy to use from F#.
+- **Views.** Each also has a mutable `ICalliopeProgram` wrapper (e.g. `FormView`) holding its state, for apps written in the usual C# style or to run a component on its own.
+
+| Component | Records and functions | View | |
+|---|---|---|---|
+| Text field | `TextFieldState`, `TextField` | `TextFieldView` | Single-line input with word delete, Ctrl+U and scrolling |
+| Confirm | `ConfirmState`, `Confirm` | `ConfirmView` | Yes/No prompt that defaults to No |
+| Dropdown | `DropdownState`, `Dropdown` | `DropdownView` | A floating list of options, opened with Space |
+| Data grid | `DataGridState<TRow>`, `DataGrid` | `DataGridView<TRow>` | Selectable, sortable, filterable table that keeps its place on refresh |
+| Form | `FormState`, `FormField`, `Form` | `FormView` | Text, number, date, boolean, choice and JSON fields with validation |
+| Command line | `CommandLineState`, `CommandLine` | `CommandLineView` | A vim-style `:` prompt with suggestions and Tab completion |
+
+`Carahsoft.Calliope.Forms.Json.JsonSchemaForm` builds a form from a JSON Schema, like one from `JsonSchemaExporter`, and turns the submitted values into a JSON object.
+
+The older components (`TextInput`, `SelectList`, `FilterableSelectList`, `ScrollView`, `Table`, `PopupDialog`, `LoadingBar`, `LoadingSpinner`) are mutable programs. `SelectList`, `TextInput` and `ScrollView` quit the program on Ctrl+C unless you turn off `QuitOnCtrlC`.
+
+### Layout
+
+`Carahsoft.Calliope.Text` has helpers for drawing with lines of styled text:
+
+- `Ansi` measures, cuts, pads and wraps lines, ignoring escape codes, and never leaves a style running into the next line.
+- `Block` places blocks of lines side by side or above each other.
+- `Frame` draws boxes, dialogs, dividers and bars. Their characters and colors come from a `FrameStyle`.
+- `Window` draws windows over other lines (popups, dropdowns), keeping the text and colors on both sides.
+
+Colors come from `Theme.Default`, which you can change with `with`. [DashboardExample](./Examples/DashboardExample/Program.cs) puts them all together: a table that refreshes itself, a confirm prompt, a form in a popup with a dropdown, a `:` command line and a help window.
+
 
 ## Calliope ASCII Rendering
 
@@ -212,7 +250,7 @@ Calliope can render text to ASCII art using the `Calliope.Print` and `Calliope.P
 
 - [ ] Multi font support for different operating systems
 - [ ] Enable custom ASCII fonts (e.g. FIGlet via [Figgle](https://github.com/drewnoakes/figgle))
-- [ ] Focused element support (Focus/Blur) for more complex apps
+- [x] Focused element support (Focus/Blur) for more complex apps
 - [ ] Mouse support
 - [ ] Full width character support (using [wcwidth](https://github.com/spectreconsole/wcwidth)?)
 - [x] Implement `Style` class to easily style many components together

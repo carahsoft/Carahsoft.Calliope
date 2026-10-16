@@ -88,7 +88,7 @@ public class AnsiTextHelperTests
         var bold = "\x1b[1m";
         var line = "ab" + bold + "cdef" + Reset + "gh";
 
-        var rest = AnsiTextHelper.SkipVisible(line, 3);
+        var rest = Text.Ansi.Skip(line, 3);
 
         Assert.Equal("defgh", AnsiTextHelper.StripAnsi(rest));
         Assert.Equal(Reset + bold + "def" + Reset + "gh", rest);
@@ -99,14 +99,14 @@ public class AnsiTextHelperTests
     {
         var line = "\x1b[1mab\x1b[mcd\x1b[0;4mef";
 
-        Assert.Equal(Reset + "d\x1b[0;4mef", AnsiTextHelper.SkipVisible(line, 3));
-        Assert.Equal(Reset + "\x1b[0;4mf", AnsiTextHelper.SkipVisible(line, 5));
+        Assert.Equal(Reset + "d\x1b[0;4mef", Text.Ansi.Skip(line, 3));
+        Assert.Equal(Reset + "\x1b[0;4mf", Text.Ansi.Skip(line, 5));
     }
 
     [Fact]
     public void SkipVisible_past_the_end_is_empty()
     {
-        Assert.Equal("", AnsiTextHelper.SkipVisible(Blue.Apply("abc"), 3));
-        Assert.Equal("", AnsiTextHelper.SkipVisible("abc", 10));
+        Assert.Equal("", Text.Ansi.Skip(Blue.Apply("abc"), 3));
+        Assert.Equal("", Text.Ansi.Skip("abc", 10));
     }
 }

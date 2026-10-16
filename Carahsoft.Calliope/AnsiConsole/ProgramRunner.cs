@@ -16,6 +16,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         private readonly TimeSpan _framerate;
         private readonly PeriodicTimer _renderTimer;
         private readonly SemaphoreSlim _renderLock = new SemaphoreSlim(1, 1);
+        private readonly CommandRunner _commands;
 
         private readonly Channel<CalliopeMsg> _messageChannel = Channel.CreateUnbounded<CalliopeMsg>(
             new UnboundedChannelOptions
@@ -54,6 +55,8 @@ namespace Carahsoft.Calliope.AnsiConsole
 
             _framerate = TimeSpan.FromSeconds(1) / _opts.Framerate;
             _renderTimer = new PeriodicTimer(_framerate);
+            // Fails if the program has stopped, in which case the message isn't needed
+            _commands = new CommandRunner(msg => _messageChannel.Writer.TryWrite(msg));
         }
 
         /// <summary>
@@ -113,6 +116,7 @@ namespace Carahsoft.Calliope.AnsiConsole
             }
             finally
             {
+                _commands.StopAll();
                 Console.TreatControlCAsInput = ctrlCRestore;
                 Console.OutputEncoding = encodingRestore;
                 if (_opts.EnableMouse)
@@ -226,6 +230,7 @@ namespace Carahsoft.Calliope.AnsiConsole
         {
             _error ??= ex;
             _quitting = true;
+            _commands.StopAll();
             _messageChannel.Writer.TryComplete();
             _commandChannel.Writer.TryComplete();
         }
@@ -406,22 +411,12 @@ namespace Carahsoft.Calliope.AnsiConsole
                 while (_commandChannel.Reader.TryRead(out var cmd))
                 {
                     if (cmd is ShutdownCmd)
-                        return;
-
-                    _ = Task.Run(async () =>
                     {
-                        CalliopeMsg msg;
-                        try
-                        {
-                            msg = await cmd.CommandFunc();
-                        }
-                        catch (Exception ex)
-                        {
-                            msg = new ErrorMsg(ex);
-                        }
-                        // Fails if the program has stopped, in which case the message isn't needed
-                        _messageChannel.Writer.TryWrite(msg);
-                    });
+                        _commands.StopAll();
+                        return;
+                    }
+
+                    _ = _commands.Start(cmd);
                 }
             }
         }
