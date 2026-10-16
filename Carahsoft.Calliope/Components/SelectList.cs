@@ -81,6 +81,11 @@ namespace Carahsoft.Calliope.Components
 
         public string View()
         {
+            if (Items.Count == 0)
+            {
+                return "(no options)";
+            }
+
             var height = Items.Count > MaxHeight ?
                 MaxHeight : Items.Count;
 
