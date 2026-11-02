@@ -5,7 +5,40 @@ namespace Carahsoft.Calliope.Tests;
 public class AnsiTextHelperTests
 {
     private const string Reset = "\x1b[0m";
+    private const string ClearRight = "\x1b[0K";
     private static readonly Style Blue = Style.Default.WithBackgroundColor(RgbColors.CarahBlue);
+
+    [Fact]
+    public void Full_width_line_is_not_followed_by_clear_to_end_of_line()
+    {
+        // Clearing after a character in the last column erases that character in most terminals
+        var line = "╭" + new string('─', 8) + "╮";
+
+        Assert.Equal(line, AnsiTextHelper.RenderLine(line, 10));
+    }
+
+    [Fact]
+    public void Full_width_styled_line_is_not_followed_by_clear_to_end_of_line()
+    {
+        var line = Blue.Apply(new string('x', 10));
+
+        Assert.Equal(line, AnsiTextHelper.RenderLine(line, 10));
+    }
+
+    [Fact]
+    public void Shorter_line_clears_what_the_last_frame_left_to_its_right()
+    {
+        Assert.Equal("short" + ClearRight, AnsiTextHelper.RenderLine("short", 10));
+        Assert.Equal(ClearRight, AnsiTextHelper.RenderLine("", 10));
+    }
+
+    [Fact]
+    public void Too_long_line_is_cut_to_the_screen_without_a_clear()
+    {
+        var rendered = AnsiTextHelper.RenderLine(new string('x', 15), 10);
+
+        Assert.Equal(new string('x', 10), rendered);
+    }
 
     [Fact]
     public void Full_width_styled_line_keeps_its_reset()

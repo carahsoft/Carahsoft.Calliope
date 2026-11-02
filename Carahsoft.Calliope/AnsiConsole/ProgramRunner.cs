@@ -502,8 +502,7 @@ namespace Carahsoft.Calliope.AnsiConsole
 
                 if (i >= _linesRendered || !skipLines[i])
                 {
-                    var renderLine = AnsiTextHelper.TruncateLineToLength(renderLines[i], _screenWidth);
-                    sb.Append(renderLine + AnsiConstants.ClearRight);
+                    sb.Append(AnsiTextHelper.RenderLine(renderLines[i], _screenWidth));
                 }
             }
             _linesRendered = renderLines.Length;

@@ -5,6 +5,26 @@ namespace Carahsoft.Calliope.AnsiConsole
 {
     public static class AnsiTextHelper
     {
+        /// <summary>
+        /// Prepares one line of a view for the screen: cut to the screen width, then clear whatever the
+        /// previous frame left to its right.
+        /// </summary>
+        /// <remarks>
+        /// A line that fills the screen width must not be followed by a clear. After a character is written
+        /// in the last column the cursor stays on that column (the wrap is pending until the next
+        /// character), so "clear to end of line" erases the character that was just written. Most
+        /// terminals (xterm, Windows Terminal) do this; tmux doesn't. A full-width line has nothing to its
+        /// right to clear anyway.
+        /// </remarks>
+        internal static string RenderLine(string? line, int screenWidth)
+        {
+            var renderLine = TruncateLineToLength(line, screenWidth);
+
+            return Ansi.VisibleLength(renderLine) < screenWidth
+                ? renderLine + Constants.AnsiConstants.ClearRight
+                : renderLine;
+        }
+
         public static string ColorText(string text, RgbColor color, RgbColor? background = null)
         {
             var sb = new StringBuilder();

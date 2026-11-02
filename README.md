@@ -207,6 +207,10 @@ The older components (`TextInput`, `SelectList`, `FilterableSelectList`, `Scroll
 
 Colors come from `Theme.Default`, which you can change with `with`. [DashboardExample](./Examples/DashboardExample/Program.cs) puts them all together: a table that refreshes itself, a confirm prompt, a form in a popup with a dropdown, a `:` command line and a help window.
 
+### F#
+
+[Carahsoft.Calliope.Elm](./Carahsoft.Calliope.Elm/README.md) runs pure Elm-style F# programs (`init`, `update` and `view` with `Cmd`s), wraps the components in F# modules, and has helpers for testing update functions without a terminal. See [ElmCounter](./Examples/ElmCounter/Program.fs).
+
 
 ## Calliope ASCII Rendering
 

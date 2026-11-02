@@ -133,12 +133,19 @@ namespace Carahsoft.Calliope
         /// <see cref="Cancel"/>, or to restart it.
         /// </summary>
         public static CalliopeCmd Every(TimeSpan interval, Func<CalliopeMsg> msg) =>
-            new(async (token, send) =>
+            Stream(async (token, send) =>
             {
                 using var timer = new PeriodicTimer(interval);
                 while (await timer.WaitForNextTickAsync(token))
                     send(msg());
-            }, null);
+            });
+
+        /// <summary>
+        /// A command that sends any number of messages, e.g. lines from a log
+        /// stream, by calling the function it's given, until it completes or is
+        /// cancelled (when the program quits, or by its key)
+        /// </summary>
+        public static CalliopeCmd Stream(Func<CancellationToken, Action<CalliopeMsg>, Task> run) => new(run, null);
 
         /// <summary>
         /// Cancels the running command with the given key, if there is one

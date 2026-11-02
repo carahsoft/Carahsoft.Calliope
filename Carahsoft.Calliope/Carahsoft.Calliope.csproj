@@ -4,7 +4,7 @@
     <TargetFrameworks>net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <VersionPrefix>0.4.0</VersionPrefix>
+    <VersionPrefix>0.3.0</VersionPrefix>
     <LangVersion>14.0</LangVersion>
     <Title>$(AssemblyName)</Title>
     <Company>Carahsoft</Company>
@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Carahsoft.Calliope.Tests" />
+    <InternalsVisibleTo Include="Carahsoft.Calliope.Elm" />
   </ItemGroup>
 
   <ItemGroup>
