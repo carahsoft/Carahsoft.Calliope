@@ -96,7 +96,7 @@ namespace TextEffectExample
             sb.AppendLine(rendered);
             sb.AppendLine(
                 Calliope.ColorText("Press 1-3 to cycle between the different effects! ctrl+c to quit.",
-                RgbColors.Grey));
+                RgbColors.Gray));
             sb.Append(GetDisplayFor("Rainbow", 1));
             sb.Append(GetDisplayFor("Christmas", 2));
             sb.Append(GetDisplayFor("Blizzard", 3));
@@ -111,7 +111,7 @@ namespace TextEffectExample
             }
             else
             {
-                return Calliope.ColorText($"[ {key} - {name} ]   ", RgbColors.Grey);
+                return Calliope.ColorText($"[ {key} - {name} ]   ", RgbColors.Gray);
             }
         }
     }

@@ -34,7 +34,7 @@ module Confirm =
     type Outcome =
         | Pending of Model
         | Confirmed
-        | Cancelled
+        | Canceled
 
     let create (title: string) (message: string list) : Model = Components.Confirm.Create(title, message)
 
@@ -43,7 +43,7 @@ module Confirm =
 
         match next.Result with
         | ConfirmResult.Confirmed -> Confirmed
-        | ConfirmResult.Cancelled -> Cancelled
+        | ConfirmResult.Canceled -> Canceled
         | _ -> Pending next
 
     /// The message and buttons, to draw inside a popup
@@ -182,7 +182,7 @@ module Field =
     let label (label: string) (f: Model) = RecordCopies.WithLabel(f, label)
     let hidden (f: Model) = RecordCopies.WithHidden(f, true)
 
-/// A form of labelled fields, built from fields or a JSON Schema
+/// A form of labeled fields, built from fields or a JSON Schema
 module Form =
     type Model = FormState
 
@@ -190,7 +190,7 @@ module Form =
         | Editing of Model
         /// Every field is valid; see values and json
         | Submitted of Model
-        | Cancelled
+        | Canceled
 
     let create (fields: Field.Model list) : Model = Components.Form.Create(fields)
 
@@ -215,7 +215,7 @@ module Form =
 
         match next.Status with
         | FormStatus.Submitted -> Submitted next
-        | FormStatus.Cancelled -> Cancelled
+        | FormStatus.Canceled -> Canceled
         | _ -> Editing next
 
     /// Validates every field: Ok with the values set, or Error with the errors set on the fields

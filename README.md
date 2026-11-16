@@ -174,7 +174,7 @@ public class CounterProgram : ICalliopeProgram
 - `CalliopeCmd.Delay(TimeSpan, msg)` sends a message after a delay.
 - `CalliopeCmd.Every(TimeSpan, () => msg)` sends a message repeatedly until the program quits.
 
-Commands can take a `CancellationToken` (`CalliopeCmd.Make(async token => ...)`), which is cancelled when the program quits. Give a command a key with `.WithKey("search")` and starting another command with the same key cancels the first, so a slow response to an old request is never delivered. `CalliopeCmd.Cancel("search")` cancels it outright, e.g. to stop an `Every` timer.
+Commands can take a `CancellationToken` (`CalliopeCmd.Make(async token => ...)`), which is canceled when the program quits. Give a command a key with `.WithKey("search")` and starting another command with the same key cancels the first, so a slow response to an old request is never delivered. `CalliopeCmd.Cancel("search")` cancels it outright, e.g. to stop an `Every` timer.
 
 ## Components
 

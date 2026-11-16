@@ -31,13 +31,13 @@ let update msg model =
             match Confirm.update k confirm with
             | Confirm.Pending confirm -> { model with Confirm = Some confirm }, Cmd.none
             | Confirm.Confirmed -> { model with Confirm = None; Count = 0 }, Cmd.none
-            | Confirm.Cancelled -> { model with Confirm = None }, Cmd.none
+            | Confirm.Canceled -> { model with Confirm = None }, Cmd.none
         | None ->
             match k.Key, k.Char with
             | ConsoleKey.RightArrow, _ -> { model with Count = model.Count + 1 }, Cmd.none
             | ConsoleKey.LeftArrow, _ -> { model with Count = model.Count - 1 }, Cmd.none
             | _, 'r' -> { model with Confirm = Some(Confirm.create "Reset" [ $"Reset the count of {model.Count}?" ]) }, Cmd.none
-            // Cancelling the keyed timer stops it; starting it again replaces any that's running
+            // Canceling the keyed timer stops it; starting it again replaces any that's running
             | _, ' ' when model.Paused -> { model with Paused = false }, tick
             | _, ' ' -> { model with Paused = true }, Cmd.cancel "tick"
             | _ -> model, Cmd.none

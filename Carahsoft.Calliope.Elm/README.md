@@ -35,9 +35,9 @@ Calliope.NewProgram(ElmProgram(init, update, view, ofCalliope)).RunAsync().Wait(
 
 ## Commands
 
-`Cmd<'msg>` is a list of effects: `Cmd.none`, `Cmd.batch`, `Cmd.quit`, `Cmd.ofMsg`, `Cmd.ofTask`, `Cmd.ofCancellableTask`, `Cmd.stream`, `Cmd.delay`, `Cmd.every` and `Cmd.map`.
+`Cmd<'msg>` is a list of effects: `Cmd.none`, `Cmd.batch`, `Cmd.quit`, `Cmd.ofMsg`, `Cmd.ofTask`, `Cmd.ofCancelableTask`, `Cmd.stream`, `Cmd.delay`, `Cmd.every` and `Cmd.map`.
 
-Effects are cancelled when the program quits. `Cmd.withKey "search"` gives an effect a key: starting another with the same key cancels the first, so the response to an old request is never delivered. `Cmd.cancel "search"` cancels it outright, e.g. to stop a `Cmd.every` timer.
+Effects are canceled when the program quits. `Cmd.withKey "search"` gives an effect a key: starting another with the same key cancels the first, so the response to an old request is never delivered. `Cmd.cancel "search"` cancels it outright, e.g. to stop a `Cmd.every` timer.
 
 ## Keys
 

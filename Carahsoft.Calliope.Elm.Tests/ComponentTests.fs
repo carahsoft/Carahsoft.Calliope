@@ -105,8 +105,8 @@ let ``confirm defaults to no`` () =
     let c = Confirm.create "t" [ "sure?" ]
 
     match Confirm.update (Key.Plain ConsoleKey.Enter) c with
-    | Confirm.Cancelled -> ()
-    | other -> failwith $"expected Cancelled, got {other}"
+    | Confirm.Canceled -> ()
+    | other -> failwith $"expected Canceled, got {other}"
 
     match Confirm.update (Key.Plain ConsoleKey.LeftArrow) c with
     | Confirm.Pending c ->
@@ -158,8 +158,8 @@ let ``form from a schema submits JSON`` () =
     | other -> failwith $"expected Submitted, got {other}"
 
     match Form.update (Key.Plain ConsoleKey.Escape) form with
-    | Form.Cancelled -> ()
-    | other -> failwith $"expected Cancelled, got {other}"
+    | Form.Canceled -> ()
+    | other -> failwith $"expected Canceled, got {other}"
 
 [<Fact>]
 let ``form built from fields`` () =

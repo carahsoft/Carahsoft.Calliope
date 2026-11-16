@@ -76,7 +76,7 @@ namespace Carahsoft.Calliope.Text
             var h = style.Horizontal;
 
             // ─── text ─── filling width - 2 columns between the corner characters
-            string Labelled(string? text, Style textStyle)
+            string Labeled(string? text, Style textStyle)
             {
                 text = Ansi.Truncate(text, Math.Max(0, inner - 2));
                 var dashes = Math.Max(0, width - 2 - Ansi.VisibleLength(text) - 2);
@@ -86,12 +86,12 @@ namespace Carahsoft.Calliope.Text
 
             var lines = new List<string>
             {
-                b.Apply(style.TopLeft.ToString()) + Labelled(title, style.Title) + b.Apply(style.TopRight.ToString()),
+                b.Apply(style.TopLeft.ToString()) + Labeled(title, style.Title) + b.Apply(style.TopRight.ToString()),
             };
             foreach (var line in content)
                 lines.Add(b.Apply(style.Vertical + " ") + Ansi.PadRight(line, inner) + b.Apply(" " + style.Vertical));
             if (!string.IsNullOrEmpty(footer))
-                lines.Add(b.Apply(style.LeftT.ToString()) + Labelled(footer, style.Footer) + b.Apply(style.RightT.ToString()));
+                lines.Add(b.Apply(style.LeftT.ToString()) + Labeled(footer, style.Footer) + b.Apply(style.RightT.ToString()));
             lines.Add(b.Apply(style.BottomLeft + new string(h, Math.Max(0, width - 2)) + style.BottomRight));
             return lines;
         }

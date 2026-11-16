@@ -22,7 +22,7 @@ public class CommandTests
     }
 
     [Fact]
-    public async Task Every_sends_repeatedly_until_cancelled()
+    public async Task Every_sends_repeatedly_until_canceled()
     {
         var count = 0;
         using var cts = new CancellationTokenSource();
@@ -64,7 +64,7 @@ public class CommandTests
     {
         var delivered = new ConcurrentQueue<CalliopeMsg>();
         var runner = new CommandRunner(delivered.Enqueue);
-        var cancelled = false;
+        var canceled = false;
 
         var running = runner.Start(CalliopeCmd.Make(async token =>
         {
@@ -74,7 +74,7 @@ public class CommandTests
             }
             catch (OperationCanceledException)
             {
-                cancelled = true;
+                canceled = true;
                 throw;
             }
             return new Msg("late");
@@ -83,7 +83,7 @@ public class CommandTests
         runner.StopAll();
         await running.WaitAsync(Timeout);
 
-        Assert.True(cancelled);
+        Assert.True(canceled);
         Assert.Empty(delivered);
 
         // Commands started after stopping don't run

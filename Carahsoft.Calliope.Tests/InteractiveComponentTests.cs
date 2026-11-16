@@ -277,9 +277,9 @@ public class ConfirmTests
     public void Defaults_to_no()
     {
         var confirm = Confirm.Create("t", "sure?");
-        Assert.Equal(ConfirmResult.Cancelled, Confirm.Update(confirm, Enter).Result);
+        Assert.Equal(ConfirmResult.Canceled, Confirm.Update(confirm, Enter).Result);
         Assert.Equal(ConfirmResult.Confirmed, Confirm.Update(confirm, Char('y')).Result);
-        Assert.Equal(ConfirmResult.Cancelled, Confirm.Update(confirm, Escape).Result);
+        Assert.Equal(ConfirmResult.Canceled, Confirm.Update(confirm, Escape).Result);
     }
 
     [Fact]
@@ -462,7 +462,7 @@ public class FormTests
     [Fact]
     public void Escape_cancels()
     {
-        Assert.Equal(FormStatus.Cancelled, Form.Update(Form.Create(FormField.Text("a")), Escape).Status);
+        Assert.Equal(FormStatus.Canceled, Form.Update(Form.Create(FormField.Text("a")), Escape).Status);
     }
 
     [Fact]
@@ -521,7 +521,7 @@ public class FormTests
     }
 
     [Fact]
-    public void Escape_closes_the_dropdown_without_changing_it_or_cancelling_the_form()
+    public void Escape_closes_the_dropdown_without_changing_it_or_canceling_the_form()
     {
         var closed = Form.Update(Form.Update(Form.Update(ChoiceForm("dev", "test", "prod"), Space), Down), Escape);
         Assert.False(Form.DropdownOpen(closed));

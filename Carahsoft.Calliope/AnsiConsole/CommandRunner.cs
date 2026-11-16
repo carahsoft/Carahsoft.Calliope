@@ -2,7 +2,7 @@ namespace Carahsoft.Calliope.AnsiConsole
 {
     /// <summary>
     /// Runs a program's commands in the background, delivering their messages
-    /// and handling cancellation: every command is cancelled by
+    /// and handling cancellation: every command is canceled by
     /// <see cref="StopAll"/>, and starting a keyed command cancels the running
     /// one with the same key.
     /// </summary>

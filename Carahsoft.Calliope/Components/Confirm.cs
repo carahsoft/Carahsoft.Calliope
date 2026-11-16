@@ -9,7 +9,7 @@ namespace Carahsoft.Calliope.Components
         /// </summary>
         Pending,
         Confirmed,
-        Cancelled,
+        Canceled,
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ namespace Carahsoft.Calliope.Components
                 case 'y':
                     return state with { Result = ConfirmResult.Confirmed };
                 case 'n':
-                    return state with { Result = ConfirmResult.Cancelled };
+                    return state with { Result = ConfirmResult.Canceled };
                 case 'h':
                 case 'l':
                     return state with { Yes = !state.Yes };
@@ -49,8 +49,8 @@ namespace Carahsoft.Calliope.Components
 
             return key.Key switch
             {
-                ConsoleKey.Escape => state with { Result = ConfirmResult.Cancelled },
-                ConsoleKey.Enter => state with { Result = state.Yes ? ConfirmResult.Confirmed : ConfirmResult.Cancelled },
+                ConsoleKey.Escape => state with { Result = ConfirmResult.Canceled },
+                ConsoleKey.Enter => state with { Result = state.Yes ? ConfirmResult.Confirmed : ConfirmResult.Canceled },
                 ConsoleKey.LeftArrow or ConsoleKey.RightArrow or ConsoleKey.Tab => state with { Yes = !state.Yes },
                 _ => state,
             };

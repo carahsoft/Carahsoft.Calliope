@@ -12,7 +12,7 @@ let quits (cmd: Cmd<'msg>) =
         | _ -> false)
 
 /// Runs each effect in the command once, returning the messages they sent within the timeout. Slow
-/// effects, like a refresh tick, are cancelled once the timeout passes. An effect that throws fails
+/// effects, like a refresh tick, are canceled once the timeout passes. An effect that throws fails
 /// with its exception.
 let runEffectsWithin (timeout: TimeSpan) (cmd: Cmd<'msg>) : 'msg list =
     [ for effect in cmd do

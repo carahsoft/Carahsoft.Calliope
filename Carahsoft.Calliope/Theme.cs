@@ -9,7 +9,7 @@ namespace Carahsoft.Calliope
     /// </summary>
     public sealed record Theme
     {
-        private static readonly RgbColor Grey = new(130, 130, 130);
+        private static readonly RgbColor Gray = new(130, 130, 130);
 
         public static Theme Default { get; } = new();
 
@@ -20,7 +20,7 @@ namespace Carahsoft.Calliope
         /// <summary>
         /// Secondary text: hints, descriptions, borders of boxes
         /// </summary>
-        public Style Dim { get; init; } = Style.FromColor(Grey);
+        public Style Dim { get; init; } = Style.FromColor(Gray);
         /// <summary>
         /// The selected row, option or button
         /// </summary>
@@ -28,7 +28,7 @@ namespace Carahsoft.Calliope
         /// <summary>
         /// Table column titles
         /// </summary>
-        public Style Header { get; init; } = Style.Bold.WithForegroundColor(Grey);
+        public Style Header { get; init; } = Style.Bold.WithForegroundColor(Gray);
         /// <summary>
         /// The selected column's title in a table header
         /// </summary>

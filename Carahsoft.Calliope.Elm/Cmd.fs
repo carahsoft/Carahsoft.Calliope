@@ -7,7 +7,7 @@ open System.Threading.Tasks
 /// Something for the program to do after an update
 [<RequireQualifiedAccess>]
 type Effect<'msg> =
-    /// Runs in the background, sending any number of messages, until it finishes or is cancelled.
+    /// Runs in the background, sending any number of messages, until it finishes or is canceled.
     /// Starting one with a key cancels the running one with the same key.
     | Run of key: string option * run: (CancellationToken -> ('msg -> unit) -> Task)
     /// Cancels the running effect with the key
@@ -36,8 +36,8 @@ module Cmd =
                   send (toMsg result)
               }) ]
 
-    /// Runs a task that can be cancelled: when the program quits, or by its key (see withKey)
-    let ofCancellableTask (f: CancellationToken -> Task<'a>) (toMsg: 'a -> 'msg) : Cmd<'msg> =
+    /// Runs a task that can be canceled: when the program quits, or by its key (see withKey)
+    let ofCancelableTask (f: CancellationToken -> Task<'a>) (toMsg: 'a -> 'msg) : Cmd<'msg> =
         [ Effect.Run(None, fun token send ->
               task {
                   let! result = f token
@@ -45,7 +45,7 @@ module Cmd =
               }) ]
 
     /// Runs a function that sends any number of messages, e.g. lines of a log stream, until it
-    /// finishes or the token is cancelled
+    /// finishes or the token is canceled
     let stream (f: CancellationToken -> ('msg -> unit) -> Task) : Cmd<'msg> = [ Effect.Run(None, f) ]
 
     /// Sends the message after a delay

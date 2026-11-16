@@ -103,7 +103,7 @@ namespace Carahsoft.Calliope.Components
         /// <summary>
         /// Esc was pressed
         /// </summary>
-        Cancelled,
+        Canceled,
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ namespace Carahsoft.Calliope.Components
     }
 
     /// <summary>
-    /// A form of labelled fields. Tab or ↓ moves to the next field and
+    /// A form of labeled fields. Tab or ↓ moves to the next field and
     /// Shift+Tab or ↑ to the previous one, skipping hidden fields. Enter
     /// validates and submits, and Esc cancels. Choice fields open a dropdown
     /// with Space, which is drawn separately (see <see cref="RenderDropdown"/>)
@@ -180,7 +180,7 @@ namespace Carahsoft.Calliope.Components
             switch (key.Key)
             {
                 case ConsoleKey.Escape:
-                    return state with { Status = FormStatus.Cancelled };
+                    return state with { Status = FormStatus.Canceled };
                 case ConsoleKey.Enter:
                     return Submit(state);
                 case ConsoleKey.Tab when key.Shift():
@@ -429,7 +429,7 @@ namespace Carahsoft.Calliope.Components
         public int Width { get; set; } = 60;
         public Theme Theme { get; set; } = Theme.Default;
         /// <summary>
-        /// Quit the program once the form is submitted or cancelled, e.g. when
+        /// Quit the program once the form is submitted or canceled, e.g. when
         /// it's run on its own with <see cref="Calliope.NewProgram"/>
         /// </summary>
         public bool QuitWhenDone { get; set; }

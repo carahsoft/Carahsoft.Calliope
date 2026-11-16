@@ -13,14 +13,14 @@ namespace Carahsoft.Calliope
     /// </summary>
     /// <remarks>
     /// Commands made with a <see cref="CancellationToken"/> parameter are
-    /// cancelled when the program quits. A command with a <see cref="Key"/>
+    /// canceled when the program quits. A command with a <see cref="Key"/>
     /// (see <see cref="WithKey"/>) also cancels the previous command with the
-    /// same key when it starts, and can be cancelled with <see cref="Cancel"/>.
-    /// The message of a cancelled command is never delivered.
+    /// same key when it starts, and can be canceled with <see cref="Cancel"/>.
+    /// The message of a canceled command is never delivered.
     /// </remarks>
     public class CalliopeCmd
     {
-        // Sends any number of messages until it completes or is cancelled
+        // Sends any number of messages until it completes or is canceled
         private readonly Func<CancellationToken, Action<CalliopeMsg>, Task> _run;
 
         public CalliopeCmd(Func<CalliopeMsg> cmd)
@@ -57,7 +57,7 @@ namespace Carahsoft.Calliope
 
         /// <summary>
         /// Runs the command, passing each message it produces to
-        /// <paramref name="send"/> until it completes or the token is cancelled
+        /// <paramref name="send"/> until it completes or the token is canceled
         /// </summary>
         public Task RunAsync(CancellationToken cancellationToken, Action<CalliopeMsg> send) =>
             _run(cancellationToken, send);
@@ -118,7 +118,7 @@ namespace Carahsoft.Calliope
         }
 
         /// <summary>
-        /// Sends the message after a delay. Cancelled if the program quits first.
+        /// Sends the message after a delay. Canceled if the program quits first.
         /// </summary>
         public static CalliopeCmd Delay(TimeSpan delay, CalliopeMsg msg) =>
             Make(async token =>
@@ -143,7 +143,7 @@ namespace Carahsoft.Calliope
         /// <summary>
         /// A command that sends any number of messages, e.g. lines from a log
         /// stream, by calling the function it's given, until it completes or is
-        /// cancelled (when the program quits, or by its key)
+        /// canceled (when the program quits, or by its key)
         /// </summary>
         public static CalliopeCmd Stream(Func<CancellationToken, Action<CalliopeMsg>, Task> run) => new(run, null);
 
