@@ -224,7 +224,7 @@ module Form =
         if next.Status = FormStatus.Submitted then Ok next else Error next
 
     /// The submitted values by field name: string, int64, decimal, DateOnly, bool or JsonNode.
-    /// Hidden fields and empty optional ones are left out.
+    /// Hidden fields and empty optional ones are left out. A raw JSON field set to null has a null value.
     let values (m: Model) : Map<string, obj> =
         match m.Values with
         | null -> Map.empty

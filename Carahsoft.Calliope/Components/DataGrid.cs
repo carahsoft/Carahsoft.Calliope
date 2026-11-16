@@ -244,7 +244,8 @@ namespace Carahsoft.Calliope.Components
                 }
             }
 
-            return Block.FitHeight(lines, height);
+            // Columns' minimum widths can add up to more than the width
+            return Block.FitHeight(lines.Select(l => Ansi.Cut(l, width)).ToList(), height);
         }
 
         /// <summary>
@@ -338,13 +339,23 @@ namespace Carahsoft.Calliope.Components
     public class DataGridView<TRow> : ICalliopeProgram
     {
         private int _height = 10;
+        private DataGridState<TRow> _state;
 
         public DataGridView(params IEnumerable<DataGridColumn<TRow>> columns)
         {
-            State = DataGrid.Create(columns);
+            _state = DataGrid.Create(columns);
+            State = _state;
         }
 
-        public DataGridState<TRow> State { get; set; }
+        /// <summary>
+        /// The grid's state. Its <see cref="DataGridState{TRow}.ViewHeight"/>
+        /// always follows <see cref="Height"/>.
+        /// </summary>
+        public DataGridState<TRow> State
+        {
+            get => _state;
+            set => _state = DataGrid.SetViewHeight(value, _height - 1);
+        }
         public TRow? Selected => DataGrid.Selected(State);
         public int Width { get; set; } = 80;
         /// <summary>
@@ -356,7 +367,7 @@ namespace Carahsoft.Calliope.Components
             set
             {
                 _height = value;
-                State = DataGrid.SetViewHeight(State, value - 1);
+                State = _state;
             }
         }
         /// <summary>

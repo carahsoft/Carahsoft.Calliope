@@ -218,7 +218,7 @@ namespace Carahsoft.Calliope.Components
         /// </summary>
         public static FormState Submit(FormState state)
         {
-            var results = state.Fields.Select(f => f.Hidden ? (true, null, null) : Validate(f)).ToList();
+            var results = state.Fields.Select(f => f.Hidden ? (true, false, null, null) : Validate(f)).ToList();
             var fields = state.Fields.Select((f, i) => f with { Error = results[i].Error }).ToList();
 
             var firstError = results.FindIndex(r => !r.Ok);
@@ -228,8 +228,8 @@ namespace Carahsoft.Calliope.Components
             var values = new Dictionary<string, object?>();
             for (int i = 0; i < fields.Count; i++)
             {
-                if (results[i].Value is { } value)
-                    values[fields[i].Name] = value;
+                if (results[i].HasValue)
+                    values[fields[i].Name] = results[i].Value;
             }
 
             return state with { Fields = fields, Status = FormStatus.Submitted, Values = values };
@@ -275,11 +275,15 @@ namespace Carahsoft.Calliope.Components
             return ["", .. Ansi.Wrap(text, width).Select(theme.Dim.Apply)];
         }
 
-        private static (bool Ok, object? Value, string? Error) Validate(FormField f)
+        /// <summary>
+        /// HasValue is false for an empty optional field, which is left out
+        /// of the values. A value can be null and still be there, e.g. JSON null.
+        /// </summary>
+        private static (bool Ok, bool HasValue, object? Value, string? Error) Validate(FormField f)
         {
             var text = f.Input.Text.Trim();
-            (bool, object?, string?) Ok(object? value) => (true, value, null);
-            (bool, object?, string?) Fail(string error) => (false, null, error);
+            (bool, bool, object?, string?) Ok(object? value) => (true, value != null, value, null);
+            (bool, bool, object?, string?) Fail(string error) => (false, false, null, error);
 
             switch (f.Kind)
             {
@@ -306,7 +310,8 @@ namespace Carahsoft.Calliope.Components
                 case FormFieldKind.RawJson:
                     try
                     {
-                        return Ok(JsonNode.Parse(text));
+                        // Typed null is a value, unlike an empty field
+                        return (true, true, JsonNode.Parse(text), null);
                     }
                     catch (JsonException e)
                     {

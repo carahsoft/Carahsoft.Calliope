@@ -90,6 +90,13 @@ public class JsonSchemaFormTests
     }
 
     [Fact]
+    public void Explicit_JSON_null_is_kept()
+    {
+        var form = JsonSchemaForm.Create("""{"type":"object","properties":{"record":{"type":["object","null"],"properties":{}}},"required":["record"]}""");
+        Assert.Equal("""{"record":null}""", Submit(Type("null", form)));
+    }
+
+    [Fact]
     public void Descriptions_are_shown()
     {
         var form = JsonSchemaForm.Create("""{"type":"object","properties":{"name":{"type":"string","description":"Who to greet"}}}""");

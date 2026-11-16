@@ -82,7 +82,9 @@ namespace Carahsoft.Calliope.Components
             var at = cursor - offset;
             var left = visible[..Math.Min(at, visible.Length)];
             var right = at + 1 <= visible.Length ? visible[(at + 1)..] : "";
-            return Ansi.Truncate(left + "\x1b[7m" + cursorChar + Ansi.Reset + right, width);
+            var line = left + "\x1b[7m" + cursorChar + Ansi.Reset + right;
+            // The ellipsis takes the last column, so when the cursor is there, cut instead
+            return at < width - 1 ? Ansi.Truncate(line, width) : Ansi.Cut(line, width);
         }
     }
 

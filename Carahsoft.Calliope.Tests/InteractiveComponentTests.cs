@@ -57,6 +57,15 @@ public class TextFieldTests
     }
 
     [Fact]
+    public void Cursor_in_the_last_column_is_not_replaced_by_the_ellipsis()
+    {
+        var field = TextFieldState.Of("abcdef");
+        Assert.Equal("abcd\x1b[7me" + Ansi.Reset, TextField.Render(field with { Cursor = 4 }, 5, true));
+        // With room for it, the ellipsis still shows there's more text
+        Assert.Equal("abc\x1b[7md" + Ansi.Reset + "…", TextField.Render(field with { Cursor = 3 }, 5, true));
+    }
+
+    [Fact]
     public void Draws_the_cursor_inverted()
     {
         var field = TextFieldState.Of("ab") with { Cursor = 1 };
@@ -192,6 +201,29 @@ public class DataGridTests
         Assert.Equal(5, lines.Count);
         Assert.All(lines, l => Assert.True(Ansi.VisibleLength(l) <= 40));
         Assert.StartsWith("NAME", Plain(lines[0]));
+    }
+
+    [Fact]
+    public void Render_clips_columns_wider_than_the_grid()
+    {
+        var grid = DataGrid.SetRows(DataGrid.Create(
+            new DataGridColumn<Row>("NAME", 10, r => r.Name),
+            new DataGridColumn<Row>("SIZE", 10, r => r.Size.ToString())), Rows);
+
+        Assert.All(DataGrid.Render(grid, 12, 4, true), l => Assert.True(Ansi.VisibleLength(l) <= 12, $"{Ansi.VisibleLength(l)} columns: {Plain(l)}"));
+        Assert.All(DataGrid.Render(grid, 12, 4, false), l => Assert.True(Ansi.VisibleLength(l) <= 12));
+    }
+
+    [Fact]
+    public void View_keeps_the_cursor_on_screen_at_its_default_height()
+    {
+        var view = new DataGridView<Row>(new DataGridColumn<Row>("NAME", 10, r => r.Name)) { AutoSize = false };
+        view.SetRows(Rows);
+        for (int i = 0; i < 9; i++)
+            view.Update(Down);
+
+        Assert.Equal("row10", view.Selected!.Name);
+        Assert.Contains("row10", Block.Lines(view.View()).Select(Plain).Select(l => l.Trim()));
     }
 
     [Fact]
