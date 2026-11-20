@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.1.1</VersionPrefix>
     <Title>$(AssemblyName)</Title>
     <Company>Carahsoft</Company>
     <Description>Elm-style F# programs for Carahsoft.Calliope: pure init/update/view, commands, and F# modules for Calliope's components.</Description>
@@ -17,6 +17,7 @@
     <FileVersion>$(VersionPrefix)</FileVersion>
     <Copyright>Copyright (c) Carahsoft Technology Corp. 2026</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <OtherFlags>$(OtherFlags) --nooptimizationdata</OtherFlags>
   </PropertyGroup>
 
   <ItemGroup>
