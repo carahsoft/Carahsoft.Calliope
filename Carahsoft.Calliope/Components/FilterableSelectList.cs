@@ -41,7 +41,7 @@ namespace Carahsoft.Calliope.Components
             var searchCmd = _searchInput.Init();
             var selectCmd = _selectList.Init();
             _selectList.Items = AllItems;
-            return CalliopeCmd.Combine(searchCmd, selectCmd, TextInput.StopBlinking());
+            return CalliopeCmd.Combine(searchCmd, selectCmd, _searchInput.StopBlink());
         }
 
         public CalliopeCmd? Update(CalliopeMsg msg)
@@ -53,7 +53,8 @@ namespace Carahsoft.Calliope.Components
                     if (kpm.KeyChar == '/')
                     {
                         Searching = true;
-                        return TextInput.StartBlinking();
+                        _searchInput.Enabled = true;
+                        return _searchInput.StartBlink();
                     }
                     else
                     {
@@ -69,7 +70,7 @@ namespace Carahsoft.Calliope.Components
                     if (kpm.Key == ConsoleKey.Enter)
                     {
                         Searching = false;
-                        return TextInput.StopBlinking();
+                        return _searchInput.StopBlink();
                     }
                     if (kpm.Key == ConsoleKey.Escape)
                     {
@@ -77,7 +78,7 @@ namespace Carahsoft.Calliope.Components
                         _searchInput.Enabled = false;
                         _searchInput.CursorIndex = 0;
                         _searchInput.Text = "";
-                        return TextInput.StopBlinking();
+                        return _searchInput.StopBlink();
                     }
                 }
             }
@@ -94,7 +95,7 @@ namespace Carahsoft.Calliope.Components
             if (!string.IsNullOrEmpty(_searchInput.Text))
             {
                 filteredItems = AllItems
-                    .Where(x => x.Value.Contains(_searchInput.Text, StringComparison.OrdinalIgnoreCase))
+                    .Where(x => (x.FilterValue ?? x.Value).Contains(_searchInput.Text, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
 

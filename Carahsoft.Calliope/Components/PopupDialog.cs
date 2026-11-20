@@ -1,8 +1,4 @@
-using Carahsoft.Calliope.AnsiConsole;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Carahsoft.Calliope.Text;
 
 namespace Carahsoft.Calliope.Components
 {
@@ -67,113 +63,19 @@ namespace Carahsoft.Calliope.Components
 
         private string OverlayPopup(string background, string content, int screenWidth, int screenHeight)
         {
-            // Get content lines and find max width
-            var contentLines = content.Split('\n');
-            var maxContentWidth = contentLines.Max(l => AnsiTextHelper.StripAnsi(l).Length);
-            var boxWidth = Math.Max(Math.Max(maxContentWidth, Title.Length + 4), Footer.Length + 4) + 4;
-
-            // Get background lines
-            var bgLines = background.Split('\n').ToList();
+            var bgLines = Block.Lines(background);
             if (screenHeight <= 0) screenHeight = bgLines.Count;
             if (screenWidth <= 0) screenWidth = 80;
 
-            // Calculate popup position (centered)
-            var popupHeight = contentLines.Length + 4; // content + title + footer + borders
-            var leftPad = Math.Max((screenWidth - boxWidth) / 2, 0);
-            var topPad = Math.Max((screenHeight - popupHeight) / 2, 0);
-
-            // Build popup lines (without left padding - we'll handle that in overlay)
-            var popupLines = new List<string>();
-
-            // Top border with title
-            var titlePad = (boxWidth - Title.Length - 4) / 2;
-            popupLines.Add(
-                AnsiTextHelper.ColorText("╭" + new string('─', titlePad), BorderColor) +
-                AnsiTextHelper.ColorText($" {Title} ", TitleColor) +
-                AnsiTextHelper.ColorText(new string('─', boxWidth - titlePad - Title.Length - 4) + "╮", BorderColor));
-
-            // Content lines
-            foreach (var line in contentLines)
+            var style = new FrameStyle
             {
-                var strippedLen = AnsiTextHelper.StripAnsi(line).Length;
-                var rightPadLen = boxWidth - strippedLen - 4;
-                popupLines.Add(
-                    AnsiTextHelper.ColorText("│ ", BorderColor) +
-                    line +
-                    new string(' ', Math.Max(rightPadLen, 0)) +
-                    AnsiTextHelper.ColorText(" │", BorderColor));
-            }
+                Border = Style.FromColor(BorderColor),
+                Title = Style.FromColor(TitleColor),
+                Footer = Style.FromColor(FooterColor),
+            };
 
-            // Footer line
-            var footerPad = (boxWidth - Footer.Length - 4) / 2;
-            popupLines.Add(
-                AnsiTextHelper.ColorText("├" + new string('─', footerPad), BorderColor) +
-                AnsiTextHelper.ColorText($" {Footer} ", FooterColor) +
-                AnsiTextHelper.ColorText(new string('─', boxWidth - footerPad - Footer.Length - 4) + "┤", BorderColor));
-
-            // Bottom border
-            popupLines.Add(AnsiTextHelper.ColorText("╰" + new string('─', boxWidth - 2) + "╯", BorderColor));
-
-            // Overlay popup lines onto background, preserving text on left and right
-            var popupEndCol = leftPad + boxWidth;
-            for (int i = 0; i < popupLines.Count && (topPad + i) < bgLines.Count; i++)
-            {
-                var bgLine = bgLines[topPad + i];
-                var bgStripped = AnsiTextHelper.StripAnsi(bgLine);
-
-                // Get the part of background before the popup (truncate to leftPad chars)
-                string leftPart;
-                if (leftPad > 0 && bgStripped.Length > 0)
-                {
-                    leftPart = AnsiTextHelper.TruncateLineToLength(bgLine, leftPad);
-                    // Pad if background was shorter than leftPad
-                    var leftPartLen = AnsiTextHelper.StripAnsi(leftPart).Length;
-                    if (leftPartLen < leftPad)
-                        leftPart += new string(' ', leftPad - leftPartLen);
-                }
-                else
-                {
-                    leftPart = new string(' ', leftPad);
-                }
-
-                // Get the part of background after the popup
-                var rightPart = "";
-                if (bgStripped.Length > popupEndCol)
-                {
-                    // Skip to the position after popup ends (accounting for ANSI codes)
-                    var visibleCount = 0;
-                    var rightStartIdx = 0;
-                    var inEscape = false;
-                    for (int j = 0; j < bgLine.Length; j++)
-                    {
-                        var c = bgLine[j];
-                        if (inEscape)
-                        {
-                            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
-                                inEscape = false;
-                        }
-                        else if (c == '\x1b')
-                        {
-                            inEscape = true;
-                        }
-                        else
-                        {
-                            visibleCount++;
-                            if (visibleCount == popupEndCol)
-                            {
-                                rightStartIdx = j + 1;
-                                break;
-                            }
-                        }
-                    }
-                    if (rightStartIdx > 0 && rightStartIdx < bgLine.Length)
-                        rightPart = bgLine.Substring(rightStartIdx);
-                }
-
-                bgLines[topPad + i] = leftPart + popupLines[i] + rightPart;
-            }
-
-            return string.Join('\n', bgLines);
+            var popup = Window.Popup(screenWidth, screenHeight, Title, Footer, Block.Lines(content), bgLines, style);
+            return string.Join('\n', popup.Lines);
         }
     }
 }

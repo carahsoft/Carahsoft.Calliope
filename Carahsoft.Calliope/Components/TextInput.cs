@@ -30,7 +30,16 @@ namespace Carahsoft.Calliope.Components
             }
         }
 
-        public bool Enabled { get; set; }
+        /// <summary>
+        /// When false, key presses are ignored (except Ctrl+C, see
+        /// <see cref="QuitOnCtrlC"/>) and the text is drawn without a cursor.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+        /// <summary>
+        /// Quit the program when Ctrl+C is pressed. Turn off when the input
+        /// is part of a larger program that handles Ctrl+C itself.
+        /// </summary>
+        public bool QuitOnCtrlC { get; set; } = true;
         public int CursorIndex { get; set; }
 
         public CalliopeCmd? Init()
@@ -44,7 +53,10 @@ namespace Carahsoft.Calliope.Components
             if (msg is KeyPressMsg kpm)
             {
                 if (kpm.Key == ConsoleKey.C && kpm.Modifiers == ConsoleModifiers.Control)
-                    return CalliopeCmd.Quit;
+                    return QuitOnCtrlC ? CalliopeCmd.Quit : null;
+
+                if (!Enabled)
+                    return null;
 
                 // Ensure cursor is in valid range before slicing
                 var safeIndex = Math.Clamp(CursorIndex, 0, Text.Length);
@@ -108,19 +120,37 @@ namespace Carahsoft.Calliope.Components
 
         public string View()
         {
-            var text = InsertCursor();
+            var text = Enabled ? InsertCursor() : Text;
             return Style?.Apply(text) ?? text;
         }
 
+        /// <summary>
+        /// Starts every text input's cursor in the program blinking. Use
+        /// <see cref="StartBlink"/> to start only this input's cursor.
+        /// </summary>
         public static CalliopeCmd StartBlinking()
         {
             return Cursor.StartBlinking();
         }
 
+        /// <summary>
+        /// Stops every text input's cursor in the program blinking. Use
+        /// <see cref="StopBlink"/> to stop only this input's cursor.
+        /// </summary>
         public static CalliopeCmd StopBlinking()
         {
             return Cursor.StopBlinking();
         }
+
+        /// <summary>
+        /// Starts this input's cursor blinking
+        /// </summary>
+        public CalliopeCmd StartBlink() => _cursor.StartBlink();
+
+        /// <summary>
+        /// Stops this input's cursor blinking
+        /// </summary>
+        public CalliopeCmd StopBlink() => _cursor.StopBlink();
 
         private string InsertCursor()
         {

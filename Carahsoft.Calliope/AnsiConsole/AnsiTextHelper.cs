@@ -1,9 +1,30 @@
 ﻿using System.Text;
+using Carahsoft.Calliope.Text;
 
 namespace Carahsoft.Calliope.AnsiConsole
 {
     public static class AnsiTextHelper
     {
+        /// <summary>
+        /// Prepares one line of a view for the screen: cut to the screen width, then clear whatever the
+        /// previous frame left to its right.
+        /// </summary>
+        /// <remarks>
+        /// A line that fills the screen width must not be followed by a clear. After a character is written
+        /// in the last column the cursor stays on that column (the wrap is pending until the next
+        /// character), so "clear to end of line" erases the character that was just written. Most
+        /// terminals (xterm, Windows Terminal) do this; tmux doesn't. A full-width line has nothing to its
+        /// right to clear anyway.
+        /// </remarks>
+        internal static string RenderLine(string? line, int screenWidth)
+        {
+            var renderLine = TruncateLineToLength(line, screenWidth);
+
+            return Ansi.VisibleLength(renderLine) < screenWidth
+                ? renderLine + Constants.AnsiConstants.ClearRight
+                : renderLine;
+        }
+
         public static string ColorText(string text, RgbColor color, RgbColor? background = null)
         {
             var sb = new StringBuilder();
@@ -76,8 +97,11 @@ namespace Carahsoft.Calliope.AnsiConsole
 
         /// <summary>
         /// Truncates the given line to the given length, ignoring
-        /// unprinted ANSI escape sequences in the line. Line must be
-        /// a single line string without newlines.
+        /// unprinted ANSI escape sequences in the line. A line that
+        /// already fits is returned unchanged. A line that is cut ends
+        /// with a reset if a style was still active where it was cut,
+        /// so the style doesn't carry into whatever is drawn next.
+        /// Multi-line strings have each line truncated separately.
         /// </summary>
         /// <remarks>
         /// Currently does not support full-width characters
@@ -87,56 +111,19 @@ namespace Carahsoft.Calliope.AnsiConsole
             if (string.IsNullOrEmpty(line))
                 return "";
 
-            if (line.Contains('\r') || line.Contains('\n'))
+            if (line.Contains('\n'))
             {
-                return line;
-                throw new ArgumentException("Multi-line string passed to LineDisplayLength", nameof(line));
+                var lines = line.Split('\n');
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    lines[i] = lines[i].EndsWith('\r')
+                        ? Ansi.Cut(lines[i][..^1], length) + "\r"
+                        : Ansi.Cut(lines[i], length);
+                }
+                return string.Join('\n', lines);
             }
 
-            bool escape = false;
-            int count = 0;
-            for (int i = 0; i < line.Length; i++)
-            {
-                if (count >= length)
-                {
-                    return line[..i];
-                }
-
-                var c = line[i];
-                // Cancel escape if we are at the end of the sequence
-                if (escape && ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')))
-                {
-                    escape = false;
-                    continue;
-                }
-
-                if (escape)
-                {
-                    continue;
-                }
-
-                if (c == '\x1b')
-                {
-                    escape = true;
-                    continue;
-                }
-                if (c == '\t')
-                {
-                    // tab moves to the next tabstop every 8 chars
-                    var tabstop = i % 8;
-                    count += 8 - tabstop;
-                    if (count >= length)
-                        return line[..(i - 1)];
-
-                    continue;
-                }
-                // TODO: handle full width chars
-
-                // This should catch most unprintable characters
-                if (!char.IsControl(c))
-                    count++;
-            }
-            return line;
+            return Ansi.Cut(line, length);
         }
     }
 }

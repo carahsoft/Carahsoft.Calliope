@@ -5,8 +5,9 @@ trigger:
   paths:
     include:
     - Carahsoft.Calliope
+    - Carahsoft.Calliope.Elm
 variables:
-  BaseVersion: 0.1
+  BaseVersion: 0.3
   BuildPlatform: AnyCPU
   ProjectName: Carahsoft.Calliope
   Solution: Carahsoft.Calliope.sln
@@ -21,9 +22,9 @@ jobs:
   steps:
   - checkout: self
   - task: UseDotNet@2
-    displayName: 'Use .NET 8.0.x'
+    displayName: 'Use .NET 10.0.x'
     inputs:
-      version: 8.0.x
+      version: 10.0.x
   - task: DotNetCoreCLI@2
     displayName: dotnet build
     inputs:
@@ -33,6 +34,15 @@ jobs:
       arguments: -c $(BuildConfiguration)
 
   - task: DotNetCoreCLI@2
+    displayName: dotnet test
+    inputs:
+      command: test
+      projects: |
+        **/$(ProjectName).Tests.csproj
+        **/$(ProjectName).Elm.Tests.fsproj
+      arguments: -c $(BuildConfiguration) --no-build
+
+  - task: DotNetCoreCLI@2
     displayName: dotnet pack
     inputs:
       command: pack
@@ -40,6 +50,16 @@ jobs:
       searchPatternPack: '**/$(ProjectName).csproj'
       versioningScheme: byBuildNumber
       arguments: --no-restore --no-build
+
+  # The Elm package has its own version line, so it's packed with the VersionPrefix in its .fsproj.
+  # It depends on Carahsoft.Calliope >= the VersionPrefix in Carahsoft.Calliope.csproj.
+  - task: DotNetCoreCLI@2
+    displayName: dotnet pack Elm
+    inputs:
+      command: pack
+      packagesToPack: '**/$(ProjectName).Elm.fsproj'
+      versioningScheme: off
+      nobuild: true
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'

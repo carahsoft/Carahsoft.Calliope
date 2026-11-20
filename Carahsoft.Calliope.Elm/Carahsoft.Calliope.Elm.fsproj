@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <Title>$(AssemblyName)</Title>
+    <Company>Carahsoft</Company>
+    <Description>Elm-style F# programs for Carahsoft.Calliope: pure init/update/view, commands, and F# modules for Calliope's components.</Description>
+    <PackageProjectUrl>https://github.com/carahsoft/Carahsoft.Calliope</PackageProjectUrl>
+    <PackageIcon>calliope_logo_128.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/carahsoft/Carahsoft.Calliope</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>console;mvu;ansi;elm;fsharp;tui</PackageTags>
+    <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
+    <FileVersion>$(VersionPrefix)</FileVersion>
+    <Copyright>Copyright (c) Carahsoft Technology Corp. 2026</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Key.fs" />
+    <Compile Include="Cmd.fs" />
+    <Compile Include="ElmProgram.fs" />
+    <Compile Include="Layout.fs" />
+    <Compile Include="Components.fs" />
+    <Compile Include="Testing.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Images\calliope_logo_128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Carahsoft.Calliope.Elm.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Carahsoft.Calliope\Carahsoft.Calliope.csproj" />
+  </ItemGroup>
+
+</Project>

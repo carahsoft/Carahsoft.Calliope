@@ -24,7 +24,7 @@
         {
             return effect switch
             {
-                CalliopeEffect.Greyscale => GreyscaleRenderer,
+                CalliopeEffect.Grayscale => GrayscaleRenderer,
                 CalliopeEffect.ScanlineGradient => ScanlineGradientRenderer,
                 CalliopeEffect.Phoenix => PhoenixRenderer,
                 CalliopeEffect.Unicorn => UnicornRenderer,
@@ -34,7 +34,9 @@
         }
 
         public static CalliopeRenderer DefaultRenderer = new DefaultRenderer();
-        public static CalliopeRenderer GreyscaleRenderer = new GreyscaleRenderer();
+        public static CalliopeRenderer GrayscaleRenderer = new GrayscaleRenderer();
+        [Obsolete("Use GrayscaleRenderer")]
+        public static CalliopeRenderer GreyscaleRenderer = GrayscaleRenderer;
         public static CalliopeRenderer PhoenixRenderer = new PhoenixRenderer();
         public static CalliopeRenderer ScanlineGradientRenderer = new ScanlineGradientRenderer();
         public static CalliopeRenderer UnicornRenderer = new UnicornRenderer();

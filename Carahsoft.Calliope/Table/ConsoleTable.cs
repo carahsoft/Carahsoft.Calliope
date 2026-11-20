@@ -337,17 +337,22 @@ namespace Carahsoft.Calliope.Table
 
             DataTable dt = new DataTable();
 
-            foreach (var o in testList[0]!.GetType().GetProperties())
+            // Use the first row's type so derived types show their own properties,
+            // falling back to T when there are no rows
+            var properties = (testList.Count > 0 ? testList[0]!.GetType() : typeof(T)).GetProperties();
+
+            foreach (var o in properties)
             {
-                dt.Columns.Add(o.Name, o.PropertyType);
+                // DataTable doesn't support Nullable<T> columns; nulls are stored as DBNull
+                dt.Columns.Add(o.Name, Nullable.GetUnderlyingType(o.PropertyType) ?? o.PropertyType);
             }
 
             foreach (var obj in testList)
             {
                 var alist = new List<object?>();
-                foreach (var whatever in obj!.GetType().GetProperties())
+                foreach (var whatever in properties)
                 {
-                    alist.Add(whatever.GetValue(obj));
+                    alist.Add(whatever.GetValue(obj) ?? DBNull.Value);
                 }
                 dt.Rows.Add(alist.ToArray());
             }

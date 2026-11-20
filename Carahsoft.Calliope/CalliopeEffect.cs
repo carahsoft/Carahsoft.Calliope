@@ -6,7 +6,9 @@
         ScanlineGradient,
         Phoenix,
         Unicorn,
-        Greyscale,
+        Grayscale,
         GalacticCrush,
+        [Obsolete("Use Grayscale")]
+        Greyscale = Grayscale,
     }
 }
